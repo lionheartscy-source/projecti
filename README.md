@@ -8,7 +8,9 @@
 
 ## 리포트 추가하기
 
-1. `reports/` 에 리포트 HTML을 넣는다
+1. 리포트 HTML을 지역에 맞는 폴더에 넣는다
+   - 국내 → `reports/kr/`
+   - 국외 → `reports/global/`
 2. **`업로드.bat` 더블클릭**
 
 reports.json 갱신 → 커밋 → 푸시까지 한 번에 처리합니다.
@@ -19,9 +21,9 @@ reports.json 갱신 → 커밋 → 푸시까지 한 번에 처리합니다.
 `index.html` 은 손댈 필요가 없습니다.
 
 ```
-reports/ 에 파일 추가
+reports/kr 또는 reports/global 에 파일 추가
    ↓
-scripts/build-reports.py 가 스캔        ← 업로드.bat 또는 GitHub Actions
+tools/build-reports.ps1 이 스캔        ← 업로드.bat 또는 GitHub Actions
    ↓
 reports.json 재생성 후 커밋
    ↓
@@ -45,8 +47,9 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 | 설명 | `<p class="sub">` → `og:description` → 첫 문단 |
 | 썸네일 | `.hero-figure img` → `og:image` → 첫 이미지 |
 | 장르 · 플랫폼 | `<span class="chip">장르 <b>...</b></span>` |
-| 상태 | `chip` 의 `상태` 항목 (미출시/예정 → 출시예정) |
-| 날짜 | 해당 파일의 git 커밋일 |
+| 상태 | `chip` 의 `상태` · `출시` 항목 |
+| 날짜 | 본문의 `작성일` · `기준일` → 없으면 파일이 추가된 커밋일 |
+| 지역 | 파일이 들어 있는 폴더 (`kr` → 국내, `global` → 국외) |
 
 ### 값을 직접 지정하고 싶을 때
 
@@ -62,9 +65,13 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 <meta name="report:thumb"  content="https://example.com/header.jpg">
 ```
 
-`status` 는 `출시` / `출시예정` / `데모` 세 값이 각각 초록 · 크림슨 · 파랑 배지로 나옵니다.
-`PC (Windows)` 처럼 괄호가 붙은 태그는 `PC` 로 자동 정리됩니다. 표기 통일 규칙은
-`tools/build-reports.ps1` 의 `$TagAliases` 에서 수정하세요.
+`status` 는 `출시`(초록) / `앞서 해보기`(금색) / `데모`(파랑) / `출시예정`(크림슨) 배지로 나옵니다.
+`Coming Soon`, `Early Access`, `2026.03.03` 같은 표기도 알아서 이 넷 중 하나로 정리됩니다.
+`PC (Windows)` 처럼 괄호가 붙은 표기는 `PC` 로 정리됩니다. 플랫폼 표기 통일은
+`tools/build-reports.ps1` 의 `$PlatformAliases`, 장르 필터 키워드는 `$TopicRules` 에서 수정하세요.
+
+카드에는 원문 장르 구절(`3인칭 슈터 로그라이트`)이 그대로 나가고,
+필터 레일에는 거기서 뽑은 키워드(`슈터`, `로그라이크`)만 씁니다.
 
 ---
 
@@ -79,7 +86,8 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 ├─ 미리보기.bat                   목록 갱신 + 브라우저로 열기
 ├─ .nojekyll
 ├─ reports/
-│  └─ sura-blade-of-eternity.html
+│  ├─ kr/         국내 리포트 → 인덱스의 '국내' 탭
+│  └─ global/     국외 리포트 → 인덱스의 '국외' 탭
 ├─ tools/
 │  └─ build-reports.ps1          리포트 스캔 → reports.js / reports.json
 └─ .github/workflows/
@@ -103,6 +111,27 @@ GitHub Actions 도 같은 `build-reports.ps1` 을 실행하므로 로직이 한 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\build-reports.ps1
 ```
+
+---
+
+## 지역 추가하기
+
+`reports/` 아래에 폴더를 만들고 `tools/build-reports.ps1` 의 `$RegionMap` 에 한 줄 추가하면
+인덱스에 탭이 자동으로 생깁니다.
+
+```powershell
+$RegionMap = @{
+    'kr' = '국내'; 'global' = '국외'
+    'jp' = '일본'          # ← 이런 식
+}
+```
+
+---
+
+## 테마
+
+상단바 오른쪽 아이콘으로 다크 / 라이트를 전환합니다. 기본은 다크이고,
+선택은 그 브라우저에만 기억됩니다.
 
 ---
 

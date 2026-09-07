@@ -261,6 +261,20 @@ function ConvertTo-IsoDate([string]$Raw) {
     return ''
 }
 
+# reports/ 아래 폴더 이름으로 지역을 판별한다.
+# 새 지역을 추가하려면 폴더를 만들고 여기에 한 줄만 넣으면 된다.
+$RegionMap = @{
+    'kr' = '국내'; 'korea' = '국내'; 'domestic' = '국내'
+    'global' = '국외'; 'overseas' = '국외'; 'intl' = '국외'
+}
+
+function Resolve-Region([string]$Folder) {
+    if (-not $Folder) { return '국내' }   # reports/ 바로 아래 있는 파일
+    $k = $Folder.ToLowerInvariant()
+    if ($RegionMap.ContainsKey($k)) { return $RegionMap[$k] }
+    return $Folder
+}
+
 function Get-ReportDate([string]$Path) {
     # 파일이 처음 추가된 커밋일. 마지막 커밋일을 쓰면 한 번 손댈 때마다 날짜가 밀린다.
     try {
@@ -304,7 +318,7 @@ function Format-ReportsJson($Items) {
     $list = @($Items)
     if ($list.Count -eq 0) { return '[]' }
 
-    $keys      = 'title', 'studio', 'desc', 'href', 'thumb', 'tags', 'platforms', 'topics', 'status', 'date', 'slug'
+    $keys      = 'title', 'studio', 'desc', 'href', 'region', 'thumb', 'tags', 'platforms', 'topics', 'status', 'date', 'slug'
     $arrayKeys = 'tags', 'platforms', 'topics'
     $out       = New-Object System.Collections.Generic.List[string]
     [void]$out.Add('[')
@@ -348,6 +362,12 @@ function Format-ReportsJson($Items) {
 function Build-Entry([System.IO.FileInfo]$File) {
     $slug = [System.IO.Path]::GetFileNameWithoutExtension($File.Name)
     $src  = Get-Content -LiteralPath $File.FullName -Raw -Encoding UTF8
+
+    # reports/ 기준 상대 경로 → href 와 지역
+    $rel = $File.FullName.Substring($ReportsDir.Length).TrimStart('\', '/').Replace('\', '/')
+    $folder = ''
+    if ($rel.Contains('/')) { $folder = $rel.Split('/')[0] }
+    $region = Resolve-Region $folder
 
     $meta  = Read-ReportMeta $src
     $rep   = $meta.report
@@ -439,7 +459,8 @@ function Build-Entry([System.IO.FileInfo]$File) {
         title     = [string]$title
         studio    = [string]$studio
         desc      = [string]$desc
-        href      = 'reports/' + $File.Name
+        href      = 'reports/' + $rel
+        region    = [string]$region
         thumb     = [string]$thumb
         tags      = @($tags)
         platforms = @($platforms.ToArray())
@@ -455,9 +476,10 @@ if (-not (Test-Path -LiteralPath $ReportsDir)) {
     exit 1
 }
 
-$files = @(Get-ChildItem -LiteralPath $ReportsDir -File |
+# 하위 폴더(kr / global …)까지 훑는다.
+$files = @(Get-ChildItem -LiteralPath $ReportsDir -File -Recurse |
            Where-Object { $_.Extension -match '^\.html?$' -and -not $_.Name.StartsWith('_') } |
-           Sort-Object Name)
+           Sort-Object FullName)
 
 $entries = New-Object System.Collections.Generic.List[object]
 foreach ($f in $files) {
@@ -466,7 +488,7 @@ foreach ($f in $files) {
         [void]$entries.Add($e)
         $tagText = if ($e.topics.Count) { ($e.topics -join ', ') } else { '-' }
         $stText  = if ($e.status) { $e.status } else { '-' }
-        Write-Host ("  [OK] {0,-32} {1,-26} {2,-6} {3,-8} {4}" -f $e.slug, $e.title, $stText, $e.date, $tagText)
+        Write-Host ("  [OK] {0,-4} {1,-30} {2,-24} {3,-6} {4,-8} {5}" -f $e.region, $e.slug, $e.title, $stText, $e.date, $tagText)
     } catch {
         # 한 파일이 깨져도 전체가 죽지 않게
         Write-Host ("  [!!] {0} 파싱 실패: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow
@@ -488,5 +510,11 @@ $js = $jsHeader + "`n" + 'window.__REPORTS__ = ' + $json + ";`n"
 [System.IO.File]::WriteAllText($OutJsPath, $js, $utf8NoBom)
 
 Write-Host ''
-Write-Host ("  리포트 {0}편 -> reports.json / reports.js" -f $sorted.Count) -ForegroundColor Green
+$byRegion = @{}
+foreach ($e in $sorted) {
+    $r = if ($e.region) { $e.region } else { '미분류' }
+    if ($byRegion.ContainsKey($r)) { $byRegion[$r]++ } else { $byRegion[$r] = 1 }
+}
+$summary = (($byRegion.Keys | Sort-Object | ForEach-Object { "$_ $($byRegion[$_])편" }) -join ' · ')
+Write-Host ("  리포트 {0}편 ({1}) -> reports.json / reports.js" -f $sorted.Count, $summary) -ForegroundColor Green
 exit 0

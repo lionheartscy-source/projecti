@@ -91,10 +91,17 @@
   .search input::placeholder{color:var(--dim)}
   .search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
   .search svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--dim)}
-  .snlinks{display:flex; gap:4px}
-  .snlinks a{font-size:13.5px; font-weight:700; color:var(--muted); padding:7px 13px; border-radius:8px}
-  .snlinks a.active{color:var(--ink); background:var(--bg); box-shadow:var(--shadow-sm)}
-  .snlinks a:hover{color:var(--ink)}
+  /* ── 국내 / 국외 탭 ── */
+  .tabs{display:flex; gap:4px}
+  .tabs button{display:inline-flex; align-items:center; gap:7px;
+    font-size:13.5px; font-weight:700; color:var(--muted);
+    padding:7px 14px; border-radius:8px; background:none; border:1px solid transparent;
+    transition:color .16s, background .16s, border-color .16s}
+  .tabs button:hover{color:var(--ink); background:var(--surface)}
+  .tabs button.on{color:var(--ink); background:var(--bg); border-color:var(--line); box-shadow:var(--shadow-sm)}
+  .tabs .tn{font-size:11px; font-weight:800; color:var(--dim);
+    background:var(--surface); padding:1px 6px; border-radius:999px; min-width:18px; text-align:center}
+  .tabs button.on .tn{color:var(--accent-ink); background:var(--accent-soft)}
 
   /* ══════════ SHELL ══════════ */
   .shell{max-width:1400px; margin:0 auto; padding:0 24px 90px}
@@ -283,10 +290,7 @@
       </svg>
       <input id="q" type="search" placeholder="리포트 검색" autocomplete="off">
     </div>
-    <div class="snlinks">
-      <a class="active" href="#browse">전체 리포트</a>
-      <a href="#top">최신</a>
-    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
   </div>
 </div>
 
@@ -303,7 +307,7 @@
     <main>
       <div class="activefilters" id="activeFilters"></div>
       <div class="toolbar">
-        <h2>전체 리포트<span class="count" id="count"></span></h2>
+        <h2><span id="browseTitle">전체 리포트</span><span class="count" id="count"></span></h2>
         <div class="sortwrap">
           <label for="sort">정렬</label>
           <select class="sort" id="sort">
@@ -366,8 +370,16 @@ const initials = t => (t || "?").replace(/[^A-Za-z0-9가-힣 ]/g, "").trim()
 const STATUS_CLASS = { "출시":"released", "출시예정":"upcoming", "데모":"demo", "앞서 해보기":"early" };
 const byDateDesc = (a,b) => String(b.date).localeCompare(String(a.date));
 
-const state = { q:"", sort:"new", status:new Set(), platforms:new Set(), topics:new Set() };
+const state = { q:"", sort:"new", region:"", status:new Set(), platforms:new Set(), topics:new Set() };
 const FILTER_KEYS = ["status", "platforms", "topics"];
+
+// 탭은 항상 이 순서로 보여준다. 리포트가 0편이어도 탭은 남긴다.
+const REGIONS = ["국내", "국외"];
+
+// 현재 탭에 해당하는 리포트만. 히어로·필터·목록이 모두 이걸 기준으로 움직인다.
+function scoped(){
+  return state.region ? REPORTS.filter(r => r.region === state.region) : REPORTS;
+}
 
 /* ──────────── HERO ──────────── */
 let heroIdx = 0;
@@ -375,7 +387,8 @@ let featured = [];
 
 function renderHero(){
   const r = featured[heroIdx];
-  if (!r) { $(".hero").style.display = "none"; return; }
+  $(".hero").style.display = r ? "" : "none";
+  if (!r) return;
   const el = $("#heroMain");
   el.href = r.href;
   el.innerHTML = `
@@ -391,6 +404,7 @@ function renderHero(){
 
   const strip = $("#heroStrip");
   if (featured.length < 2) { strip.style.display = "none"; return; }
+  strip.style.display = "";
   strip.innerHTML = `<span class="hstrip-cap">Recent Reports</span>` +
     featured.map((f,i) => `
       <button class="hitem${i===heroIdx?" on":""}" data-i="${i}">
@@ -411,7 +425,7 @@ const STATUS_ORDER = ["출시", "앞서 해보기", "데모", "출시예정"];
 
 function countBy(key){
   const c = {};
-  REPORTS.forEach(r => {
+  scoped().forEach(r => {
     const v = r[key];
     (Array.isArray(v) ? v : (v ? [v] : [])).forEach(x => c[x] = (c[x]||0)+1);
   });
@@ -494,13 +508,14 @@ function cardHTML(r){
       (r.tags||[]).slice(0,2).map(t=>`<span class="tag">${esc(t)}</span>`).join("") +
       (r.platforms||[]).slice(0,2).map(p=>`<span class="tag plat">${esc(p)}</span>`).join("")
     }</div>
-    <span class="cdate">${esc(r.date||"")}</span>
+    <span class="cdate">${state.region ? "" : esc(r.region) + " · "}${esc(r.date||"")}</span>
   </a>`;
 }
 
 function render(){
   const q = state.q.trim().toLowerCase();
-  let list = REPORTS.filter(r => {
+  const pool = scoped();
+  let list = pool.filter(r => {
     const hay = [r.title, r.studio, r.desc, r.status,
                  ...(r.tags||[]), ...(r.platforms||[]), ...(r.topics||[])].join(" ").toLowerCase();
     if (q && !hay.includes(q)) return false;
@@ -517,14 +532,65 @@ function render(){
   : s === "old"   ? String(a.date).localeCompare(String(b.date))
   :                 byDateDesc(a,b));
 
-  $("#grid").innerHTML = list.length
-    ? list.map(cardHTML).join("")
-    : `<div class="empty"><div class="big">◇</div>
-         <p>조건에 맞는 리포트가 없습니다.</p>
-         <button class="afchip" onclick="clearAll()">필터 초기화</button></div>`;
+  if (list.length) {
+    $("#grid").innerHTML = list.map(cardHTML).join("");
+  } else if (!pool.length) {
+    // 탭 자체가 비어 있는 경우 (아직 국외 리포트가 없을 때)
+    $("#grid").innerHTML = `<div class="empty"><div class="big">◇</div>
+      <p>${esc(state.region)} 리포트가 아직 없습니다.<br>
+      <code>reports/${state.region === "국외" ? "global" : "kr"}/</code> 에 파일을 넣고 업로드하면 여기에 나타납니다.</p></div>`;
+  } else {
+    $("#grid").innerHTML = `<div class="empty"><div class="big">◇</div>
+      <p>조건에 맞는 리포트가 없습니다.</p>
+      <button class="afchip" onclick="clearAll()">필터 초기화</button></div>`;
+  }
 
-  $("#count").textContent = `${list.length} / ${REPORTS.length}편`;
+  $("#count").textContent = `${list.length} / ${pool.length}편`;
+  $("#browseTitle").textContent = state.region ? `${state.region} 리포트` : "전체 리포트";
   renderActiveFilters();
+}
+
+/* ──────────── 탭 ──────────── */
+function buildTabs(){
+  const counts = {};
+  REPORTS.forEach(r => counts[r.region] = (counts[r.region]||0)+1);
+  const defs = [["", "전체", REPORTS.length]].concat(
+    REGIONS.map(rg => [rg, rg, counts[rg] || 0]),
+    // 매핑에 없는 폴더가 생기면 그 지역도 탭으로 붙는다
+    Object.keys(counts).filter(k => k && !REGIONS.includes(k)).sort()
+          .map(rg => [rg, rg, counts[rg]])
+  );
+
+  $("#tabs").innerHTML = defs.map(([val,label,n]) => `
+    <button type="button" role="tab" data-region="${esc(val)}"
+            class="${val === state.region ? "on" : ""}"
+            aria-selected="${val === state.region}">
+      ${esc(label)}<span class="tn">${n}</span>
+    </button>`).join("");
+
+  $("#tabs").querySelectorAll("button").forEach(b =>
+    b.addEventListener("click", () => selectRegion(b.dataset.region)));
+}
+
+function selectRegion(region){
+  if (region === state.region) return;
+  state.region = region;
+  // 탭이 바뀌면 필터 선택지가 달라지므로 함께 비운다
+  state.q = "";
+  FILTER_KEYS.forEach(k => state[k].clear());
+  $("#q").value = "";
+
+  $("#tabs").querySelectorAll("button").forEach(b => {
+    const on = b.dataset.region === region;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-selected", String(on));
+  });
+
+  heroIdx = 0;
+  featured = [...scoped()].sort(byDateDesc).slice(0, 4);
+  buildRail();
+  renderHero();
+  render();
 }
 
 /* ──────────── INIT ──────────── */
@@ -535,6 +601,7 @@ function normalize(list){
     studio:    r.studio || "",
     desc:      r.desc   || "",
     href:      String(r.href),
+    region:    r.region || "국내",
     thumb:     r.thumb  || "",
     tags:      arr(r.tags),
     // 예전 형식(platforms/topics 없음)도 그대로 뜨도록 tags 로 대체한다
@@ -555,8 +622,9 @@ function boot(){
     REPORTS = normalize(FALLBACK_REPORTS);
   }
 
-  featured = [...REPORTS].sort(byDateDesc).slice(0, 4);
+  featured = [...scoped()].sort(byDateDesc).slice(0, 4);
   $("#navCount").textContent = REPORTS.length;
+  buildTabs();
   buildRail();
   renderHero();
   render();
