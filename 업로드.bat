@@ -49,13 +49,20 @@ echo [3/5] 스테이징...
 if errorlevel 1 goto :FAILADD
 
 "%GIT%" diff --cached --quiet
-if not errorlevel 1 goto :NOCHANGE
+if not errorlevel 1 goto :SKIPCOMMIT
 
 echo.
 echo [4/5] 커밋...
 "%GIT%" commit -m "리포트 갱신 %TODAY%"
 if errorlevel 1 goto :FAILCOMMIT
+goto :DOPUSH
 
+:SKIPCOMMIT
+echo.
+echo [4/5] 새로 바뀐 파일이 없어 커밋은 건너뜁니다.
+
+REM 커밋할 게 없어도 아직 안 올라간 커밋이 남아 있을 수 있으므로 푸시는 항상 시도한다.
+:DOPUSH
 echo.
 echo [5/5] 푸시...
 "%GIT%" push -u origin main
@@ -66,11 +73,6 @@ echo ============================================
 echo  [완료] %TODAY% GitHub 반영 완료
 echo  https://lionheartscy-source.github.io/projecti/
 echo ============================================
-goto :END
-
-:NOCHANGE
-echo.
-echo  [알림] 커밋할 변경사항이 없습니다. (이미 모두 반영된 상태)
 goto :END
 
 :NOGIT
