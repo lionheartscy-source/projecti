@@ -8,21 +8,28 @@
 
 ## 리포트 추가하기
 
-**`reports/` 에 HTML 파일을 넣고 푸시하면 끝입니다.**
+1. `reports/` 에 리포트 HTML을 넣는다
+2. **`업로드.bat` 더블클릭**
 
-인덱스에 반영하는 작업은 GitHub Actions가 합니다. `index.html`은 손댈 필요 없습니다.
+reports.json 갱신 → 커밋 → 푸시까지 한 번에 처리합니다.
+확인만 하고 싶으면 `미리보기.bat` 을 먼저 실행하세요.
+
+웹에서 직접 올려도 됩니다 — 그때는 GitHub Actions가 대신 reports.json을 갱신합니다.
+
+`index.html` 은 손댈 필요가 없습니다.
 
 ```
-reports/ 에 파일 추가 → push
+reports/ 에 파일 추가
    ↓
-Actions 가 scripts/build-reports.py 실행
+scripts/build-reports.py 가 스캔        ← 업로드.bat 또는 GitHub Actions
    ↓
-reports.json 재생성 후 자동 커밋
+reports.json 재생성 후 커밋
    ↓
 index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 ```
 
-반영까지 보통 1~2분 걸립니다. 진행 상황은 저장소의 **Actions** 탭에서 볼 수 있습니다.
+웹 업로드로 올린 경우 Actions 반영까지 1~2분 걸립니다. 진행 상황은 저장소의
+**Actions** 탭에서 볼 수 있습니다.
 
 파일명은 ASCII 슬러그(소문자·하이픈)를 쓰세요. 한글·공백은 URL에서 깨집니다.
 
@@ -67,6 +74,8 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 /
 ├─ index.html                    네비게이션 허브 (히어로 + 그리드 + 필터 레일)
 ├─ reports.json                  ← 자동 생성. 직접 수정 금지
+├─ 업로드.bat                     reports.json 갱신 + 커밋 + 푸시
+├─ 미리보기.bat                   로컬 서버로 실제 목록까지 확인
 ├─ .nojekyll
 ├─ reports/
 │  └─ sura-blade-of-eternity.html
@@ -83,17 +92,12 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 `index.html` 을 더블클릭해 열면 브라우저가 `reports.json` 을 못 읽습니다(`file://` 제약).
 이때는 `index.html` 안의 `FALLBACK_REPORTS` 목록이 대신 표시됩니다 — 레이아웃 확인용입니다.
 
-실제 목록까지 보려면 로컬 서버를 띄우세요.
-
-```bash
-python -m http.server 8000
-# → http://localhost:8000
-```
-
-reports.json 을 미리 만들어 보려면:
+실제 목록까지 보려면 **`미리보기.bat`** 을 실행하세요. 수동으로 하려면:
 
 ```bash
 python scripts/build-reports.py
+python -m http.server 8000
+# → http://localhost:8000
 ```
 
 ---
