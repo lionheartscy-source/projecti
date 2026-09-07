@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinoblade · Team Spino — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#f8f1ee; --surface2:#fdf8f6;
+    --ink:#1c1512; --ink2:#382a24; --muted:#6e574e; --dim:#a08a80;
+    --line:#f0e2db; --line2:#f6ebe5;
+    --accent:#d8442d; --accent-ink:#b0331f; --accent-soft:#fbe6de;
+    --gold:#6a4bb0; --gold-soft:#ece7fa; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(50,20,10,.05),0 1px 3px rgba(50,20,10,.08);
+    --shadow:0 4px 8px -2px rgba(50,20,10,.08),0 2px 4px -2px rgba(50,20,10,.05);
+    --shadow-lg:0 16px 32px -10px rgba(50,20,10,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#f08a3a); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  @media(max-width:820px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  .shot{border-radius:11px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; background:var(--surface); box-shadow:var(--shadow-sm)}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  /* trend bars */
+  .trend{display:flex; align-items:flex-end; gap:10px; height:150px; padding:8px 4px 0}
+  .tbar{flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; height:100%}
+  .tbar .bar{width:100%; max-width:56px; border-radius:6px 6px 0 0; margin-top:auto; background:linear-gradient(180deg,var(--accent),#e88a5f)}
+  .tbar .bar.mut{background:linear-gradient(180deg,#c9b6ad,#ddd0c9)}
+  .tbar .cap2{font-size:11.5px; color:var(--muted); text-align:center; font-weight:600}
+  .tbar .val{font-size:12.5px; font-weight:800; color:var(--ink2)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#fdf2ec; border:1px solid #f3ddd0; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#fdf4ee !important; border-color:#f3ddd0; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(28,14,6,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#e2ccbe; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    .shot:hover img{transform:none}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">🦖</span> Dinoblade <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 성과·투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 성과·투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">⚔️ Post-Launch · Review &amp; Market Analysis</span>
+    <h1>Dinoblade —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">인디 스튜디오 <b>Team Spino</b>와 신작 「Dinoblade」 — <b>대검을 든 스피노사우루스</b>가 대재앙 이후의 선사시대에서 공룡 알파들과 싸우는 <b>공룡 소울라이크 액션 RPG</b>에 대한 개발사·게임·시장성 중심 <b>출시 후(Post-Launch)</b> 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>소울라이크 액션 RPG</b></span>
+      <span class="chip">출시 <b>2026.07.23</b></span>
+      <span class="chip">가격 <b>$19.99</b></span>
+      <span class="chip">플랫폼 <b>PC (Steam) · Deck</b></span>
+      <span class="chip">평가 <b>매우 긍정적 91%</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="Dinoblade 대표 이미지" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/dd831b124cdb96ec91b600768fd96b0697bffc73/ss_dd831b124cdb96ec91b600768fd96b0697bffc73.1920x1080.jpg?t=1784885012">
+    </div>
+    <div class="figcap">▲ 「Dinoblade」 인게임 화면 (출처: Steam 공식)</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>Team Spino</b>는 2026년 7월 23일 출시된 공룡 소울라이크 액션 RPG <span class="hg">「Dinoblade」</span>를 개발하고 <b>Boltray Games</b>와 공동 퍼블리싱한 소규모 인디 스튜디오입니다. 플레이어는 <b>대검을 든 어린 스피노사우루스</b>가 되어, 각 바이옴을 지배하는 <b>공룡 ‘알파’ 보스들</b>과 싸우며 종(種)의 운명을 건 이야기를 풀어갑니다. Dark Souls식 전투 리듬에 <b>Sekiro식 자세(posture) 파괴·패링</b>을 얹되, 사망 페널티를 완화한 <b>‘소울라이트(Soulslite)’</b> 구조로 진입장벽을 낮춘 것이 핵심입니다.</p>
+      <p style="margin-bottom:0">“<b>대검 든 공룡</b>”이라는 강렬한 한 줄 컨셉과 뛰어난 애니메이션으로 <b>출시 직후 Steam 인기 출시작 1위</b>에 올랐고, <span class="hl">유저 평가 ‘매우 긍정적’ 91%(리뷰 2,260+건)</span>, 추정 판매 <b>약 6.4만 장·매출 ≈ $76만</b>을 기록했습니다. 다만 카메라·락온·패링 손맛·최적화 등 <b>소울라이크의 핵심인 ‘조작 정밀도’ 영역에서 완성도가 발목</b>을 잡아 전문 매체 점수는 7~9점으로 갈렸고, 출시 스파이크 이후 동접이 빠르게 하락한 <b>롱런 검증 초기</b> 단계입니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n">91%</div><div class="l">Steam 평가 (매우 긍정적)</div></div>
+      <div class="kpi"><div class="n g">~63.6K</div><div class="l">추정 판매량</div></div>
+      <div class="kpi"><div class="n o">~$763K</div><div class="l">추정 누적 매출</div></div>
+      <div class="kpi"><div class="n">2,192</div><div class="l">역대 최고 동접</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>컨셉·독창성</b></td><td>‘대검 든 스피노사우루스’ 소울라이크 — 출시 직후 Steam 인기 1위</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>유저 평가</b></td><td>매우 긍정적 91% (리뷰 2,260+건) — 보스전·연출 호평</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>상업 성과</b></td><td>추정 6.4만 장·$76만 — 인디 성공작이나 초대형 히트급은 아님</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>완성도(전투감·최적화)</b></td><td>카메라·락온·패링 반응·프레임/히트박스 이슈로 평단 갈림</td><td><span class="pill pl-mid">보통</span></td></tr>
+          <tr><td><b>리텐션·롱런</b></td><td>출시 후 일평균 동접 -58.5% 하락 — 싱글 액션 특성</td><td><span class="pill pl-mid">보통</span></td></tr>
+          <tr><td><b>IP·투자 매력도</b></td><td>독보적 컨셉·IP 확장성 vs 소규모·롱런/후속 검증 전</td><td><span class="pill pl-cond">관찰(유망)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 판매·매출·동접 수치는 서드파티 추정치(raijin.gg 등)로 실제와 차이가 있을 수 있습니다. 본 리포트는 Steam 공식 정보와 공개 리뷰·집계를 바탕으로 한 출시 직후 시점 분석이며, 향후 패치·세일·후속 콘텐츠에 따라 지표가 변동될 수 있습니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Team Spino · Boltray Games</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>Team Spino LLC</td></tr>
+            <tr><th>핵심 인물</th><td>Jean Nguyen (베테랑 게임 애니메이터 · 리드)</td></tr>
+            <tr><th>퍼블리셔</th><td>Team Spino LLC · Boltray Games (공동)</td></tr>
+            <tr><th>대표작</th><td>Dinoblade (2026)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Steam) · Steam Deck Playable</td></tr>
+            <tr><th>지원 언어</th><td>19개 언어 (한국어 인터페이스·자막 지원)</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ 팀 규모·소재지 등 상세 프로필은 공개 정보가 제한적입니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">Team Spino는 <b>애니메이터 Jean Nguyen</b>이 이끄는 소규모 팀으로, <b>‘대검 든 공룡’이라는 명료한 한 줄 컨셉</b>과 강점인 <b>애니메이션·보스 연출</b>을 앞세워 데뷔작을 흥행시켰습니다. 퍼블리싱·마케팅은 인디 전문 <b>Boltray Games</b>가 협업 지원했습니다.</p>
+          <ul class="clean">
+            <li><b>2025년 10월 공개 데모</b>가 강한 호응 → 출시 전 위시리스트 40만+ 축적</li>
+            <li>출시 직후 <b>Steam 인기 출시작 1위</b>로 화제성 검증</li>
+            <li>스피노사우루스 <b>마스코트·세계관</b>으로 IP·후속작 잠재력</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘스펙터클과 컨셉으로 승부하는 인디 소울라이트’. 관건은 조작 정밀도·최적화의 <b>후속 패치 개선</b>과, 화제성을 <b>IP·후속 콘텐츠</b>로 잇는 실행력입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Dinoblade</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/7959644e178fbf0681fd9e173ffa13b39896085a/ss_7959644e178fbf0681fd9e173ffa13b39896085a.1920x1080.jpg?t=1784885012')"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">소울라이크</span><span class="tag">공룡</span><span class="tag">액션 RPG</span><span class="tag">보스 러시</span><span class="tag">다크 판타지</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">대검을 든 어린 <b>스피노사우루스</b>가 대재앙 이후 선사시대의 여러 바이옴을 누비며, 각지를 지배하는 <b>공룡 알파 보스</b>들과 싸웁니다. <b>패링으로 적의 자세(posture) 게이지를 채우고</b> 결정타를 넣는 전투가 핵심 리듬입니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0">잠금 해제형 <b>소울 아츠(Soul Arts)·특수기·소환</b>, 능력치·스킬 성장, 그리고 완화된 사망 페널티의 <b>‘소울라이트’ 구조</b>로 코어 소울라이크보다 넓은 유저층을 겨냥합니다. 싱글플레이 · 29개 도전과제 · 리더보드 · 클라우드 지원.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>액션 · 인디 · RPG (소울라이크 · 핵앤슬래시)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Windows 10 64-bit+) · Steam Deck Playable</td></tr>
+            <tr><th>출시</th><td>2026년 7월 23일 (출시 완료)</td></tr>
+            <tr><th>가격</th><td>$19.99 (출시 10% 할인 ~7/30)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>Team Spino · Boltray Games</td></tr>
+            <tr><th>핵심 루프</th><td>탐험 → 알파 보스전 → 패링·자세 파괴 → 스킬·소울 아츠 성장</td></tr>
+            <tr><th>기능</th><td>싱글플레이 · 29 도전과제 · 리더보드 · 클라우드 · 패밀리 셰어링</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>출시 성과 & 평단</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px">유저 평가는 <b>‘매우 긍정적’ 91%</b>로 견고하지만, <b>전문 매체 점수는 7~9점으로 갈렸습니다.</b> 컨셉·보스·애니메이션에 무게를 두면 고평가, 조작 정밀도·최적화·레벨 디자인에 무게를 두면 박한 점수가 나옵니다.</p>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>매체</th><th style="width:26%">점수</th></tr></thead><tbody>
+              <tr><td>AltChar</td><td><span class="pill pl-good">9 / 10</span></td></tr>
+              <tr><td>The Wand Report</td><td><span class="pill pl-mid">7 / 10</span></td></tr>
+              <tr><td>mxdwn Games</td><td><span class="pill pl-mid">7 / 10</span></td></tr>
+              <tr><td>Game8</td><td><span class="pill pl-cond">유보(신중)</span></td></tr>
+              <tr><td>Steam 유저</td><td><span class="pill pl-good">91% 긍정</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>강점 & 약점 (매체 종합)</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--green); margin:0 0 8px">▲ 강점</p>
+        <ul class="clean g">
+          <li><b>독보적 컨셉</b> — “대검 든 공룡”을 끝까지 밀어붙인 강한 정체성</li>
+          <li><b>보스 디자인·애니메이션</b> — 매체 공통으로 꼽는 최대 강점</li>
+          <li><b>사운드트랙</b> — 탐험의 앰비언트 → 전투의 메탈 전환 연출</li>
+          <li><b>접근성</b> — 완화된 사망 페널티의 ‘소울라이트’ 구조</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--red); margin:0 0 8px">▼ 약점</p>
+        <ul class="clean r">
+          <li><b>카메라·락온</b> — 불안정한 거동이 반복 지적</li>
+          <li><b>패링 손맛</b> — Sekiro 대비 반응성·피드백 부족</li>
+          <li><b>최적화</b> — 프레임 드롭·히트박스 부정확</li>
+          <li><b>레벨 디자인</b> — 선형적·희소, 탐험 요소 빈약</li>
+          <li><b>폴리시</b> — 오탈자·성우 연기 등 마감 완성도</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>공식 스크린샷</div>
+    <div class="gallery">
+      <div class="shot"><img loading="lazy" alt="스크린샷" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/dd831b124cdb96ec91b600768fd96b0697bffc73/ss_dd831b124cdb96ec91b600768fd96b0697bffc73.1920x1080.jpg?t=1784885012"></div>
+      <div class="shot"><img loading="lazy" alt="스크린샷" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/7959644e178fbf0681fd9e173ffa13b39896085a/ss_7959644e178fbf0681fd9e173ffa13b39896085a.1920x1080.jpg?t=1784885012"></div>
+      <div class="shot"><img loading="lazy" alt="키 아트" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/d3bb8fe273de5f89504044835ff413c938552ed4/header.jpg?t=1784885012"></div>
+    </div>
+    <div class="cap">▲ 「Dinoblade」 공식 이미지 (출처: Steam 상점) · 이미지 클릭 시 확대 · 전체 스크린샷/트레일러는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 소울라이크 · 공룡 액션</h2></div>
+    <p class="lead"><span class="hl">붐비는 소울라이크 시장 × ‘공룡’이라는 미개척 소재</span> — 강한 코어 수요 위에 대중적 훅을 얹은 조합.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>소울라이크</b>는 <b>Elden Ring</b>·<b>Lies of P</b> 등으로 검증된 <b>충성도 높은 코어 시장</b>이자, 인디에도 성공 사례가 잇따르는 장르입니다. 여기에 <b>‘플레이어가 공룡이 된다’</b>는 미개척 소재와 완화된 난이도(‘소울라이트’)를 결합해 <b>코어와 라이트층을 동시에</b> 노렸습니다.</p>
+          <ul class="clean g">
+            <li>강한 코어 팬덤 → <b>스트리밍·입소문·보스전 클립</b> 유리</li>
+            <li>공룡이라는 <b>대중적·시각적 훅</b> → 넓은 접근성</li>
+            <li>완화 난이도 → 소울라이크 <b>비경험층까지 흡수</b></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">‘공룡 소울라이크’는 붐비는 소울라이크 속에서 <b>또렷한 차별화 훅</b>이며, 화제성으로 이미 검증됐습니다. 다만 소울라이크 코어 유저는 <b>조작 정밀도·최적화에 냉정</b>하고, 싱글 액션 특성상 <b>클리어 후 이탈이 빠릅니다.</b></p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 소울라이크는 <b>‘손맛(패링·카메라)·최적화’</b>가 평판을 좌우합니다. 컨셉 훅은 확보했으니, 관건은 <b>전투감 완성도 개선과 후속 콘텐츠</b>로 롱테일을 만드는 것입니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>출시 후 플레이어 추이 — 전형적 인디 스파이크</div>
+    <div class="card">
+      <p style="font-size:14px">출시 화제성으로 최고 동접 <b>2,192명</b>을 찍었으나, 싱글 액션 RPG 특성상 클리어 후 이탈이 빠릅니다. 7월 일평균 436명 → <b>8월 181명(-58.5%)</b>으로 하락했고, 매출은 8월에도 완만히 성장 중이라 <b>‘화제성 소진 후 롱테일 판매’</b> 국면으로 보입니다. 위시리스트도 3월 42.7만 → 8월 23.6만으로 출시 전환에 소진됐습니다.</p>
+      <div class="trend">
+        <div class="tbar"><span class="val">2,192</span><div class="bar" style="height:100%"></div><span class="cap2">최고 동접</span></div>
+        <div class="tbar"><span class="val">436</span><div class="bar" style="height:22%"></div><span class="cap2">7월 일평균</span></div>
+        <div class="tbar"><span class="val">181</span><div class="bar" style="height:11%"></div><span class="cap2">8월 일평균<br>(-58.5%)</span></div>
+        <div class="tbar"><span class="val">146</span><div class="bar mut" style="height:8%"></div><span class="cap2">현재 동접</span></div>
+      </div>
+      <p class="cap">▲ 동시 접속자 추이 (서드파티 추정치, raijin.gg · 기준일 2026.08.12)</p>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>성과 · 투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>독보적 컨셉(‘대검 든 공룡’) → 강한 정체성·화제성</li>
+        <li>매우 긍정적 91% · 출시 직후 Steam 인기 1위</li>
+        <li>뛰어난 보스 디자인·애니메이션·사운드트랙</li>
+        <li>완화 난이도로 코어+라이트 동시 흡수</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>카메라·락온·패링 손맛 등 전투 정밀도 미흡</li>
+        <li>프레임 드롭·히트박스 등 최적화 이슈</li>
+        <li>선형적·희소한 레벨 디자인, 빈약한 탐험</li>
+        <li>출시 후 동접 급락 — 롱런·리텐션 약함</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>전투감·최적화 후속 패치로 평판 상향 여지</li>
+        <li>신규 보스·바이옴·게임+ 등 콘텐츠 업데이트/DLC</li>
+        <li>콘솔(PS·Xbox·Switch) 이식 확장</li>
+        <li>공룡 IP·마스코트 기반 후속작·브랜드 확장</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>소울라이크 코어 유저의 냉정한 완성도 잣대</li>
+        <li>대형 소울라이크·인디 신작과의 노출 경쟁</li>
+        <li>화제성 소진 후 판매 둔화</li>
+        <li>패치 지연 시 부정 리뷰 누적 리스크</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>Dinoblade는 <span class="hl">강렬한 컨셉과 뛰어난 연출로 화제성·초기 흥행을 검증했으나, 소울라이크의 핵심인 ‘전투 정밀도·최적화’에서 완성도가 갈린 ‘컨셉 승리형 인디 성공작’</span>입니다. 소규모 팀이 40만 위시리스트·인기 1위·6만+ 판매를 만들어낸 점은 분명한 성취지만, 롱런·후속 검증은 이제 시작 단계입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자·IP 매력 요인</div>
+          <ul class="clean g">
+            <li>재현하기 어려운 <b>독보적 컨셉·아트·애니메이션 역량</b></li>
+            <li>검증된 <b>화제성·초기 판매</b>와 강한 코어 팬덤</li>
+            <li>공룡 IP의 <b>후속작·콘솔·브랜드 확장</b> 상방</li>
+            <li>완화 난이도로 <b>넓은 대중 접근성</b> 확보</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>후속 패치 로드맵</b>(카메라·패링·최적화 개선 계획)</li>
+            <li>동접 급락 대비 <b>리텐션·재유입 콘텐츠(DLC·게임+)</b></li>
+            <li>개발사 규모·자금·차기작 계획</li>
+            <li>콘솔 이식 계획과 <b>판매 롱테일</b> 추이</li>
+            <li>IP 권리·마스코트/브랜드 확장 전략</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(유망)’</b>. 컨셉·아트 역량과 초기 흥행은 뚜렷하나, 롱런 리텐션과 완성도 개선이 검증 전이라 <b>후속 패치·판매 롱테일·후속작 방향을 확인한 뒤</b> 판단하는 것이 바람직합니다. 특히 <b>‘공룡 소울라이크’ IP의 확장 가치</b>에 무게를 둔 접근이 유효합니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 소울라이크 · 공룡 소재</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">코어</div><div class="l">충성 팬덤</div></div>
+          <div class="kpi"><div class="n o">미개척</div><div class="l">공룡 소재</div></div>
+          <div class="kpi"><div class="n g">$15~25</div><div class="l">인디 소울 가격대</div></div>
+          <div class="kpi"><div class="n">클립</div><div class="l">보스전 확산성</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 코어 수요 위의 대중적 훅, 단 완성도가 롱런을 가른다.</b> 소울라이크는 충성도 높은 코어 시장이자 인디 성공 사례(Lies of P·Nine Sols 등)가 잇따르는 장르입니다. 여기에 <b>‘공룡’이라는 미개척·시각적 소재</b>를 얹은 Dinoblade는 넓은 대중을 끌었으나, 코어 유저의 <b>‘손맛·최적화’ 잣대</b>가 평판 지속을 좌우합니다.</p>
+        <div class="note gold" style="font-size:13px"><b>Dinoblade의 위치</b> — ‘대검 든 스피노사우루스’라는 <b>명료하고 시각적인 훅</b>으로 붐비는 소울라이크에서 차별화에 성공. 관건은 이 훅을 <b>전투감 개선·후속 콘텐츠</b>로 롱테일 판매·IP로 잇는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘검증된 소울라이크 코어 수요 + 공룡이라는 대중 훅 + 뛰어난 연출’의 결합</b>입니다. 이 조합이 화제성과 초기 판매를 만들었고, 완화 난이도로 접근성까지 넓혔습니다. 다만 Team Spino는 정보가 제한적인 신인 팀이고 <b>전투 정밀도·최적화·롱런 리텐션</b>이 약점으로 지적돼, <b>시장성은 ‘초기 흥행은 검증, 지속력은 검증 대기’의 성공-후-과제형</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>초기 흥행 검증형</b> — 컨셉·연출·화제성으로 6만+ 판매·인기 1위</li>
+        <li>관건 — <b>완성도 개선·후속 콘텐츠·콘솔 확장·IP화</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘완성도 패치 후 콘솔 이식 + IP 확장’</b><br>Dinoblade의 최대 상방은 <b>①전투감·최적화 후속 패치로 평판을 끌어올린 뒤 ②콘솔(PS5·Xbox·Switch2) 이식</b>으로 소울라이크·공룡 팬층을 새 플랫폼에서 흡수하는 것입니다. 2순위는 <b>신규 보스·바이옴·게임+·난이도 모드 등 DLC/무료 업데이트</b>로 동접 급락을 재유입으로 되돌리는 것, 3순위는 <b>‘공룡 소울라이크’ IP를 축으로 한 후속작·굿즈·브랜드 확장</b>입니다. 단, 모든 확장의 전제는 <b>‘손맛·최적화’ 완성도 개선</b>이며, 이것이 롱테일 판매와 후속 IP 가치를 좌우합니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>다크 판타지 선사시대</b> 톤과 <b>대검 든 공룡</b>이라는 강렬한 비주얼 훅</li>
+          <li>매체 공통 극찬 포인트인 <b>보스 디자인·애니메이션</b> — 애니메이터 출신 리드의 강점</li>
+          <li>탐험 앰비언트 → 전투 메탈로 전환되는 <b>사운드트랙</b> 연출</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>Sekiro식 자세 파괴·패링 + Dark Souls식 리듬</b>의 하이브리드</li>
+          <li>소울 아츠·특수기·소환·스킬 성장 + 완화된 <b>‘소울라이트’ 페널티</b></li>
+          <li>과제 — <b>카메라·락온·패링 반응·최적화·선형 레벨</b> 정밀도</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 검증된 소울라이크 코어 수요에 <span class="hl">‘공룡’이라는 대중 훅과 뛰어난 연출</span>을 얹어 초기 흥행을 만든 인디 성공작입니다. 다만 <b>전투 정밀도·최적화·롱런 리텐션</b>이 과제로 남아, 후속 패치·콘텐츠·콘솔 확장·IP화 실행력이 지속 시장성과 투자 가치의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">6건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/3440070/Dinoblade/" target="_blank" rel="noopener">Steam — Dinoblade</a>
+          <a href="https://raijin.gg/app/3440070/Dinoblade" target="_blank" rel="noopener">Raijin — Dinoblade Steam 통계·추정치</a>
+          <a href="https://www.notebookcheck.net/New-hype-Dark-Souls-with-dinosaurs-hits-No-1-on-Steam-shortly-after-launch.1350760.0.html" target="_blank" rel="noopener">Notebookcheck — Steam 인기 1위 보도</a>
+          <a href="https://perthro.io/blog/2026-07-24-dinoblade-review-critics-divided-dinosaur-soulslite" target="_blank" rel="noopener">Perthro — 평단 리뷰 종합(점수 분포)</a>
+          <a href="https://gamerant.com/new-soulslike-games-steam-dinoblade-reviews/" target="_blank" rel="noopener">Game Rant — 출시 리뷰 반응</a>
+          <a href="https://games.mxdwn.com/reviews/dinoblade-review-a-chaotic-prehistoric-soulslite-full-of-dinosaur-action/" target="_blank" rel="noopener">mxdwn Games — 리뷰</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © Team Spino / Boltray Games / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아닙니다. 판매·매출·동접·위시리스트 수치는 서드파티 추정치(raijin.gg 등)로 실제와 차이가 있을 수 있으며, 출시 직후 시점 지표는 이후 패치·세일·후속 콘텐츠에 따라 변동됩니다. 개발사 상세(규모·소재지)는 공개가 제한적입니다. · 기준일 2026.08.12</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.gallery .shot img, .hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>

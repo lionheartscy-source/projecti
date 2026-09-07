@@ -134,6 +134,29 @@ window.__REPORTS__ = [
     "slug": "Transpawt_Train"
   },
   {
+    "title": "Dinoblade",
+    "studio": "Team Spino",
+    "desc": "인디 스튜디오 Team Spino와 신작 「Dinoblade」 — 대검을 든 스피노사우루스가 대재앙 이후의 선사시대에서 공룡 알파들과 싸우는 공룡 소울라이크 액션 RPG에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
+    "href": "reports/global/Dinoblade.html",
+    "region": "국외",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/dd831b124cdb96ec91b600768fd96b0697bffc73/ss_dd831b124cdb96ec91b600768fd96b0697bffc73.1920x1080.jpg?t=1784885012",
+    "tags": [
+      "소울라이크 액션 RPG"
+    ],
+    "platforms": [
+      "PC",
+      "Deck"
+    ],
+    "topics": [
+      "소울라이크",
+      "RPG",
+      "액션"
+    ],
+    "status": "출시",
+    "date": "2026-08-12",
+    "slug": "Dinoblade"
+  },
+  {
     "title": "Hexborne",
     "studio": "BlowYAmind",
     "desc": "한국 인디 스튜디오 BlowYAmind와 신작 「Hexborne」 — 헥스 타일 위에서 무기·방패·물약을 한 붓 그리기(원-스트로크)로 연결해 공격·방어·생존하는 턴제 로그라이트 RPG. 2010년 모바일 명작 Dungeon Raid를 다크 판타지로 재해석한 작품에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
@@ -200,6 +223,29 @@ window.__REPORTS__ = [
     "status": "출시예정",
     "date": "2026-08-12",
     "slug": "INARI"
+  },
+  {
+    "title": "Little Sheep Valley",
+    "studio": "Redknot Games",
+    "desc": "3인 인디 스튜디오 Redknot Games와 신작 「Little Sheep Valley」 — 지중해 풍경의 목장에서 양을 쓰다듬고 돌보며 랜치를 꾸미는 ‘코지 랜치 빌더(행복 시뮬레이터)’에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/global/Little_Sheep_Valley.html",
+    "region": "국외",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4075740/3e6cfcebbee9e31d4e1199b09064d2130bf9a17f/header.jpg?t=1786225826",
+    "tags": [
+      "코지 랜치 빌더",
+      "힐링 시뮬"
+    ],
+    "platforms": [
+      "PC",
+      "Mac"
+    ],
+    "topics": [
+      "코지",
+      "시뮬레이션"
+    ],
+    "status": "데모",
+    "date": "2026-08-12",
+    "slug": "Little_Sheep_Valley"
   },
   {
     "title": "Oh! Robot: Legendary Mechanic",
@@ -313,6 +359,48 @@ window.__REPORTS__ = [
     "status": "출시",
     "date": "2026-08-12",
     "slug": "Wobble_Wobble"
+  },
+  {
+    "title": "Seina: a Tale of Spirits",
+    "studio": "POFUPOFU Studios",
+    "desc": "그리스 1인 개발자 Argyro Brotsi(스튜디오 POFUPOFU STUDIOS)와 신작 「Seina: a Tale of Spirits」 — 잃어버린 고양이를 찾아 정령의 세계로 떠나는 수채화 코지 판타지 어드벤처에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/global/Seina-a_Tale_of_Spirits.html",
+    "region": "국외",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4119150/4fb1ffe3101db4a5ff592c7ce862d9b9160f85fa/ss_4fb1ffe3101db4a5ff592c7ce862d9b9160f85fa.1920x1080.jpg?t=1786019115",
+    "tags": [
+      "코지 판타지 어드벤처"
+    ],
+    "platforms": [
+      "PC",
+      "콘솔",
+      "Switch 2"
+    ],
+    "topics": [
+      "어드벤처",
+      "코지"
+    ],
+    "status": "데모",
+    "date": "2026-07-15",
+    "slug": "Seina-a_Tale_of_Spirits"
+  },
+  {
+    "title": "Timberborn",
+    "studio": "Mechanistry",
+    "desc": "폴란드 완전 원격 인디 스튜디오 Mechanistry와 대표작 「Timberborn(팀버본)」 — 럼버펑크 비버 도시건설 시뮬레이션에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
+    "href": "reports/global/Timberborn.html",
+    "region": "국외",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1062090/154bdaa6fc267e89d57592015268f8c0b59924e1/ss_154bdaa6fc267e89d57592015268f8c0b59924e1.1920x1080.jpg?t=1784023977",
+    "tags": [
+      "샌드박스 시티빌더",
+      "콜로니 심"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [],
+    "status": "출시",
+    "date": "2026-07-15",
+    "slug": "Timberborn"
   },
   {
     "title": "숲속의 작은 마녀",

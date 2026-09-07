@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Sheep Valley · Redknot Games — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#f5f4ea; --surface2:#fbfaf3;
+    --ink:#1a1c14; --ink2:#2f3324; --muted:#5e6349; --dim:#93987c;
+    --line:#e8ebda; --line2:#f1f3e8;
+    --accent:#6b9e57; --accent-ink:#4d7c3c; --accent-soft:#e7f1dd;
+    --gold:#c9744a; --gold-soft:#f7e7dd; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(30,40,15,.05),0 1px 3px rgba(30,40,15,.08);
+    --shadow:0 4px 8px -2px rgba(30,40,15,.08),0 2px 4px -2px rgba(30,40,15,.05);
+    --shadow-lg:0 16px 32px -10px rgba(30,40,15,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#9cc47f); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#f4f6ec; border:1px solid #e4ecd6; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#f5f7ee !important; border-color:#e4ecd6; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(16,22,8,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#d3dcc0; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">🐑</span> Little Sheep Valley <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">🐑 Pre-Launch · Developer &amp; Market Analysis</span>
+    <h1>Little Sheep Valley —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">3인 인디 스튜디오 <b>Redknot Games</b>와 신작 「Little Sheep Valley」 — 지중해 풍경의 목장에서 <b>양을 쓰다듬고 돌보며 랜치를 꾸미는</b> ‘코지 랜치 빌더(행복 시뮬레이터)’에 대한 개발사·게임·시장성 중심 <b>출시 전(Pre-Launch)</b> 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>코지 랜치 빌더 · 힐링 시뮬</b></span>
+      <span class="chip">출시 <b>2026 Q4 예정 (앞서 해보기)</b></span>
+      <span class="chip">상태 <b>미출시 · 데모 공개</b></span>
+      <span class="chip">플랫폼 <b>PC · macOS</b></span>
+      <span class="chip">한국어 <b>지원</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="Little Sheep Valley 대표 이미지" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4075740/3e6cfcebbee9e31d4e1199b09064d2130bf9a17f/header.jpg?t=1786225826">
+    </div>
+    <div class="figcap">▲ 「Little Sheep Valley」 키 아트 (출처: Steam 공식) · 전체 스크린샷·트레일러·데모는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>Redknot Games</b>는 2026년 4분기(앞서 해보기) 출시를 목표로 하는 코지 랜치 빌더 <span class="hg">「Little Sheep Valley」</span>를 개발·자체 퍼블리싱하는 <b>3인 규모 인디 스튜디오</b>입니다. 플레이어는 <b>지중해풍 목장</b>에서 급수대·모닥불·울타리·손질 오두막 등을 지어 <b>양 떼를 돌보고(쓰다듬기·먹이·물·털깎기·놀아주기)</b>, 목장을 자유롭게 꾸며 더 많은 양을 불러 모읍니다. 스스로 “<b>Nintendogs가 Stardew Valley를 만난</b>” 게임으로 소개하는 <b>동물 교감 + 랜치 빌딩 + 힐링</b> 조합이 핵심입니다.</p>
+      <p style="margin-bottom:0">느긋하고 스트레스 없는 <b>슬로 페이스 진행</b>, 건물 업그레이드를 통한 <b>작업 자동화</b>, 데코·커스터마이즈 중심의 ‘행복 시뮬레이터’ 설계가 특징입니다. 2026년 5월 리빌 트레일러 공개 후 <b>8월 Wholesome Games Celebration에서 데모를 배포</b>했고, <b>Deutsche Indie Showcase 공식 선정작</b>에 이름을 올렸습니다. <span class="hl">현재 미출시(2026 Q4 예정) 상태로, 코지·동물 교감 수요가 견고한 유망 신작이되 상업 검증은 아직 이뤄지지 않은 초기 단계</span>입니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n">3인</div><div class="l">개발팀 규모</div></div>
+      <div class="kpi"><div class="n g">데모</div><div class="l">공개(플레이 가능)</div></div>
+      <div class="kpi"><div class="n o">8개</div><div class="l">지원 언어(한국어 포함)</div></div>
+      <div class="kpi"><div class="n">2026 Q4</div><div class="l">출시 예정(미출시)</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>장르 적합도</b></td><td>코지 랜치 빌더 + 동물 교감 — 최근 흥행 강한 대중 수요 조합</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>차별화 훅</b></td><td>‘양을 쓰다듬는’ 동물 교감 + 지중해 감성 아트</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>진행·리텐션 설계</b></td><td>빌딩·데코·자동화 루프, 단 코지 특유의 저긴장 반복성 관리 필요</td><td><span class="pill pl-mid">보통~양호</span></td></tr>
+          <tr><td><b>대외 검증</b></td><td>Deutsche Indie Showcase 선정·Wholesome Games 데모 노출</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>상업 검증</b></td><td>미출시 — 판매·리뷰 부재, 데모·위시리스트가 선행지표</td><td><span class="pill pl-mid">미검증</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>코지 수요·차별화 훅 vs 미출시·3인 소규모·검증 전</td><td><span class="pill pl-cond">관찰(유망)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>미출시(2026 Q4 예정, 앞서 해보기)</b>이므로 판매량·리뷰 등 상업 지표가 아직 없습니다. 본 리포트는 콘셉트·개발사·장르 시장성 중심의 <b>출시 전 전망</b>이며, 데모 반응·위시리스트가 확인되면 정량 보강이 필요합니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Redknot Games</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>Redknot Games</td></tr>
+            <tr><th>규모</th><td>3인 인디 팀</td></tr>
+            <tr><th>성격</th><td>인디 개발 · 자체 퍼블리싱</td></tr>
+            <tr><th>대표작</th><td>Little Sheep Valley (데뷔작)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Steam) · macOS</td></tr>
+            <tr><th>공개 채널</th><td>공식 웹사이트 · Discord · TikTok · Instagram · itch.io</td></tr>
+            <tr><th>대외 인정</th><td>Deutsche Indie Showcase 공식 선정</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ 소재지·설립 시기·구성원 등 상세 프로필은 현재 공개 정보가 제한적입니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">Redknot Games는 <b>3인의 소규모 자체 개발·퍼블리싱</b> 팀으로, 데뷔작에서 <b>흥행 강한 코지 장르(랜치/농장 빌딩)+동물 교감(양 쓰다듬기)+지중해 감성 아트</b>라는 대중 친화 조합을 택했습니다. IP·수익·방향성을 직접 통제합니다.</p>
+          <ul class="clean">
+            <li><b>Deutsche Indie Showcase 선정</b> · <b>Wholesome Games Celebration 데모 참여</b>로 초기 노출·큐레이션 확보</li>
+            <li>플레이 가능한 <b>데모 선공개</b>로 출시 전 반응 검증</li>
+            <li>양 마스코트·지중해 무드로 <b>SNS(TikTok·Instagram) 소구</b> 강점</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘동물 교감이 있는 힐링 랜치 빌더’. 관건은 데모 반응을 위시리스트·출시 흥행으로 전환하고, 코지 특유의 <b>후반 콘텐츠·리텐션</b>을 탄탄히 하는 것입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Little Sheep Valley</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4075740/3e6cfcebbee9e31d4e1199b09064d2130bf9a17f/header.jpg?t=1786225826')"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">코지</span><span class="tag">랜치 빌더</span><span class="tag">동물 교감</span><span class="tag">힐링·데코</span><span class="tag">샌드박스</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">지중해풍 목장에서 <b>급수대·모닥불·울타리·손질 오두막</b>을 지어 양 떼를 돌봅니다. <b>쓰다듬기·먹이·물·털깎기·놀아주기</b>로 양의 행복을 채우고, 목장을 아름답게 꾸며 <b>새로운 양을 불러 모으는</b> 것이 핵심 루프입니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0">건물 <b>업그레이드로 반복 작업을 자동화</b>하고, 폭넓은 데코·커스터마이즈로 나만의 랜치를 완성합니다. 느긋한 <b>슬로 페이스·무(無)스트레스 설계</b>의 ‘행복 시뮬레이터’를 지향합니다.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>캐주얼 · 시뮬레이션 · 전략 (코지 랜치 빌더)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Windows 64-bit) · macOS</td></tr>
+            <tr><th>출시</th><td>2026년 4분기 예정 (앞서 해보기 · 미출시)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>Redknot Games (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>양 돌봄 → 랜치 건설·데코 → 자동화 업그레이드 → 무리 확장</td></tr>
+            <tr><th>지원 언어</th><td>영어·독일어·프랑스어·스페인어·한국어·중국어(간체)·일본어 (8종)</td></tr>
+            <tr><th>기능</th><td>싱글플레이 · 3인칭 · Steam 클라우드 · 패밀리 셰어링</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>출시 전 관찰</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px">아직 <b>정식 출시 전</b>이라 판매·리뷰 지표는 없습니다. 다만 <b>플레이 가능한 데모</b>가 <b>Wholesome Games Celebration</b>에서 배포되고 <b>Deutsche Indie Showcase</b>에 선정되는 등, <b>코지·동물 교감 팬층의 초기 관심·큐레이션</b>을 받고 있습니다.</p>
+          <ul class="clean g">
+            <li>‘양 쓰다듬기’ 동물 교감 → <b>SNS 클립·스크린샷 소구</b> 강함</li>
+            <li>지중해 감성 아트 → <b>코지 팬층 위시리스트 유입</b></li>
+            <li>슬로 페이스·힐링 → <b>넓은 캐주얼 대중 접근성</b></li>
+          </ul>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>선행지표 권장</b> — 출시 흥행 예측을 위해 <b>데모 플레이 수·위시리스트 증가율·SNS(TikTok) 반응·스트리머 픽업</b>을 추적하면 좋습니다(현재 공개 수치는 제한적).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>미디어 · 데모</div>
+    <div class="card">
+      <p style="font-size:14px; margin-bottom:0">「Little Sheep Valley」는 <b>2026년 5월 1일 리빌 트레일러</b>를 공개했고, <b>8월 7일 Wholesome Games Celebration</b>에 맞춰 <b>Steam 무료 데모</b>를 배포했습니다. 전체 스크린샷·게임플레이 트레일러·데모 플레이는 <a href="https://store.steampowered.com/app/4075740/Little_Sheep_Valley__Cozy_ranchbuilder/" target="_blank" rel="noopener">Steam 상점 페이지</a>에서 확인할 수 있습니다. <span class="cap">(개별 인게임 스크린샷은 Steam 정책상 외부 임베드가 제한되어 본 리포트에는 공식 키 아트만 포함했습니다.)</span></p>
+    </div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 코지 랜치 빌더 · 힐링 시뮬</h2></div>
+    <p class="lead"><span class="hl">최근 초강세인 코지·팜/랜치 빌딩</span> × <span class="hl">동물 교감</span> — 대중성·리텐션이 강한 조합, 단 경쟁 과열이 변수.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>코지 팜/랜치 빌딩</b>은 <b>Stardew Valley</b>를 필두로 <b>Coral Island·Fields of Mistria</b> 등 흥행이 잇따르는 대형 대중 장르입니다. 여기에 <b>Nintendogs식 동물 교감(양 쓰다듬기)</b>을 결합해 <b>‘돌봄의 정서’</b>를 훅으로 삼았습니다.</p>
+          <ul class="clean g">
+            <li>코지·힐링 수요 견고 → <b>위시리스트·롱테일 유리</b></li>
+            <li>동물 교감·데코 → <b>SNS·스트리밍 확산성</b> 높음</li>
+            <li>콘솔(Switch) 이식 친화 → <b>확장 시장</b> 용이</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">‘양을 쓰다듬는 힐링 랜치’는 붐비는 코지 시장에서 <b>또렷한 정서적 훅</b>입니다. 다만 코지·팜 신작이 <b>과잉 공급</b>돼 노출 경쟁이 치열하고, 저긴장 장르 특성상 <b>후반 콘텐츠·목표감</b> 관리가 리텐션을 좌우합니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 코지 빌더는 <b>‘초기 위시리스트 볼륨·데모 전환·후반 콘텐츠’</b>가 흥행을 좌우합니다. 대중적·정서적 훅은 확보, 관건은 <b>차별화 유지와 진행 목표 설계</b>입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>흥행 강한 장르(코지 랜치 빌더)+동물 교감 훅</li>
+        <li>지중해 감성 아트·양 마스코트 → SNS 확산성</li>
+        <li>Deutsche Indie Showcase·Wholesome Games 큐레이션 노출</li>
+        <li>자체 개발·퍼블리싱 → IP·수익 통제</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>미출시 — 상업성(판매·리뷰) 미검증</li>
+        <li>3인 소규모 → 볼륨·라이브 운영·업데이트 여력 제약</li>
+        <li>코지·팜 신작 과잉 속 노출 경쟁 심화</li>
+        <li>저긴장 장르의 후반 콘텐츠·목표감 리스크</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>콘솔(Switch 등) 이식 — 코지 최적 확장 시장</li>
+        <li>신규 동물·바이옴·시즌 이벤트 업데이트/DLC</li>
+        <li>양 마스코트 기반 굿즈·브랜드 확장</li>
+        <li>앞서 해보기 커뮤니티 피드백으로 완성도 제고</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>대형·다수 코지 신작과의 위시리스트 경쟁</li>
+        <li>차별화 약화 시 매몰 리스크</li>
+        <li>초기 화제의 출시 흥행 전환 불확실성</li>
+        <li>환율·플랫폼 수수료 등 외부 변수</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>Little Sheep Valley는 <span class="hl">흥행 강한 코지 장르·정서적 동물 교감 훅·SNS 친화 아트를 갖췄으나 아직 상업적으로 검증되지 않은 ‘출시 전 유망주’</span>입니다. 투자·퍼블리싱 관점에서는 확정 성과가 아니라 <b>선행지표(데모·위시리스트·SNS 반응)에 기반한 잠재력 베팅</b>이며, <b>코지 수요와 커뮤니티 확산성이 뒷받침되면 콘솔 확장 상방이 큰</b> 편입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
+          <ul class="clean g">
+            <li>흥행 장르·정서 훅 → 넓은 위시리스트·롱테일 잠재</li>
+            <li>동물 교감·데코 → SNS·스트리밍 오가닉 마케팅</li>
+            <li>콘솔·DLC·시즌 업데이트로 확장 용이</li>
+            <li>양 마스코트 기반 브랜드·굿즈 잠재력</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>데모 플레이 수·위시리스트·SNS 반응</b>(핵심 선행지표)</li>
+            <li>3인 팀의 <b>개발 진척·출시 확정 일정·운영 여력</b></li>
+            <li><b>후반 콘텐츠·진행 목표·리텐션</b> 설계 완성도</li>
+            <li>콘솔 이식·앞서 해보기 로드맵</li>
+            <li>차별화 지속(경쟁작 대비 훅 유지)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(유망)’</b>. 흥행 장르·정서적 훅·큐레이션 노출은 뚜렷하나 미출시·3인 소규모라, <b>데모 지표(전환)와 위시리스트·출시 성과를 확인한 뒤</b> 판단하는 것이 바람직합니다. 커뮤니티 확산이 양호하면 특히 <b>콘솔 확장 관점</b>에서 적극 검토할 여지가 있습니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 코지 팜/랜치 빌딩 · 동물 교감</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">초강세</div><div class="l">코지·팜 수요</div></div>
+          <div class="kpi"><div class="n o">동물교감</div><div class="l">정서적 훅</div></div>
+          <div class="kpi"><div class="n g">$15~25</div><div class="l">통상 가격대</div></div>
+          <div class="kpi"><div class="n">Switch</div><div class="l">확장 최적</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 대중성·리텐션 강한 조합, 단 경쟁 과열이 관건.</b> 코지 팜/랜치 빌딩은 <b>Stardew Valley</b> 이후 <b>가장 두꺼운 대중 수요</b>를 가진 장르이고, 동물 교감(Nintendogs 계보)은 <b>정서적 몰입·SNS 확산</b>이 강합니다. 둘의 결합은 넓은 대중을 겨냥하나, 신작 과잉 속 <b>차별화·후반 목표감</b>이 흥행 지속을 좌우합니다.</p>
+        <div class="note gold" style="font-size:13px"><b>LSV의 위치</b> — ‘양을 쓰다듬는 지중해 힐링 랜치’라는 <b>따뜻하고 명료한 훅</b>으로 코지 시장에서 정서적 차별화를 확보. 관건은 이 훅과 데코·자동화 루프를 데모 전환·SNS 입소문으로 실제 위시리스트·판매까지 잇는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘흥행 강한 코지 랜치 빌딩 + 동물 교감 정서 + SNS 친화 아트’의 결합</b>입니다. 코지·힐링 수요는 견고하고 ‘양 쓰다듬기’ 소재는 따뜻해, 데모 전환만 뒷받침되면 <b>초기 위시리스트·출시 스파이크와 콘솔 확장</b>을 기대할 수 있습니다. 다만 Redknot Games는 정보가 제한적인 <b>3인 신인 팀</b>이고 코지 후반 목표감 관리가 어려워, <b>시장성은 ‘검증 대기’의 잠재형(정서 훅·콘솔 상방 큼)</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>시장성 잠재형(상방 큼)</b> — 흥행 장르 + 정서 훅 + SNS 확산성</li>
+        <li>관건 — <b>차별화 유지·후반 콘텐츠·데모 전환·콘솔 확장</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔(Switch) 이식’</b><br>코지 랜치/팜 빌더는 <b>Nintendo Switch 등 콘솔에서 큰 추가 시장</b>을 내는 장르입니다. (출시 성공을 전제로) 1순위 미개척 수익원은 <b>콘솔 이식</b>으로, 느긋한 플레이와 휴대용 감성이 특히 잘 맞아 신규 매출·유저층을 크게 넓힐 수 있습니다. 2순위는 <b>신규 동물·바이옴·시즌 이벤트 업데이트/DLC</b>, 그리고 <b>양 마스코트 기반 굿즈·브랜드</b>. 단, 현재는 <b>‘완성도 높은 출시(특히 후반 콘텐츠·목표감)’가 최우선</b>이며, 확장은 데모/앞서 해보기 반응을 보고 결정하는 것이 합리적입니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>지중해 풍경·따뜻한 스타일라이즈드 비주얼</b> — 코지 팬층·SNS 소구</li>
+          <li>노을·자연·귀여운 양 떼의 <b>포근한 화면</b>이 힐링 감성 강화</li>
+          <li>또렷한 양 마스코트로 <b>브랜드·굿즈 확장</b> 여지</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>동물 교감(쓰다듬기·놀이) + 랜치 빌딩·데코</b>의 하이브리드 — 정서·리텐션 강점</li>
+          <li><b>건물 업그레이드 기반 작업 자동화</b>로 반복 완화</li>
+          <li>과제 — 코지 특유의 <b>후반 목표감·콘텐츠 고갈·반복성</b> 관리</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 대중성·리텐션 강한 장르 조합(코지 랜치 빌더+동물 교감)에 <span class="hl">따뜻한 지중해 아트·양 마스코트</span>를 얹은 유망 신작입니다. 다만 <b>미출시·3인 소규모</b>인 만큼, 데모 전환·위시리스트 선행지표와 후반 콘텐츠·목표감 완성도, 그리고 콘솔·DLC 확장 실행력이 시장성의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">6건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/4075740/Little_Sheep_Valley__Cozy_ranchbuilder/" target="_blank" rel="noopener">Steam — Little Sheep Valley</a>
+          <a href="https://cogconnected.com/2026/08/little-sheep-valley-opens-the-gate-to-its-first-demo-on-steam-today/" target="_blank" rel="noopener">COGconnected — 첫 데모 공개(2026.08.07)</a>
+          <a href="https://www.gamingbible.com/news/cozy-steam-game-little-sheep-valley-nintendogs-meets-stardew-519829-20260502" target="_blank" rel="noopener">GamingBible — “Nintendogs meets Stardew”</a>
+          <a href="https://www.gamesradar.com/games/simulation/im-gonna-need-you-to-look-at-the-sheep-in-this-cozy-ranch-building-game-thats-launching-on-steam-this-year-and-immediately-threatening-my-free-time/" target="_blank" rel="noopener">GamesRadar+ — 프리뷰(3인 팀·Q4 2026)</a>
+          <a href="https://ladiesgamers.com/little-sheep-valley-announced-for-steam/" target="_blank" rel="noopener">LadiesGamers — Steam 공개 소식</a>
+          <a href="https://www.gamespress.com/Little-Sheep-Valley-Reveal-Announcement" target="_blank" rel="noopener">Games Press — 리빌 공식 발표</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © Redknot Games / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>미출시(2026 Q4 예정, 앞서 해보기)</b>로 판매·리뷰 등 상업 지표가 없어 콘셉트·장르 시장성 중심의 출시 전 전망입니다. 개발사 상세(소재지·설립·구성원)와 정량 지표는 공개가 제한적이므로 실제 투자 검토 시 실사·선행지표 확인이 필요합니다. · 기준일 2026.08.12</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>
