@@ -29,7 +29,7 @@ for /f %%D in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd"') d
 
 echo.
 echo [1/5] 리포트 목록 생성...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\build-reports.ps1" -GitExe "%GIT%"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\build-reports.ps1" -Root "%CD%" -GitExe "%GIT%"
 if errorlevel 1 goto :FAILBUILD
 
 echo.

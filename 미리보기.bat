@@ -19,7 +19,7 @@ for /d %%D in ("%LocalAppData%\GitHubDesktop\app-*") do set "GIT=%%D\resources\a
 
 echo.
 echo  리포트 목록을 갱신합니다...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\build-reports.ps1" -GitExe "%GIT%"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\build-reports.ps1" -Root "%CD%" -GitExe "%GIT%"
 if errorlevel 1 goto :FAILBUILD
 
 echo.

@@ -12,12 +12,23 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Root   = (Split-Path -Parent $PSScriptRoot),
+    [string]$Root,
     [string]$GitExe = 'git'
 )
 
 $ErrorActionPreference = 'Stop'
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
+
+# $PSScriptRoot 는 PowerShell 5.1 의 param() 기본값 자리에서 비어 있을 수 있으므로
+# 본문에서 계산한다. 호출 측이 -Root 를 넘기면 그 값을 그대로 쓴다.
+if (-not $Root) {
+    $scriptDir = $PSScriptRoot
+    if (-not $scriptDir) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
+    if (-not $scriptDir) { $scriptDir = (Get-Location).Path }
+    $Root = Split-Path -Parent $scriptDir
+}
+if (-not $Root) { $Root = (Get-Location).Path }
+$Root = (Resolve-Path -LiteralPath $Root).Path
 
 $ReportsDir = Join-Path $Root 'reports'
 $OutPath    = Join-Path $Root 'reports.json'
@@ -275,10 +286,9 @@ $json = [regex]::Replace($json, '\\u([0-9a-fA-F]{4})', {
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($OutPath, $json + "`r`n", $utf8NoBom)
 
-$js = @"
-/* 자동 생성 파일 — 직접 수정하지 마세요. tools/build-reports.ps1 이 만듭니다. */
-window.__REPORTS__ = $json;
-"@
+# 여기서 here-string 을 쓰면 JSON 안의 $ 문자가 변수로 해석될 수 있어 문자열 연결로 만든다.
+$jsHeader = '/* 자동 생성 파일 - 직접 수정하지 마세요. tools/build-reports.ps1 이 만듭니다. */'
+$js = $jsHeader + "`r`n" + 'window.__REPORTS__ = ' + $json + ';'
 [System.IO.File]::WriteAllText($OutJsPath, $js + "`r`n", $utf8NoBom)
 
 Write-Host ''
