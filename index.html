@@ -5,28 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>인디게임 리포트 아카이브</title>
 <meta name="description" content="인디게임 개발사·게임·시장성 분석 리포트 모음">
+<script>
+  /* 저장된 테마를 그리기 전에 먼저 적용한다. 안 그러면 새로고침 때 흰 화면이 번쩍인다. */
+  (function(){
+    try{
+      var t = localStorage.getItem("theme");
+      if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+    }catch(e){}
+  })();
+</script>
 <style>
   :root{
+    color-scheme:light;
     --bg:#ffffff; --surface:#f5f2f2; --surface2:#fbf9f9;
     --ink:#1a1315; --ink2:#332527; --muted:#6a5457; --dim:#a08a8d;
     --line:#efe4e5; --line2:#f6edee;
     --accent:#c02a3c; --accent-ink:#9c1f30; --accent-soft:#f9e2e4;
     --gold:#9c6b2e; --green:#0b8a4e; --blue:#2f6bd6;
+    --nav-bg:rgba(255,255,255,.9);
     --shadow-sm:0 1px 2px rgba(40,10,15,.05),0 1px 3px rgba(40,10,15,.08);
     --shadow:0 4px 8px -2px rgba(40,10,15,.08),0 2px 4px -2px rgba(40,10,15,.05);
     --shadow-lg:0 16px 32px -10px rgba(40,10,15,.16);
     --r:12px; --rail:288px;
   }
+  /* ── 다크 (에픽 스토어 계열의 웜 뉴트럴) ── */
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#141013; --surface:#211a1e; --surface2:#1a1417;
+    --ink:#f6f0f1; --ink2:#ded1d4; --muted:#a39196; --dim:#7b686d;
+    --line:#2e2529; --line2:#251e21;
+    --accent:#d93b4e; --accent-ink:#ff8894; --accent-soft:#3b1f26;
+    --gold:#d19a4e; --green:#2fbf7b; --blue:#6f9ff0;
+    --nav-bg:rgba(20,16,19,.88);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.34);
+    --shadow:0 4px 8px -2px rgba(0,0,0,.46),0 2px 4px -2px rgba(0,0,0,.36);
+    --shadow-lg:0 18px 36px -12px rgba(0,0,0,.66);
+  }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0; color:var(--ink); background:var(--bg);
+    transition:background-color .2s ease, color .2s ease;
     font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif;
     line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
   a{color:inherit; text-decoration:none}
   button{font:inherit; cursor:pointer}
 
   /* ══════════ TOPNAV ══════════ */
-  .topnav{position:sticky; top:0; z-index:60; background:rgba(255,255,255,.9);
+  .topnav{position:sticky; top:0; z-index:60; background:var(--nav-bg);
     backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
   .topnav-inner{max-width:1400px; margin:0 auto; height:56px; padding:0 24px;
     display:flex; align-items:center; gap:16px; justify-content:space-between}
@@ -34,10 +59,22 @@
   .brand .mark{display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center;
     background:linear-gradient(135deg,var(--accent),#e0596a); color:#fff; border-radius:8px; font-size:13px}
   .brand small{display:block; font-size:10px; font-weight:700; color:var(--dim); letter-spacing:.09em}
+  .navright{display:flex; align-items:center; gap:10px}
   .navmeta{font-size:12px; font-weight:700; color:var(--muted); background:var(--surface);
     border:1px solid var(--line); padding:5px 12px; border-radius:999px; white-space:nowrap}
   .navmeta b{color:var(--accent-ink)}
   @media(max-width:640px){ .navmeta{display:none} }
+
+  /* ── 테마 토글 ── */
+  .themetoggle{display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; flex:none; padding:0; border-radius:9px;
+    background:var(--surface); border:1px solid var(--line); color:var(--muted);
+    transition:color .18s, background .18s, border-color .18s}
+  .themetoggle:hover{color:var(--accent-ink); border-color:var(--dim)}
+  .themetoggle svg{display:block}
+  .themetoggle .moon{display:none}
+  :root[data-theme="dark"] .themetoggle .moon{display:block}
+  :root[data-theme="dark"] .themetoggle .sun{display:none}
 
   /* ══════════ SUBNAV (Epic style) ══════════ */
   .subnav{position:sticky; top:56px; z-index:55; background:var(--surface2);
@@ -121,6 +158,9 @@
     color:var(--ink2); border:1px solid var(--line); border-radius:9px; appearance:none; outline:none;
     background:var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4.5 6 8.5 10 4.5' fill='none' stroke='%236a5457' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 11px center;
     cursor:pointer}
+  /* 화살표 아이콘은 data URI 안에 색이 박혀 있어 다크용을 따로 둔다 */
+  :root[data-theme="dark"] select.sort{
+    background:var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4.5 6 8.5 10 4.5' fill='none' stroke='%23a39196' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 11px center}
   select.sort:focus{border-color:var(--accent)}
 
   /* ══════════ CARD GRID ══════════ */
@@ -213,7 +253,21 @@
       <span class="mark">◆</span>
       <span>INDIE GAME REPORTS<small>개발사 · 게임 · 시장성 분석</small></span>
     </a>
-    <span class="navmeta">총 <b id="navCount">0</b>편의 리포트</span>
+    <div class="navright">
+      <span class="navmeta">총 <b id="navCount">0</b>편의 리포트</span>
+      <button class="themetoggle" id="themeToggle" type="button"
+              aria-label="테마 전환" title="라이트 / 다크 전환">
+        <svg class="sun" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M10 1.6v2.2M10 16.2v2.2M18.4 10h-2.2M3.8 10H1.6M15.9 4.1l-1.6 1.6M5.7 14.3l-1.6 1.6M15.9 15.9l-1.6-1.6M5.7 5.7 4.1 4.1"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <svg class="moon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M17 12.4A7.4 7.4 0 0 1 7.6 3a7.4 7.4 0 1 0 9.4 9.4z"
+                stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -504,6 +558,23 @@ function boot(){
   renderHero();
   render();
 }
+
+/* ──────────── 테마 토글 ──────────── */
+// 기본은 라이트(리포트 본문과 같은 톤). 선택은 이 브라우저에만 기억된다.
+function currentTheme(){
+  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+}
+function setTheme(next){
+  if (next === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  else                 document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem("theme", next); } catch(e) {}
+  const btn = $("#themeToggle");
+  btn.setAttribute("aria-pressed", next === "dark" ? "true" : "false");
+  btn.title = next === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환";
+}
+$("#themeToggle").addEventListener("click", () =>
+  setTheme(currentTheme() === "dark" ? "light" : "dark"));
+setTheme(currentTheme());
 
 $("#yr").textContent = new Date().getFullYear();
 $("#q").addEventListener("input", e => { state.q = e.target.value; render(); });
