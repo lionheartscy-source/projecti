@@ -411,18 +411,28 @@ function Build-Entry([System.IO.FileInfo]$File) {
     }
     $status = if ($rep['status']) { $rep['status'] } else { Normalize-Status $statusRaw }
 
-    # ── 날짜 ── 리포트 안의 작성일/기준일 chip 이 가장 정확하다.
+    # ── 날짜 ──
+    # 리포트가 스스로 밝힌 작성일/기준일이 가장 정확하다.
+    # git 커밋일에 기대면 파일을 한 번 커밋한 순간 전부 같은 날짜가 되어버린다.
     $date = ''
     if ($rep['date']) {
         $date = $rep['date']
     } else {
+        # 1) chip 으로 들어간 경우
         foreach ($key in $chips.Keys) {
             if ($key -match '작성일|기준일|작성') {
                 $date = ConvertTo-IsoDate $chips[$key]
                 if ($date) { break }
             }
         }
+        # 2) 본문 어딘가에 "기준일 2026.08.13" 형태로만 적힌 경우
+        if (-not $date) {
+            $plain = ConvertTo-PlainText $src
+            $m = [regex]::Match($plain, '(?:기준일|작성일)\s*[:：]?\s*(\d{4}[.\-/]\d{1,2}[.\-/]\d{1,2})')
+            if ($m.Success) { $date = ConvertTo-IsoDate $m.Groups[1].Value }
+        }
     }
+    # 3) 그래도 없으면 파일이 처음 추가된 커밋일
     if (-not $date) { $date = Get-ReportDate $File.FullName }
 
     return [pscustomobject][ordered]@{
