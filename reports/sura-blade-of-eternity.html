@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SURA: Blade of Eternity · Crimson Blade — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#f5f2f2; --surface2:#fbf9f9;
+    --ink:#1a1315; --ink2:#332527; --muted:#6a5457; --dim:#a08a8d;
+    --line:#efe4e5; --line2:#f6edee;
+    --accent:#c02a3c; --accent-ink:#9c1f30; --accent-soft:#f9e2e4;
+    --gold:#9c6b2e; --gold-soft:#f3ead9; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(40,10,15,.05),0 1px 3px rgba(40,10,15,.08);
+    --shadow:0 4px 8px -2px rgba(40,10,15,.08),0 2px 4px -2px rgba(40,10,15,.05);
+    --shadow-lg:0 16px 32px -10px rgba(40,10,15,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#e0596a); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  @media(max-width:820px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  .shot{border-radius:11px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; background:var(--surface); box-shadow:var(--shadow-sm)}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#fbf0f1; border:1px solid #f2d9dc; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#fcf2f3 !important; border-color:#f2d9dc; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(24,6,10,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#e0c4c8; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">⚔️</span> SURA: Blade of Eternity <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">⚔️ Pre-Launch · Developer &amp; Market Analysis</span>
+    <h1>SURA: Blade of Eternity —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">한국 인디 스튜디오 <b>Crimson Blade</b>와 신작 「SURA: Blade of Eternity」 — 사후 세계를 배경으로 <b>저주받은 사무라이</b>가 완벽한 패링(디플렉션)과 잔혹한 처형기로 싸우는 <b>중세 일본풍 소울라이크 로그라이크</b>에 대한 개발사·게임·시장성 중심 <b>출시 전(Pre-Launch)</b> 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>소울라이크 · 액션 로그라이크</b></span>
+      <span class="chip">출시 <b>2026 예정</b></span>
+      <span class="chip">상태 <b>미출시 · 데모 공개</b></span>
+      <span class="chip">플랫폼 <b>PC (Windows)</b></span>
+      <span class="chip">언어 <b>5개 (한국어 포함)</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="SURA: Blade of Eternity 대표 이미지" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4292970/c22079b64a79cf79a73254152ac7a6b77e8ebfbb/header.jpg?t=1785320371">
+    </div>
+    <div class="figcap">▲ 「SURA: Blade of Eternity」 대표 이미지 (출처: Steam 공식) · 전체 스크린샷·데모는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>Crimson Blade</b>는 2026년 출시를 목표로 하는 중세 일본풍 소울라이크 로그라이크 <span class="hg">「SURA: Blade of Eternity」</span>를 개발·자체 퍼블리싱하는 한국 인디 스튜디오입니다. 플레이어는 ‘<b>진홍의 저주(crimson curse)</b>’에 걸려 변이를 막기 위해 스스로 팔을 자른 저주받은 무사가 되어, <b>사후 세계</b>에서 완벽한 <b>패링(디플렉션) 검술</b>과 <b>의수(prosthetic arm) 능력</b>, 잔혹한 <b>처형기(finisher)</b>로 싸웁니다. <b>Sekiro식 쳐내기 전투 + 로그라이크(“죽을 때마다 전장이 바뀐다”)</b>를 결합한 것이 핵심 정체성입니다.</p>
+      <p style="margin-bottom:0">사실적·분위기 중심의 다크한 톤(고어·바이올런트·닌자 태그)에 <b>싱글 + 멀티플레이</b>를 지원하며, <b>영어·일본어·중국어(번체/간체)·한국어 5개 언어</b>로 글로벌을 겨냥합니다. 현재 <span class="hl">미출시(2026 예정) 상태로 데모를 공개</span>했으며, <b>‘소울라이크 + 로그라이크’라는 리텐션 강한 조합에 사무라이·의수라는 대중적 훅</b>을 얹은 유망작이되 <b>상업 검증은 아직 이뤄지지 않은 초기 단계</b>입니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n">디플렉션</div><div class="l">퍼펙트 패링 전투 훅</div></div>
+      <div class="kpi"><div class="n o">2026</div><div class="l">출시 예정(데모 공개)</div></div>
+      <div class="kpi"><div class="n g">싱글+멀티</div><div class="l">플레이 모드</div></div>
+      <div class="kpi"><div class="n">5개</div><div class="l">지원 언어(글로벌)</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>장르 적합도</b></td><td>소울라이크+로그라이크 — 리텐션·리플레이 강한 검증 조합</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>차별화 훅</b></td><td>사무라이·의수·디플렉션(Sekiro 계보) + 사후세계 다크 톤</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>글로벌 접근성</b></td><td>영·일·중·한 5개 언어 — 사무라이 소재의 글로벌 소구</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>완성도(전투감)</b></td><td>소울라이크 핵심인 패링 손맛·최적화 — 데모로 검증 필요</td><td><span class="pill pl-mid">관찰</span></td></tr>
+          <tr><td><b>상업 검증</b></td><td>미출시 — 판매·리뷰 부재, 데모·위시리스트가 선행지표</td><td><span class="pill pl-mid">미검증</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>대중적 훅·글로벌·멀티 vs 미출시·소규모·검증 전·스코프</td><td><span class="pill pl-cond">관찰(유망)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>미출시(2026 예정)</b>로 출시일·가격·판매·리뷰 등 지표가 아직 없습니다. 개발사(Crimson Blade) 공개 정보도 제한적이라, 본 리포트는 스토어 정보·장르 시장성 중심의 <b>출시 전 전망</b>이며 데모·위시리스트 반응이 확인되면 정량 보강이 필요합니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Crimson Blade</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>Crimson Blade</td></tr>
+            <tr><th>성격</th><td>한국 인디 게임 개발 · 자체 퍼블리싱</td></tr>
+            <tr><th>대표작</th><td>SURA: Blade of Eternity (미출시)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/4292970/SURA_Blade_of_Eternity/" target="_blank" rel="noopener">Steam</a>, Windows 10 64-bit)</td></tr>
+            <tr><th>출시</th><td>2026 예정 (데모 공개 중)</td></tr>
+            <tr><th>노출 경로</th><td>‘Indie Games from Korea’ 큐레이터 추천</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ 소재지·팀 규모·이전 작품 등 상세 프로필은 현재 공개 정보가 제한적입니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">Crimson Blade는 <b>자체 개발·퍼블리싱</b> 구조의 한국 인디로 파악됩니다. 데뷔작에서 <b>검증된 리텐션 장르(소울라이크·로그라이크)+글로벌 소구 소재(사무라이·닌자)+강렬한 액션(디플렉션·처형기)</b>이라는 대중 친화 조합을 택했고, <b>데모 공개</b>로 출시 전 검증에 나섰습니다.</p>
+          <ul class="clean">
+            <li>Sekiro식 <b>쳐내기 전투 + 로그라이크 리플레이</b>로 몰입·리텐션 지향</li>
+            <li>플레이 가능한 <b>데모 공개</b> → 출시(2026) 전 손맛·반응 검증</li>
+            <li>영·일·중·한 <b>5개 언어</b> + 사무라이 소재 → 글로벌 소구</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘Sekiro의 손맛을 로그라이크로’ 지향하는 다크 액션. 관건은 데모로 <b>패링 손맛·최적화</b>를 입증하고, 화제성을 위시리스트·출시 흥행으로 전환하는 것입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — SURA: Blade of Eternity</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4292970/c22079b64a79cf79a73254152ac7a6b77e8ebfbb/header.jpg?t=1785320371')"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">소울라이크</span><span class="tag">액션 로그라이크</span><span class="tag">사무라이·닌자</span><span class="tag">디플렉션</span><span class="tag">다크·고어</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">‘진홍의 저주’에 걸려 스스로 팔을 자른 무사가 <b>사후 세계</b>에서 싸우는 다크 액션. <b>완벽한 패링(디플렉션)</b>으로 적의 공세를 쳐내고, <b>의수 능력</b>과 잔혹한 <b>처형기</b>로 승부하는 전투가 핵심입니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0"><b>“죽을 때마다 전장이 바뀌는”</b> 로그라이크 구조로 런마다 다른 도전과 리플레이를 제공합니다. 사실적·분위기 중심의 다크 톤에 <b>싱글 + 멀티플레이</b>를 지원합니다.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>액션 · 인디 · RPG (소울라이크 · 액션 로그라이크)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/4292970/SURA_Blade_of_Eternity/" target="_blank" rel="noopener">Steam</a> · Windows 10 64-bit)</td></tr>
+            <tr><th>출시</th><td>2026 예정 · 데모 공개 (미출시)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>Crimson Blade (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>디플렉션 패링 → 의수·처형기 → 로그라이크 진행 → 사망·재도전</td></tr>
+            <tr><th>모드</th><td>싱글플레이 · 멀티플레이 · 패밀리 셰어링</td></tr>
+            <tr><th>지원 언어</th><td>영어·일본어·중국어(번체/간체)·한국어 (자막·인터페이스, 풀보이스 없음)</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>출시 전 관찰</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px">아직 <b>정식 출시 전</b>이라 판매·리뷰·위시리스트 수치는 없습니다. 다만 <b>플레이 가능한 데모</b>가 공개돼 있어, ‘Indie Games from Korea’ 큐레이션과 함께 <b>소울라이크·사무라이 액션 팬층의 초기 노출</b>을 얻는 단계입니다.</p>
+          <ul class="clean g">
+            <li>디플렉션·처형기의 강렬한 액션 → <b>클립·스트리밍 소구</b></li>
+            <li>사무라이·사후세계 다크 톤 → <b>글로벌·비주얼 차별화</b></li>
+            <li>로그라이크 리플레이 → <b>체류·리텐션 친화</b></li>
+          </ul>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>선행지표 권장</b> — 출시 흥행 예측을 위해 <b>데모 플레이·패링 손맛 평가·위시리스트 전환·스트리머 반응</b>을 추적하면 좋습니다(현재 공개 수치 없음).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>강점 & 관찰 포인트</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--green); margin:0 0 8px">▲ 강점</p>
+        <ul class="clean g">
+          <li><b>대중적 훅</b> — 사무라이·의수·디플렉션(Sekiro 계보)의 검증된 매력</li>
+          <li><b>장르 결합</b> — 소울라이크 손맛 + 로그라이크 리플레이</li>
+          <li><b>글로벌 소구</b> — 사무라이 소재 + 영·일·중·한 5개 언어</li>
+          <li><b>데모 공개</b> — 출시 전 손맛·완성도 검증 기회</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--amber); margin:0 0 8px">◆ 관찰 포인트</p>
+        <ul class="clean a">
+          <li>소울라이크 핵심 <b>패링 손맛·카메라·최적화</b> — 데모 검증 필수</li>
+          <li><b>멀티플레이 스코프</b> — 소규모 팀엔 개발·운영 부담 가능</li>
+          <li>사무라이 소울라이크 <b>경쟁 심화</b>(대형·인디 다수)</li>
+          <li>미출시·개발사 정보 제한적 — <b>트랙레코드 미확인</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>미디어 · 데모</div>
+    <div class="card">
+      <div class="gallery">
+        <div class="shot"><img loading="lazy" alt="SURA 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4292970/c40d64d3cfa232b7a7aff8eaad1988c7259006cd/ss_c40d64d3cfa232b7a7aff8eaad1988c7259006cd.1920x1080.jpg?t=1782714847"></div>
+        <div class="shot"><img loading="lazy" alt="SURA 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4292970/21925d9780c64cc9e467a1778e044f3a5f2bad0b/ss_21925d9780c64cc9e467a1778e044f3a5f2bad0b.1920x1080.jpg?t=1782714847"></div>
+        <div class="shot"><img loading="lazy" alt="SURA 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4292970/cdb7bbd35815b841aa26babe9edf9c853d12fffc/ss_cdb7bbd35815b841aa26babe9edf9c853d12fffc.1920x1080.jpg?t=1782714847"></div>
+        <div class="shot"><img loading="lazy" alt="SURA 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4292970/c58b4d7a3a12eb515e8384b66e01384eb4596fa5/ss_c58b4d7a3a12eb515e8384b66e01384eb4596fa5.1920x1080.jpg?t=1782714847"></div>
+        <div class="shot"><img loading="lazy" alt="SURA 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4292970/3683ae6cc4e32a27b0d9aa10758b7be4ef699486/ss_3683ae6cc4e32a27b0d9aa10758b7be4ef699486.1920x1080.jpg?t=1782714847"></div>
+        <div class="shot"><img loading="lazy" alt="SURA 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4292970/5387e30168e17824e7278f02b258ba58fd965880/ss_5387e30168e17824e7278f02b258ba58fd965880.1920x1080.jpg?t=1782714847"></div>
+      </div>
+      <div class="cap" style="margin-top:12px">▲ 「SURA: Blade of Eternity」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/4292970/SURA_Blade_of_Eternity/" target="_blank" rel="noopener">Steam 상점에서 데모·전체 스크린샷 보기 →</a></div>
+    </div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 소울라이크 · 액션 로그라이크</h2></div>
+    <p class="lead"><span class="hl">코어 충성도 높은 소울라이크 × 리플레이 강한 로그라이크</span> — 사무라이라는 글로벌 소재, 단 손맛·경쟁이 성패를 가른다.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>소울라이크</b>는 <b>Sekiro</b>·<b>Elden Ring</b>·<b>Lies of P</b>로 검증된 충성 코어 시장이고, <b>액션 로그라이크</b>(Hades·Dead Cells)는 강한 리플레이가 강점입니다. SURA는 둘을 결합하고 <b>사무라이·닌자</b>라는 글로벌 소구 소재와 <b>디플렉션·처형기</b>의 강렬함으로 차별화합니다.</p>
+          <ul class="clean g">
+            <li>강한 코어 팬덤 → <b>스트리밍·보스전 클립</b> 확산</li>
+            <li>사무라이 소재 → <b>글로벌(특히 서구·일본) 소구</b></li>
+            <li>로그라이크 → <b>리플레이·체류 시간</b> 확보</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">‘Sekiro의 손맛을 로그라이크로’는 매력적 훅이나, <b>소울라이크 코어 유저는 손맛·최적화에 냉정</b>합니다. 또 사무라이 소울라이크는 <b>대형·인디 경쟁이 치열</b>하고, <b>멀티플레이</b>는 소규모 팀에 스코프 부담이 될 수 있습니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 소울라이크는 <b>‘패링 손맛·카메라·최적화’</b>가 평판을 좌우합니다. 훅·글로벌 소재는 확보, 관건은 <b>데모로 손맛을 입증하고 스코프를 관리</b>하는 것입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>대중적·검증된 훅(사무라이·의수·디플렉션)</li>
+        <li>소울라이크 손맛 + 로그라이크 리플레이 결합</li>
+        <li>사무라이 소재 + 5개 언어 → 글로벌 소구</li>
+        <li>데모 공개·자체 IP 통제</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>미출시 — 상업성(판매·리뷰·위시리스트) 미검증</li>
+        <li>개발사(Crimson Blade) 트랙레코드·규모 제한적</li>
+        <li>멀티플레이 스코프 — 개발·운영 부담</li>
+        <li>소울라이크 핵심 손맛·최적화 난도 높음</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>콘솔(PS·Xbox·Switch) 이식 — 소울라이크 최적 확장</li>
+        <li>데모 반응으로 위시리스트·커뮤니티 조기 확보</li>
+        <li>신규 무기·보스·바이옴 업데이트/DLC</li>
+        <li>사무라이 다크 판타지 IP·세계관 확장</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>사무라이 소울라이크 대형·인디 경쟁 심화</li>
+        <li>패링 손맛·최적화 미흡 시 코어 혹평 리스크</li>
+        <li>멀티플레이 완성도·유지 부담</li>
+        <li>출시 지연·긴 리드타임의 화제 유지 부담</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>SURA는 <span class="hl">대중적·검증된 훅(사무라이·디플렉션)과 리텐션 강한 장르 결합·글로벌 소재를 갖춘 ‘출시 전 유망주’</span>이나 아직 상업적으로 검증되지 않았습니다. 투자·퍼블리싱 관점에서는 확정 성과가 아니라 <b>선행지표(데모·위시리스트·손맛 평가)에 기반한 잠재력 베팅</b>이며, <b>손맛만 입증되면 사무라이 소재의 글로벌·콘솔 확장 상방이 큰</b> 편입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
+          <ul class="clean g">
+            <li>검증된 훅(사무라이·Sekiro식 디플렉션)의 대중성</li>
+            <li>글로벌 소재 + 5개 언어 → 넓은 위시리스트·판매</li>
+            <li>콘솔·DLC로 확장 용이(소울라이크 특성)</li>
+            <li>강렬한 액션 → 스트리밍·클립 오가닉 마케팅</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>데모의 패링 손맛·최적화·위시리스트 전환</b>(핵심)</li>
+            <li>개발사 규모·자금·개발 진척·출시 확정 일정</li>
+            <li><b>멀티플레이 스코프</b>와 완성도·유지 계획</li>
+            <li>콘솔 이식·업데이트 로드맵</li>
+            <li>경쟁작 대비 차별화 지속(손맛·연출)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(유망)’</b>. 대중적 훅·글로벌 소재·데모 공개는 뚜렷하나 미출시·정보 제한적·소울라이크 손맛 난도가 커, <b>데모의 전투감·최적화·위시리스트 전환과 멀티 스코프·로드맵을 확인한 뒤</b> 판단하는 것이 바람직합니다. 데모 손맛이 양호하면 특히 <b>글로벌·콘솔 확장 관점</b>에서 적극 검토 여지가 있습니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 소울라이크 · 액션 로그라이크</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">코어</div><div class="l">충성 팬덤</div></div>
+          <div class="kpi"><div class="n o">사무라이</div><div class="l">글로벌 소재</div></div>
+          <div class="kpi"><div class="n g">$15~25</div><div class="l">인디 소울 가격대</div></div>
+          <div class="kpi"><div class="n">클립</div><div class="l">디플렉션 확산성</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 검증 수요 위의 강한 훅, 손맛이 성패를 가른다.</b> 소울라이크는 충성 코어 시장이자 인디 성공(Lies of P·Nine Sols)이 잇따르고, 로그라이크는 리플레이가 강점입니다. SURA는 <b>사무라이·디플렉션·처형기</b>라는 강렬한 훅으로 이를 겨냥하되, <b>코어의 손맛 잣대</b>가 관건입니다.</p>
+        <div class="note gold" style="font-size:13px"><b>SURA의 위치</b> — ‘Sekiro의 쳐내기를 로그라이크로, 사후세계 사무라이 톤’이라는 <b>명료하고 강렬한 훅</b>으로 차별화. 관건은 이 훅을 <b>데모 손맛·최적화·글로벌 확장</b>으로 실제 위시리스트·판매까지 잇는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘검증된 소울라이크 코어 수요 + 사무라이라는 글로벌 훅 + 로그라이크 리플레이’의 결합</b>입니다. 훅은 강렬하고 5개 언어로 글로벌 대응까지 갖췄습니다. 다만 개발사(Crimson Blade)는 정보가 제한적인 신인이고 <b>소울라이크 손맛·최적화·멀티 스코프</b>가 미확인이라, <b>시장성은 ‘검증 대기’의 유망형(훅·글로벌·콘솔 상방 큼, 실행 난도 높음)</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>시장성 유망형(상방 큼·난도 높음)</b> — 강한 훅 + 리텐션 장르 + 글로벌</li>
+        <li>관건 — <b>데모 손맛·최적화·멀티 스코프·콘솔 확장</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘완성도 검증 후 콘솔 이식’</b><br>SURA의 최대 상방은 <b>①데모로 패링 손맛·최적화를 입증한 뒤 ②콘솔(PS5·Xbox·Switch2) 이식</b>으로 사무라이·소울라이크 팬층을 새 플랫폼에서 흡수하는 것입니다. 2순위는 <b>신규 무기·보스·바이옴·난이도 모드 등 업데이트/DLC</b>로 로그라이크 리플레이를 확장하는 것, 3순위는 <b>사무라이 다크 판타지 IP·세계관 확장</b>입니다. 단, 모든 확장의 전제는 <b>‘소울라이크 손맛·최적화 완성도’와 멀티 스코프 관리</b>이며, 이것이 롱테일 판매와 IP 가치를 좌우합니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>사후세계·중세 일본풍 다크 톤</b>과 사무라이라는 강렬한 비주얼 훅</li>
+          <li>사실적·분위기 중심(고어·바이올런트)의 <b>강렬한 액션 연출</b></li>
+          <li>‘진홍의 저주’·의수 등 <b>캐릭터·세계관</b>으로 IP 확장 여지</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>디플렉션(퍼펙트 패링) + 의수 능력 + 처형기</b>의 Sekiro 계보 전투</li>
+          <li><b>“죽을 때마다 전장이 바뀌는” 로그라이크</b> 리플레이</li>
+          <li>과제 — <b>패링 손맛·카메라·최적화</b>와 <b>멀티플레이 완성도</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 검증된 소울라이크 코어 수요에 <span class="hl">사무라이·디플렉션이라는 강렬한 훅과 로그라이크 리플레이·글로벌(5개 언어)</span>을 얹은 유망 신작입니다. 다만 <b>미출시·정보 제한적·손맛/멀티 실행 난도</b>가 과제로 남아, 데모 전투감·최적화 검증과 콘솔·DLC 확장, 멀티 스코프 관리 실행력이 시장성의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">2건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/4292970/SURA_Blade_of_Eternity/" target="_blank" rel="noopener">Steam — SURA: Blade of Eternity</a>
+          <a href="https://store.steampowered.com/app/4292970/SURA_Blade_of_Eternity/?l=koreana" target="_blank" rel="noopener">Steam — SURA (한국어 상점)</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © Crimson Blade / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>미출시(2026 예정, 데모 공개)</b>로 출시일·가격·판매·리뷰 등 상업 지표가 없어 콘셉트·장르 시장성 중심의 출시 전 전망입니다. 개발사(Crimson Blade) 상세 정보와 정량 지표는 공개가 제한적이므로 실제 투자 검토 시 실사·선행지표(데모 손맛·위시리스트) 확인이 필요합니다. · 기준일 2026.08.12</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.gallery .shot img, .hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>

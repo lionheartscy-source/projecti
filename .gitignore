@@ -1,0 +1,11 @@
+# 파이썬
+__pycache__/
+*.pyc
+
+# 윈도우
+Thumbs.db
+desktop.ini
+
+# 에디터
+.vscode/
+.idea/
