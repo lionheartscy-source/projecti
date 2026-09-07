@@ -155,11 +155,21 @@ function Get-Chips([string]$Src) {
 $PlatformAliases = @{
     'windows' = 'PC'; '윈도우' = 'PC'; '스팀' = 'PC'; 'steam' = 'PC'
     'steamos' = 'PC'; 'linux' = 'PC'; 'pc' = 'PC'
+    'deck' = 'PC'; 'steam deck' = 'PC'; '스팀덱' = 'PC'; '스팀 덱' = 'PC'
     'macos' = 'Mac'; 'mac' = 'Mac'; 'osx' = 'Mac'
     'playstation' = '콘솔'; 'ps4' = '콘솔'; 'ps5' = '콘솔'; 'xbox' = '콘솔'
-    'switch' = '콘솔'; '닌텐도 스위치' = '콘솔'; '콘솔' = '콘솔'
+    'switch' = '콘솔'; '닌텐도 스위치' = '콘솔'; '스위치' = '콘솔'; '콘솔' = '콘솔'
     '모바일' = '모바일'; 'ios' = '모바일'; 'android' = '모바일'
 }
+
+# 'Switch 2', 'Xbox Series X', 'PS5 Pro' 처럼 세대·기종이 뒤에 붙는 표기가 흔하다.
+# 정확히 일치하지 않으면 앞부분 키워드로 한 번 더 본다.
+$PlatformPatterns = @(
+    @{ Pattern = '^(?:pc|windows|steam|steamos|linux|deck)\b'; Value = 'PC' }
+    @{ Pattern = '^(?:mac|osx)';                               Value = 'Mac' }
+    @{ Pattern = '^(?:switch|스위치|xbox|playstation|ps[3-9])'; Value = '콘솔' }
+    @{ Pattern = '^(?:ios|android|모바일)';                     Value = '모바일' }
+)
 
 # 장르 구절에서 필터용 키워드를 뽑는다. 카드에는 원문 구절이 그대로 나가고,
 # 필터 레일에는 여기서 나온 키워드만 쓴다. 위에서부터 순서대로 검사한다.
@@ -183,6 +193,18 @@ $TopicRules = @(
     @{ Pattern = '보스 러시';                       Topics = @('보스 러시') }
     @{ Pattern = '픽셀';                            Topics = @('픽셀 아트') }
     @{ Pattern = '턴제';                            Topics = @('턴제') }
+    @{ Pattern = '시티빌더|시티 빌더|도시 건설|건설'; Topics = @('건설') }
+    @{ Pattern = '콜로니|타이쿤|경영';               Topics = @('경영', '시뮬레이션') }
+    @{ Pattern = '샌드박스';                        Topics = @('샌드박스') }
+    @{ Pattern = '메트로배니아';                     Topics = @('메트로배니아') }
+    @{ Pattern = '덱빌딩|덱 빌딩|카드';              Topics = @('덱빌딩') }
+    @{ Pattern = '생존|서바이벌';                    Topics = @('생존') }
+    @{ Pattern = '오픈월드|오픈 월드';               Topics = @('오픈월드') }
+    @{ Pattern = '타워 디펜스|디펜스';               Topics = @('디펜스') }
+    @{ Pattern = '농장|파밍';                       Topics = @('농장') }
+    @{ Pattern = '내러티브|비주얼 노벨|스토리';       Topics = @('내러티브') }
+    @{ Pattern = '레이싱';                          Topics = @('레이싱') }
+    @{ Pattern = '격투';                            Topics = @('격투') }
 )
 
 # 괄호 부연은 값을 쪼개기 전에 통째로 걷어낸다.
@@ -198,6 +220,9 @@ function Normalize-Platform([string]$Value) {
     $v = $Value.Trim()
     $k = $v.ToLowerInvariant()
     if ($PlatformAliases.ContainsKey($k)) { return $PlatformAliases[$k] }
+    foreach ($p in $PlatformPatterns) {
+        if ($k -match $p.Pattern) { return $p.Value }
+    }
     return $v
 }
 

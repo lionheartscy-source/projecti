@@ -1,115 +1,6 @@
 /* 자동 생성 파일 - 직접 수정하지 마세요. tools/build-reports.ps1 이 만듭니다. */
 window.__REPORTS__ = [
   {
-    "title": "Chaos Bringer",
-    "studio": "Beff Inc.",
-    "desc": "인디 개발사 Beff Inc.의 신작 「Chaos Bringer」 — ‘혼자서 즐기는 MMORPG 레이드’를 표방하는 전략 RPG. 빠른 택티컬 던전(로그라이크)에서 적을 제압하고, 시간을 멈춰(레이드 리더) 8인 파티에 완벽한 커맨드를 내려 거대 보스를 solo로 공략.",
-    "href": "reports/kr/Chaos_Bringer.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3119830/ss_305bc1179564b844197270de4f05b09c0fbf2621.1920x1080.jpg?t=1781582576",
-    "tags": [
-      "전략 RPG"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "RPG",
-      "전략"
-    ],
-    "status": "출시예정",
-    "date": "2026-08-13",
-    "slug": "Chaos_Bringer"
-  },
-  {
-    "title": "Hallowanderband",
-    "studio": "White-Kite",
-    "desc": "한국 인디 스튜디오 White-Kite와 신작 「Hallowanderband(할로윈더밴드)」 — 수습 사신 료울(Ryoul)이 밴드를 꾸려 핼러윈 퍼레이드에 나서는 리듬 + 어드벤처 하이브리드. BIC 2025 2관왕 등 수상 이력이 뚜렷한 캐주얼 리듬 어드벤처에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/kr/Hallowanderband.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3127030/7007f2d6554ea72bae1ebcf435e885402df320af/ss_7007f2d6554ea72bae1ebcf435e885402df320af.1920x1080.jpg?t=1783075363",
-    "tags": [
-      "리듬",
-      "어드벤처"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "리듬",
-      "어드벤처"
-    ],
-    "status": "데모",
-    "date": "2026-08-13",
-    "slug": "Hallowanderband"
-  },
-  {
-    "title": "Pharma Noctis",
-    "studio": "Yudiko Studio",
-    "desc": "인디 개발사 Yudiko Studio의 신작 「Pharma Noctis」 — 야간 약국의 약사가 되어 처방을 조제하고 질서를 지키는 심리 호러 시뮬레이션. 루틴에 깊이 빠져들수록 이 벽 안에 무언가 잘못돼 있다는 감각이 커진다.",
-    "href": "reports/kr/Pharma_Noctis.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/9112f8268a0cbafa51a5ab4bd2b231ae581afedb/ss_9112f8268a0cbafa51a5ab4bd2b231ae581afedb.1920x1080.jpg?t=1771490394",
-    "tags": [
-      "심리 호러",
-      "시뮬레이션"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "호러",
-      "시뮬레이션"
-    ],
-    "status": "데모",
-    "date": "2026-08-13",
-    "slug": "Pharma_Noctis"
-  },
-  {
-    "title": "Project BS",
-    "studio": "DDish",
-    "desc": "인디 개발사 DDish의 신작 「Project BS」 — 드래고뉴트 소녀 시에나(Sienna)가 아름답지만 위험한 정령의 섬에서 강적·라이벌과 싸우며 정령의 힘을 되찾는 3D 판타지 소울라이크 액션 RPG. 애니메이션풍 아트와 속성 스킬·보스 러시 전투를 내세운 출시 전(Pre-Launch) 타이틀에 대한 개발사·게임·시장성 분석.",
-    "href": "reports/kr/Project_BS.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_25568aa4cd0792b83855b97fd1676cf00d9da78b.1920x1080.jpg?t=1749301066",
-    "tags": [
-      "소울라이크 액션 RPG"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "소울라이크",
-      "RPG",
-      "액션"
-    ],
-    "status": "출시예정",
-    "date": "2026-08-13",
-    "slug": "Project_BS"
-  },
-  {
-    "title": "RELOADIAN",
-    "studio": "Bucketplay",
-    "desc": "한국 게임사 Bucketplay(버킷플레이)의 신작 「RELOADIAN(리로디안)」 — 전설의 무기를 조합해 혼돈의 우주에 질서를 되찾는 고속 액션 로그라이크. 솔로 또는 최대 3인 온라인 협동, 거대 보스를 두고 경쟁·협동하는 PvPvE 배틀 아레나이자 PC·PS5·Xbox 크로스플랫폼 타이틀.",
-    "href": "reports/kr/RELOADIAN.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/bffffdad8ab315fcae82de2fba4d3c73e75dfaec/ss_bffffdad8ab315fcae82de2fba4d3c73e75dfaec.1920x1080.jpg?t=1781809813",
-    "tags": [
-      "액션 로그라이크"
-    ],
-    "platforms": [
-      "PC",
-      "콘솔"
-    ],
-    "topics": [
-      "로그라이크",
-      "액션"
-    ],
-    "status": "앞서 해보기",
-    "date": "2026-08-13",
-    "slug": "RELOADIAN"
-  },
-  {
     "title": "Transpawt Train",
     "studio": "ORIN SOFT",
     "desc": "인디 개발사 ORIN SOFT의 출시작 「Transpawt Train」 — 동물 마을 ‘포시티(Paw-City)’에 첫 철도를 놓는 캐주얼 코지 전략·퍼즐 게임. 마을 사이에 철도를 손으로 그려 기차를 운행하고, 새 마을·재난에 맞춰 노선을 다시 설계합니다.",
@@ -134,140 +25,158 @@ window.__REPORTS__ = [
     "slug": "Transpawt_Train"
   },
   {
-    "title": "Dinoblade",
-    "studio": "Team Spino",
-    "desc": "인디 스튜디오 Team Spino와 신작 「Dinoblade」 — 대검을 든 스피노사우루스가 대재앙 이후의 선사시대에서 공룡 알파들과 싸우는 공룡 소울라이크 액션 RPG에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
-    "href": "reports/global/Dinoblade.html",
-    "region": "국외",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/dd831b124cdb96ec91b600768fd96b0697bffc73/ss_dd831b124cdb96ec91b600768fd96b0697bffc73.1920x1080.jpg?t=1784885012",
+    "title": "RELOADIAN",
+    "studio": "Bucketplay",
+    "desc": "한국 게임사 Bucketplay(버킷플레이)의 신작 「RELOADIAN(리로디안)」 — 전설의 무기를 조합해 혼돈의 우주에 질서를 되찾는 고속 액션 로그라이크. 솔로 또는 최대 3인 온라인 협동, 거대 보스를 두고 경쟁·협동하는 PvPvE 배틀 아레나이자 PC·PS5·Xbox 크로스플랫폼 타이틀.",
+    "href": "reports/kr/RELOADIAN.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/bffffdad8ab315fcae82de2fba4d3c73e75dfaec/ss_bffffdad8ab315fcae82de2fba4d3c73e75dfaec.1920x1080.jpg?t=1781809813",
+    "tags": [
+      "액션 로그라이크"
+    ],
+    "platforms": [
+      "PC",
+      "콘솔"
+    ],
+    "topics": [
+      "로그라이크",
+      "액션"
+    ],
+    "status": "앞서 해보기",
+    "date": "2026-08-13",
+    "slug": "RELOADIAN"
+  },
+  {
+    "title": "Project BS",
+    "studio": "DDish",
+    "desc": "인디 개발사 DDish의 신작 「Project BS」 — 드래고뉴트 소녀 시에나(Sienna)가 아름답지만 위험한 정령의 섬에서 강적·라이벌과 싸우며 정령의 힘을 되찾는 3D 판타지 소울라이크 액션 RPG. 애니메이션풍 아트와 속성 스킬·보스 러시 전투를 내세운 출시 전(Pre-Launch) 타이틀에 대한 개발사·게임·시장성 분석.",
+    "href": "reports/kr/Project_BS.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_25568aa4cd0792b83855b97fd1676cf00d9da78b.1920x1080.jpg?t=1749301066",
     "tags": [
       "소울라이크 액션 RPG"
     ],
     "platforms": [
-      "PC",
-      "Deck"
+      "PC"
     ],
     "topics": [
       "소울라이크",
       "RPG",
       "액션"
     ],
-    "status": "출시",
-    "date": "2026-08-12",
-    "slug": "Dinoblade"
-  },
-  {
-    "title": "Hexborne",
-    "studio": "BlowYAmind",
-    "desc": "한국 인디 스튜디오 BlowYAmind와 신작 「Hexborne」 — 헥스 타일 위에서 무기·방패·물약을 한 붓 그리기(원-스트로크)로 연결해 공격·방어·생존하는 턴제 로그라이트 RPG. 2010년 모바일 명작 Dungeon Raid를 다크 판타지로 재해석한 작품에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/kr/Hexborne.html",
-    "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4890800/a8ee9819a93fb3623f85e13cf7383b4fbda1cf2f/ss_a8ee9819a93fb3623f85e13cf7383b4fbda1cf2f.1920x1080.jpg?t=1785320371",
-    "tags": [
-      "턴제 로그라이트",
-      "퍼즐 RPG"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "로그라이크",
-      "턴제",
-      "RPG",
-      "퍼즐"
-    ],
     "status": "출시예정",
-    "date": "2026-08-12",
-    "slug": "Hexborne"
+    "date": "2026-08-13",
+    "slug": "Project_BS"
   },
   {
-    "title": "Horde Arena",
-    "studio": "FiveFiveSix Games",
-    "desc": "한국 인디 스튜디오 FiveFiveSix Games와 신작 「Horde Arena」 — 캐릭터를 골라 스탯·무기를 강화하고 진화하며 끝없는 적의 웨이브에서 생존하는 3인칭 슈터 로그라이트(최대 4인 코옵)에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/kr/Horde_Arena.html",
+    "title": "Pharma Noctis",
+    "studio": "Yudiko Studio",
+    "desc": "인디 개발사 Yudiko Studio의 신작 「Pharma Noctis」 — 야간 약국의 약사가 되어 처방을 조제하고 질서를 지키는 심리 호러 시뮬레이션. 루틴에 깊이 빠져들수록 이 벽 안에 무언가 잘못돼 있다는 감각이 커진다.",
+    "href": "reports/kr/Pharma_Noctis.html",
     "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3561610/8c2e7c5571355fb165a0b941a13a198eeaf6224c/ss_8c2e7c5571355fb165a0b941a13a198eeaf6224c.1920x1080.jpg?t=1783425505",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/9112f8268a0cbafa51a5ab4bd2b231ae581afedb/ss_9112f8268a0cbafa51a5ab4bd2b231ae581afedb.1920x1080.jpg?t=1771490394",
     "tags": [
-      "3인칭 슈터 로그라이트",
-      "서바이버"
+      "심리 호러",
+      "시뮬레이션"
     ],
     "platforms": [
       "PC"
     ],
     "topics": [
-      "로그라이크",
-      "슈터",
-      "서바이버"
-    ],
-    "status": "데모",
-    "date": "2026-08-12",
-    "slug": "Horde_Arena"
-  },
-  {
-    "title": "INARI",
-    "studio": "1HP STUDIO",
-    "desc": "한국 인디 스튜디오 1HP STUDIO와 신작 「INARI(이나리)」 — 동양 판타지 세계에서 쿠나이 투척과 순간이동으로 질주하는 초고속 액션 플랫포머. 사신 ‘이즈나’가 되어 ‘일곱 딸’을 처단하는, 킥스타터 17분 목표 달성·1주 위시리스트 5만의 화제작에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/kr/INARI.html",
-    "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3910680/d321f7cc1d3f96013c413ccc53e20498c05f5dcc/ss_d321f7cc1d3f96013c413ccc53e20498c05f5dcc.1920x1080.jpg?t=1785728900",
-    "tags": [
-      "고속 쿠나이 액션 플랫포머"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "플랫포머",
-      "액션"
-    ],
-    "status": "출시예정",
-    "date": "2026-08-12",
-    "slug": "INARI"
-  },
-  {
-    "title": "Little Sheep Valley",
-    "studio": "Redknot Games",
-    "desc": "3인 인디 스튜디오 Redknot Games와 신작 「Little Sheep Valley」 — 지중해 풍경의 목장에서 양을 쓰다듬고 돌보며 랜치를 꾸미는 ‘코지 랜치 빌더(행복 시뮬레이터)’에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/global/Little_Sheep_Valley.html",
-    "region": "국외",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4075740/3e6cfcebbee9e31d4e1199b09064d2130bf9a17f/header.jpg?t=1786225826",
-    "tags": [
-      "코지 랜치 빌더",
-      "힐링 시뮬"
-    ],
-    "platforms": [
-      "PC",
-      "Mac"
-    ],
-    "topics": [
-      "코지",
+      "호러",
       "시뮬레이션"
     ],
     "status": "데모",
-    "date": "2026-08-12",
-    "slug": "Little_Sheep_Valley"
+    "date": "2026-08-13",
+    "slug": "Pharma_Noctis"
   },
   {
-    "title": "Oh! Robot: Legendary Mechanic",
-    "studio": "Garage Arts",
-    "desc": "한국 인디 스튜디오 Garage Arts와 신작 「Oh! Robot: Legendary Mechanic(오! 로봇: 전설의 정비공)」 — 소녀가 로봇 제로봇(ZeroBot)에 탑승해 폭주 기계들과 싸우는 탑다운 트윈스틱 슈터 · 불릿헬 로그라이트.",
-    "href": "reports/kr/Oh_Robot.html",
+    "title": "Hallowanderband",
+    "studio": "White-Kite",
+    "desc": "한국 인디 스튜디오 White-Kite와 신작 「Hallowanderband(할로윈더밴드)」 — 수습 사신 료울(Ryoul)이 밴드를 꾸려 핼러윈 퍼레이드에 나서는 리듬 + 어드벤처 하이브리드. BIC 2025 2관왕 등 수상 이력이 뚜렷한 캐주얼 리듬 어드벤처에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/kr/Hallowanderband.html",
     "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3715770/888bb99013f33d5fbc0c98948a95da0379c402e9/header.jpg",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3127030/7007f2d6554ea72bae1ebcf435e885402df320af/ss_7007f2d6554ea72bae1ebcf435e885402df320af.1920x1080.jpg?t=1783075363",
     "tags": [
-      "트윈스틱 슈터",
-      "불릿헬 로그라이트"
+      "리듬",
+      "어드벤처"
     ],
     "platforms": [
       "PC"
     ],
     "topics": [
-      "슈터",
-      "로그라이크"
+      "리듬",
+      "어드벤처"
     ],
     "status": "데모",
+    "date": "2026-08-13",
+    "slug": "Hallowanderband"
+  },
+  {
+    "title": "Chaos Bringer",
+    "studio": "Beff Inc.",
+    "desc": "인디 개발사 Beff Inc.의 신작 「Chaos Bringer」 — ‘혼자서 즐기는 MMORPG 레이드’를 표방하는 전략 RPG. 빠른 택티컬 던전(로그라이크)에서 적을 제압하고, 시간을 멈춰(레이드 리더) 8인 파티에 완벽한 커맨드를 내려 거대 보스를 solo로 공략.",
+    "href": "reports/kr/Chaos_Bringer.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3119830/ss_305bc1179564b844197270de4f05b09c0fbf2621.1920x1080.jpg?t=1781582576",
+    "tags": [
+      "전략 RPG"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "RPG",
+      "전략"
+    ],
+    "status": "출시예정",
+    "date": "2026-08-13",
+    "slug": "Chaos_Bringer"
+  },
+  {
+    "title": "바들바들",
+    "studio": "Team Baeb Sae",
+    "desc": "한국 인디 스튜디오 Team Baeb Sae(팀 뱁새)와 신작 「바들바들(Wobble Wobble)」 — 참새들의 세상에서 신참 폭탄 해체 요원이 되어, 마우스로 블록을 밀고 당겨 젠가처럼 무너지지 않게 폭탄을 해체하는 물리 시뮬레이션 퍼즐에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
+    "href": "reports/kr/Wobble_Wobble.html",
+    "region": "국내",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4529820/eac2dd84b87108de4904d07a2564ab7683001153/ss_eac2dd84b87108de4904d07a2564ab7683001153.1920x1080.jpg?t=1775804425",
+    "tags": [
+      "물리 퍼즐",
+      "캐주얼 시뮬"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "퍼즐",
+      "시뮬레이션",
+      "캐주얼"
+    ],
+    "status": "출시",
     "date": "2026-08-12",
-    "slug": "Oh_Robot"
+    "slug": "Wobble_Wobble"
+  },
+  {
+    "title": "WALTO",
+    "studio": "KUKUKU GAMES",
+    "desc": "한국 인디 스튜디오 KUKUKU GAMES와 신작 「WALTO」 — 토끼의 땅을 배경으로 회피와 공격이 하나로 통합된 전투 철학을 앞세운 2D 사이드스크롤 소울라이크 보스 러시에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
+    "href": "reports/kr/WALTO.html",
+    "region": "국내",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3964330/524f820ff405eaf5cce35f816e9deaacadc6530f/header.jpg?t=1779064011",
+    "tags": [
+      "소울라이크",
+      "보스 러시"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "소울라이크",
+      "보스 러시"
+    ],
+    "status": "출시",
+    "date": "2026-08-12",
+    "slug": "WALTO"
   },
   {
     "title": "Sephiria",
@@ -316,91 +225,184 @@ window.__REPORTS__ = [
     "slug": "SURA_Blade_of_Eternity"
   },
   {
-    "title": "WALTO",
-    "studio": "KUKUKU GAMES",
-    "desc": "한국 인디 스튜디오 KUKUKU GAMES와 신작 「WALTO」 — 토끼의 땅을 배경으로 회피와 공격이 하나로 통합된 전투 철학을 앞세운 2D 사이드스크롤 소울라이크 보스 러시에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
-    "href": "reports/kr/WALTO.html",
+    "title": "Oh! Robot: Legendary Mechanic",
+    "studio": "Garage Arts",
+    "desc": "한국 인디 스튜디오 Garage Arts와 신작 「Oh! Robot: Legendary Mechanic(오! 로봇: 전설의 정비공)」 — 소녀가 로봇 제로봇(ZeroBot)에 탑승해 폭주 기계들과 싸우는 탑다운 트윈스틱 슈터 · 불릿헬 로그라이트.",
+    "href": "reports/kr/Oh_Robot.html",
     "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3964330/524f820ff405eaf5cce35f816e9deaacadc6530f/header.jpg?t=1779064011",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3715770/888bb99013f33d5fbc0c98948a95da0379c402e9/header.jpg",
     "tags": [
-      "소울라이크",
-      "보스 러시"
+      "트윈스틱 슈터",
+      "불릿헬 로그라이트"
     ],
     "platforms": [
       "PC"
     ],
     "topics": [
-      "소울라이크",
-      "보스 러시"
+      "슈터",
+      "로그라이크"
     ],
-    "status": "출시",
+    "status": "데모",
     "date": "2026-08-12",
-    "slug": "WALTO"
+    "slug": "Oh_Robot"
   },
   {
-    "title": "바들바들",
-    "studio": "Team Baeb Sae",
-    "desc": "한국 인디 스튜디오 Team Baeb Sae(팀 뱁새)와 신작 「바들바들(Wobble Wobble)」 — 참새들의 세상에서 신참 폭탄 해체 요원이 되어, 마우스로 블록을 밀고 당겨 젠가처럼 무너지지 않게 폭탄을 해체하는 물리 시뮬레이션 퍼즐에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
-    "href": "reports/kr/Wobble_Wobble.html",
-    "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4529820/eac2dd84b87108de4904d07a2564ab7683001153/ss_eac2dd84b87108de4904d07a2564ab7683001153.1920x1080.jpg?t=1775804425",
-    "tags": [
-      "물리 퍼즐",
-      "캐주얼 시뮬"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "퍼즐",
-      "시뮬레이션",
-      "캐주얼"
-    ],
-    "status": "출시",
-    "date": "2026-08-12",
-    "slug": "Wobble_Wobble"
-  },
-  {
-    "title": "Seina: a Tale of Spirits",
-    "studio": "POFUPOFU Studios",
-    "desc": "그리스 1인 개발자 Argyro Brotsi(스튜디오 POFUPOFU STUDIOS)와 신작 「Seina: a Tale of Spirits」 — 잃어버린 고양이를 찾아 정령의 세계로 떠나는 수채화 코지 판타지 어드벤처에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/global/Seina-a_Tale_of_Spirits.html",
+    "title": "Little Sheep Valley",
+    "studio": "Redknot Games",
+    "desc": "3인 인디 스튜디오 Redknot Games와 신작 「Little Sheep Valley」 — 지중해 풍경의 목장에서 양을 쓰다듬고 돌보며 랜치를 꾸미는 ‘코지 랜치 빌더(행복 시뮬레이터)’에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/global/Little_Sheep_Valley.html",
     "region": "국외",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4119150/4fb1ffe3101db4a5ff592c7ce862d9b9160f85fa/ss_4fb1ffe3101db4a5ff592c7ce862d9b9160f85fa.1920x1080.jpg?t=1786019115",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4075740/3e6cfcebbee9e31d4e1199b09064d2130bf9a17f/header.jpg?t=1786225826",
     "tags": [
-      "코지 판타지 어드벤처"
+      "코지 랜치 빌더",
+      "힐링 시뮬"
+    ],
+    "platforms": [
+      "PC",
+      "Mac"
+    ],
+    "topics": [
+      "코지",
+      "시뮬레이션"
+    ],
+    "status": "데모",
+    "date": "2026-08-12",
+    "slug": "Little_Sheep_Valley"
+  },
+  {
+    "title": "INARI",
+    "studio": "1HP STUDIO",
+    "desc": "한국 인디 스튜디오 1HP STUDIO와 신작 「INARI(이나리)」 — 동양 판타지 세계에서 쿠나이 투척과 순간이동으로 질주하는 초고속 액션 플랫포머. 사신 ‘이즈나’가 되어 ‘일곱 딸’을 처단하는, 킥스타터 17분 목표 달성·1주 위시리스트 5만의 화제작에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/kr/INARI.html",
+    "region": "국내",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3910680/d321f7cc1d3f96013c413ccc53e20498c05f5dcc/ss_d321f7cc1d3f96013c413ccc53e20498c05f5dcc.1920x1080.jpg?t=1785728900",
+    "tags": [
+      "고속 쿠나이 액션 플랫포머"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "플랫포머",
+      "액션"
+    ],
+    "status": "출시예정",
+    "date": "2026-08-12",
+    "slug": "INARI"
+  },
+  {
+    "title": "Horde Arena",
+    "studio": "FiveFiveSix Games",
+    "desc": "한국 인디 스튜디오 FiveFiveSix Games와 신작 「Horde Arena」 — 캐릭터를 골라 스탯·무기를 강화하고 진화하며 끝없는 적의 웨이브에서 생존하는 3인칭 슈터 로그라이트(최대 4인 코옵)에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/kr/Horde_Arena.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3561610/8c2e7c5571355fb165a0b941a13a198eeaf6224c/ss_8c2e7c5571355fb165a0b941a13a198eeaf6224c.1920x1080.jpg?t=1783425505",
+    "tags": [
+      "3인칭 슈터 로그라이트",
+      "서바이버"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "로그라이크",
+      "슈터",
+      "서바이버"
+    ],
+    "status": "데모",
+    "date": "2026-08-12",
+    "slug": "Horde_Arena"
+  },
+  {
+    "title": "Hexborne",
+    "studio": "BlowYAmind",
+    "desc": "한국 인디 스튜디오 BlowYAmind와 신작 「Hexborne」 — 헥스 타일 위에서 무기·방패·물약을 한 붓 그리기(원-스트로크)로 연결해 공격·방어·생존하는 턴제 로그라이트 RPG. 2010년 모바일 명작 Dungeon Raid를 다크 판타지로 재해석한 작품에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/kr/Hexborne.html",
+    "region": "국내",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4890800/a8ee9819a93fb3623f85e13cf7383b4fbda1cf2f/ss_a8ee9819a93fb3623f85e13cf7383b4fbda1cf2f.1920x1080.jpg?t=1785320371",
+    "tags": [
+      "턴제 로그라이트",
+      "퍼즐 RPG"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "로그라이크",
+      "턴제",
+      "RPG",
+      "퍼즐"
+    ],
+    "status": "출시예정",
+    "date": "2026-08-12",
+    "slug": "Hexborne"
+  },
+  {
+    "title": "Dinoblade",
+    "studio": "Team Spino",
+    "desc": "인디 스튜디오 Team Spino와 신작 「Dinoblade」 — 대검을 든 스피노사우루스가 대재앙 이후의 선사시대에서 공룡 알파들과 싸우는 공룡 소울라이크 액션 RPG에 대한 개발사·게임·시장성 중심 출시 후(Post-Launch) 분석.",
+    "href": "reports/global/Dinoblade.html",
+    "region": "국외",
+    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3440070/dd831b124cdb96ec91b600768fd96b0697bffc73/ss_dd831b124cdb96ec91b600768fd96b0697bffc73.1920x1080.jpg?t=1784885012",
+    "tags": [
+      "소울라이크 액션 RPG"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "소울라이크",
+      "RPG",
+      "액션"
+    ],
+    "status": "출시",
+    "date": "2026-08-12",
+    "slug": "Dinoblade"
+  },
+  {
+    "title": "오구와 비밀의 숲",
+    "studio": "Sinkhole Studio",
+    "desc": "성남 분당 소재 소규모 인디 스튜디오 싱크홀 스튜디오(Sinkhole Studio)와 대표작 「오구와 비밀의 숲」을 비롯한 다장르·다플랫폼 라인업에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
+    "href": "reports/kr/OGU_and_the_Secret_Forest.html",
+    "region": "국내",
+    "thumb": "https://cdn.cloudflare.steamstatic.com/steam/apps/1985960/header.jpg",
+    "tags": [
+      "퍼즐 어드벤처"
     ],
     "platforms": [
       "PC",
       "콘솔",
-      "Switch 2"
+      "모바일"
     ],
     "topics": [
-      "어드벤처",
-      "코지"
+      "퍼즐",
+      "어드벤처"
     ],
-    "status": "데모",
+    "status": "",
     "date": "2026-07-15",
-    "slug": "Seina-a_Tale_of_Spirits"
+    "slug": "OGU_and_the_Secret_Forest"
   },
   {
-    "title": "Timberborn",
-    "studio": "Mechanistry",
-    "desc": "폴란드 완전 원격 인디 스튜디오 Mechanistry와 대표작 「Timberborn(팀버본)」 — 럼버펑크 비버 도시건설 시뮬레이션에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
-    "href": "reports/global/Timberborn.html",
-    "region": "국외",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1062090/154bdaa6fc267e89d57592015268f8c0b59924e1/ss_154bdaa6fc267e89d57592015268f8c0b59924e1.1920x1080.jpg?t=1784023977",
+    "title": "스타더스트: 별과 마녀",
+    "studio": "크니브스튜디오",
+    "desc": "㈜크니브스튜디오(Kniv Studio Co., Ltd.)와 데뷔작 「스타더스트: 별과 마녀」, 그리고 현 퍼블리셔 SoloGame Entertainment에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
+    "href": "reports/kr/Stardust_Wish_of_Witch.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3936730/f401a6117d9a592ea2c16c0b181e47dfbe7578f6/ss_f401a6117d9a592ea2c16c0b181e47dfbe7578f6.1920x1080.jpg?t=1783599802",
     "tags": [
-      "샌드박스 시티빌더",
-      "콜로니 심"
+      "픽셀 아트 SRPG"
     ],
     "platforms": [
       "PC"
     ],
-    "topics": [],
+    "topics": [
+      "전략",
+      "RPG",
+      "픽셀 아트"
+    ],
     "status": "출시",
     "date": "2026-07-15",
-    "slug": "Timberborn"
+    "slug": "Stardust_Wish_of_Witch"
   },
   {
     "title": "숲속의 작은 마녀",
@@ -426,48 +428,49 @@ window.__REPORTS__ = [
     "slug": "Little_Witch_in_the_Woods"
   },
   {
-    "title": "스타더스트: 별과 마녀",
-    "studio": "크니브스튜디오",
-    "desc": "㈜크니브스튜디오(Kniv Studio Co., Ltd.)와 데뷔작 「스타더스트: 별과 마녀」, 그리고 현 퍼블리셔 SoloGame Entertainment에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
-    "href": "reports/kr/Stardust_Wish_of_Witch.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3936730/f401a6117d9a592ea2c16c0b181e47dfbe7578f6/ss_f401a6117d9a592ea2c16c0b181e47dfbe7578f6.1920x1080.jpg?t=1783599802",
+    "title": "Timberborn",
+    "studio": "Mechanistry",
+    "desc": "폴란드 완전 원격 인디 스튜디오 Mechanistry와 대표작 「Timberborn(팀버본)」 — 럼버펑크 비버 도시건설 시뮬레이션에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
+    "href": "reports/global/Timberborn.html",
+    "region": "국외",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1062090/154bdaa6fc267e89d57592015268f8c0b59924e1/ss_154bdaa6fc267e89d57592015268f8c0b59924e1.1920x1080.jpg?t=1784023977",
     "tags": [
-      "픽셀 아트 SRPG"
+      "샌드박스 시티빌더",
+      "콜로니 심"
     ],
     "platforms": [
       "PC"
     ],
     "topics": [
-      "전략",
-      "RPG",
-      "픽셀 아트"
+      "건설",
+      "샌드박스",
+      "경영",
+      "시뮬레이션"
     ],
     "status": "출시",
     "date": "2026-07-15",
-    "slug": "Stardust_Wish_of_Witch"
+    "slug": "Timberborn"
   },
   {
-    "title": "오구와 비밀의 숲",
-    "studio": "Sinkhole Studio",
-    "desc": "성남 분당 소재 소규모 인디 스튜디오 싱크홀 스튜디오(Sinkhole Studio)와 대표작 「오구와 비밀의 숲」을 비롯한 다장르·다플랫폼 라인업에 대한 사업·마케팅·개발·운영·디자인 종합 분석.",
-    "href": "reports/kr/OGU_and_the_Secret_Forest.html",
-    "region": "국내",
-    "thumb": "https://cdn.cloudflare.steamstatic.com/steam/apps/1985960/header.jpg",
+    "title": "Seina: a Tale of Spirits",
+    "studio": "POFUPOFU Studios",
+    "desc": "그리스 1인 개발자 Argyro Brotsi(스튜디오 POFUPOFU STUDIOS)와 신작 「Seina: a Tale of Spirits」 — 잃어버린 고양이를 찾아 정령의 세계로 떠나는 수채화 코지 판타지 어드벤처에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/global/Seina-a_Tale_of_Spirits.html",
+    "region": "국외",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4119150/4fb1ffe3101db4a5ff592c7ce862d9b9160f85fa/ss_4fb1ffe3101db4a5ff592c7ce862d9b9160f85fa.1920x1080.jpg?t=1786019115",
     "tags": [
-      "퍼즐 어드벤처"
+      "코지 판타지 어드벤처"
     ],
     "platforms": [
       "PC",
-      "콘솔",
-      "모바일"
+      "콘솔"
     ],
     "topics": [
-      "퍼즐",
-      "어드벤처"
+      "어드벤처",
+      "코지"
     ],
-    "status": "",
+    "status": "데모",
     "date": "2026-07-15",
-    "slug": "OGU_and_the_Secret_Forest"
+    "slug": "Seina-a_Tale_of_Spirits"
   }
 ];
