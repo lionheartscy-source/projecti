@@ -267,15 +267,17 @@
   </footer>
 </div>
 
+<!-- 리포트 목록. tools/build-reports.ps1 이 자동 생성합니다. -->
+<script src="reports.js"></script>
 <script>
 /* ════════════════════════════════════════════════════════════
-   리포트 목록은 reports.json 에서 자동으로 불러옵니다.
+   리포트 목록은 reports.js 가 심어주는 window.__REPORTS__ 를 씁니다.
 
-   reports.json 은 GitHub Actions 가 만듭니다 —
-   reports/ 에 HTML을 올리고 푸시하면 끝. 이 파일은 손댈 필요 없습니다.
+   reports.js 는 reports/ 폴더를 스캔해 자동 생성됩니다 —
+   업로드.bat 을 돌리거나, 그냥 푸시하면 GitHub Actions 가 만듭니다.
+   이 파일(index.html)은 손댈 필요가 없습니다.
 
-   아래 FALLBACK 은 reports.json 을 못 읽을 때만 쓰입니다.
-   (파일을 더블클릭해 file:// 로 열었을 때 등)
+   아래 FALLBACK 은 reports.js 가 아예 없을 때만 쓰입니다.
    ════════════════════════════════════════════════════════════ */
 const FALLBACK_REPORTS = [
   {
@@ -452,16 +454,13 @@ function normalize(list){
   }));
 }
 
-async function boot(){
-  try{
-    const res = await fetch("reports.json", { cache:"no-store" });
-    if(!res.ok) throw new Error(res.status);
-    const data = normalize(await res.json());
-    if(!data.length) throw new Error("empty");
-    REPORTS = data;
-  }catch(err){
-    // reports.json 을 못 읽는 경우(file:// 로 연 로컬 미리보기 등)
-    console.info("reports.json 로드 실패 — 내장 목록으로 표시합니다.", err);
+function boot(){
+  const loaded = normalize(window.__REPORTS__);
+  if(loaded.length){
+    REPORTS = loaded;
+  }else{
+    // reports.js 가 없거나 비어 있는 경우
+    console.info("reports.js 를 읽지 못했습니다 — 내장 목록으로 표시합니다.");
     REPORTS = normalize(FALLBACK_REPORTS);
   }
 

@@ -1,60 +1,50 @@
 @echo off
-chcp 949 >nul
-title ¸®Æ÷Æ® ¾ÆÄ«ÀÌºê - GitHub ¾÷·Îµå
+chcp 65001 >nul
+title ë¦¬í¬íŠ¸ ì•„ì¹´ì´ë¸Œ - GitHub ì—…ë¡œë“œ
 REM ============================================================
-REM  reports/ ½ºÄµ -> reports.json °»½Å -> Ä¿¹Ô -> Çª½Ã
-REM  °¢ ´Ü°è ½ÇÆÐ ½Ã ÀÌÀ¯¸¦ È­¸é¿¡ ³²±â°í ¸ØÃá´Ù
+REM  reports/ ìŠ¤ìº” -> reports.json / reports.js ê°±ì‹  -> ì»¤ë°‹ -> í‘¸ì‹œ
+REM  PowerShell ë¡œ ë™ìž‘í•˜ë¯€ë¡œ ë³„ë„ ì„¤ì¹˜ê°€ í•„ìš” ì—†ìŠµë‹ˆë‹¤.
 REM ============================================================
 setlocal
+cd /d "%~dp0"
 
-set "REPO=C:\Users\LION\Documents\GitHub\projecti"
-
-REM ---- git ½ÇÇàÆÄÀÏ Ã£±â (PATH ¿ì¼±, ¾øÀ¸¸é GitHub Desktop ³»Àå git) ----
+REM ---- git ì‹¤í–‰íŒŒì¼ ì°¾ê¸° (PATH ìš°ì„ , ì—†ìœ¼ë©´ GitHub Desktop ë‚´ìž¥ git) ----
 set "GIT=git"
 where git >nul 2>nul
 if not errorlevel 1 goto :GITOK
 for /d %%D in ("%LocalAppData%\GitHubDesktop\app-*") do set "GIT=%%D\resources\app\git\cmd\git.exe"
+if not exist "%GIT%" goto :NOGIT
 :GITOK
 
-REM ---- ÆÄÀÌ½ã Ã£±â ----
-set "PY=python"
-where python >nul 2>nul
-if not errorlevel 1 goto :PYOK
-set "PY=py"
-where py >nul 2>nul
-if not errorlevel 1 goto :PYOK
-goto :NOPY
-:PYOK
+where powershell >nul 2>nul
+if errorlevel 1 goto :NOPS
 
-cd /d "%REPO%"
-if errorlevel 1 goto :NOREPO
-
-REM ---- ÀÌÀü ½ÇÇàÀÌ ³²±ä Àá±Ý ÆÄÀÏ Á¤¸® (ÀÌ°Ô ³²À¸¸é gitÀÌ ÅëÂ°·Î ¸ØÃá´Ù) ----
-if exist "%REPO%\.git\index.lock" del /f /q "%REPO%\.git\index.lock" >nul 2>nul
-if exist "%REPO%\.git\HEAD.lock" del /f /q "%REPO%\.git\HEAD.lock" >nul 2>nul
-if exist "%REPO%\.git\objects\maintenance.lock" del /f /q "%REPO%\.git\objects\maintenance.lock" >nul 2>nul
-if exist "%REPO%\.git\index.lock" goto :LOCKED
+REM ---- ì´ì „ ì‹¤í–‰ì´ ë‚¨ê¸´ ìž ê¸ˆ íŒŒì¼ ì •ë¦¬ (ì´ê²Œ ë‚¨ìœ¼ë©´ gitì´ í†µì§¸ë¡œ ë©ˆì¶˜ë‹¤) ----
+if exist ".git\index.lock" del /f /q ".git\index.lock" >nul 2>nul
+if exist ".git\HEAD.lock" del /f /q ".git\HEAD.lock" >nul 2>nul
+if exist ".git\objects\maintenance.lock" del /f /q ".git\objects\maintenance.lock" >nul 2>nul
+if exist ".git\index.lock" goto :LOCKED
 
 for /f %%D in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd"') do set "TODAY=%%D"
 
 echo.
-echo [1/5] ¸®Æ÷Æ® ¸ñ·Ï »ý¼º (reports.json)...
-"%PY%" scripts\build-reports.py
+echo [1/5] ë¦¬í¬íŠ¸ ëª©ë¡ ìƒì„±...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\build-reports.ps1" -GitExe "%GIT%"
 if errorlevel 1 goto :FAILBUILD
 
 echo.
-echo [2/5] ¿ø°Ý µ¿±âÈ­...
+echo [2/5] ì›ê²© ë™ê¸°í™”...
 "%GIT%" ls-remote --exit-code --heads origin main >nul 2>nul
 if errorlevel 1 goto :SKIPPULL
 "%GIT%" pull --rebase --autostash
 if errorlevel 1 goto :FAILPULL
 goto :PULLDONE
 :SKIPPULL
-echo       ¿ø°Ý¿¡ main ºê·£Ä¡°¡ ¾ÆÁ÷ ¾ø½À´Ï´Ù. Ã¹ ¾÷·Îµå·Î ÁøÇàÇÕ´Ï´Ù.
+echo       ì›ê²©ì— main ë¸Œëžœì¹˜ê°€ ì•„ì§ ì—†ìŠµë‹ˆë‹¤. ì²« ì—…ë¡œë“œë¡œ ì§„í–‰í•©ë‹ˆë‹¤.
 :PULLDONE
 
 echo.
-echo [3/5] ½ºÅ×ÀÌÂ¡...
+echo [3/5] ìŠ¤í…Œì´ì§•...
 "%GIT%" add -A
 if errorlevel 1 goto :FAILADD
 
@@ -62,71 +52,70 @@ if errorlevel 1 goto :FAILADD
 if not errorlevel 1 goto :NOCHANGE
 
 echo.
-echo [4/5] Ä¿¹Ô...
-"%GIT%" commit -m "¸®Æ÷Æ® °»½Å %TODAY%"
+echo [4/5] ì»¤ë°‹...
+"%GIT%" commit -m "ë¦¬í¬íŠ¸ ê°±ì‹  %TODAY%"
 if errorlevel 1 goto :FAILCOMMIT
 
 echo.
-echo [5/5] Çª½Ã...
+echo [5/5] í‘¸ì‹œ...
 "%GIT%" push -u origin main
 if errorlevel 1 goto :FAILPUSH
 
 echo.
 echo ============================================
-echo  [¿Ï·á] %TODAY% GitHub ¹Ý¿µ ¿Ï·á
+echo  [ì™„ë£Œ] %TODAY% GitHub ë°˜ì˜ ì™„ë£Œ
 echo  https://lionheartscy-source.github.io/projecti/
 echo ============================================
 goto :END
 
 :NOCHANGE
 echo.
-echo  [¾Ë¸²] Ä¿¹ÔÇÒ º¯°æ»çÇ×ÀÌ ¾ø½À´Ï´Ù. (ÀÌ¹Ì ¸ðµÎ ¹Ý¿µµÈ »óÅÂ)
+echo  [ì•Œë¦¼] ì»¤ë°‹í•  ë³€ê²½ì‚¬í•­ì´ ì—†ìŠµë‹ˆë‹¤. (ì´ë¯¸ ëª¨ë‘ ë°˜ì˜ëœ ìƒíƒœ)
 goto :END
 
-:NOREPO
+:NOGIT
 echo.
-echo  [¿À·ù] ÀúÀå¼Ò Æú´õ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: %REPO%
+echo  [ì˜¤ë¥˜] git ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
+echo         GitHub Desktop ì„ ì„¤ì¹˜í–ˆë‹¤ë©´ í•œ ë²ˆ ì‹¤í–‰í•´ ë¡œê·¸ì¸í•´ ì£¼ì„¸ìš”.
 goto :END
 
-:NOPY
+:NOPS
 echo.
-echo  [¿À·ù] ÆÄÀÌ½ãÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.
-echo         https://www.python.org ¿¡¼­ ¼³Ä¡ ÈÄ ´Ù½Ã ½ÇÇàÇÏ¼¼¿ä.
-echo         ¼³Ä¡ ½Ã "Add Python to PATH" ¸¦ ¹Ýµå½Ã Ã¼Å©ÇÏ¼¼¿ä.
+echo  [ì˜¤ë¥˜] PowerShell ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
+echo         Windows ê¸°ë³¸ êµ¬ì„± ìš”ì†Œë¼ ë³´í†µ ìžˆì–´ì•¼ í•©ë‹ˆë‹¤.
 goto :END
 
 :LOCKED
 echo.
-echo  [¿À·ù] .git\index.lock À» Áö¿ï ¼ö ¾ø½À´Ï´Ù.
-echo         GitHub Desktop ÀÌ³ª ´Ù¸¥ git ÇÁ·Î±×·¥ÀÌ ½ÇÇà ÁßÀÌ¸é Á¾·áÇÏ°í ´Ù½Ã ½ÃµµÇÏ¼¼¿ä.
+echo  [ì˜¤ë¥˜] .git\index.lock ì„ ì§€ìš¸ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
+echo         GitHub Desktop ì´ë‚˜ ë‹¤ë¥¸ git í”„ë¡œê·¸ëž¨ì´ ì‹¤í–‰ ì¤‘ì´ë©´ ì¢…ë£Œí•˜ê³  ë‹¤ì‹œ ì‹œë„í•˜ì„¸ìš”.
 goto :END
 
 :FAILBUILD
 echo.
-echo  [¿À·ù] reports.json »ý¼º ½ÇÆÐ. À§ ¸Þ½ÃÁö¸¦ È®ÀÎÇÏ¼¼¿ä.
+echo  [ì˜¤ë¥˜] ë¦¬í¬íŠ¸ ëª©ë¡ ìƒì„± ì‹¤íŒ¨. ìœ„ ë©”ì‹œì§€ë¥¼ í™•ì¸í•˜ì„¸ìš”.
 goto :END
 
 :FAILPULL
 echo.
-echo  [¿À·ù] ¿ø°Ý µ¿±âÈ­(pull) ½ÇÆÐ. ³×Æ®¿öÅ© ¹®Á¦ÀÌ°Å³ª Ãæµ¹ÀÏ ¼ö ÀÖ½À´Ï´Ù.
+echo  [ì˜¤ë¥˜] ì›ê²© ë™ê¸°í™”(pull) ì‹¤íŒ¨. ë„¤íŠ¸ì›Œí¬ ë¬¸ì œì´ê±°ë‚˜ ì¶©ëŒì¼ ìˆ˜ ìžˆìŠµë‹ˆë‹¤.
 goto :END
 
 :FAILADD
 echo.
-echo  [¿À·ù] ½ºÅ×ÀÌÂ¡(add) ½ÇÆÐ. À§ ¸Þ½ÃÁö¸¦ È®ÀÎÇÏ¼¼¿ä.
+echo  [ì˜¤ë¥˜] ìŠ¤í…Œì´ì§•(add) ì‹¤íŒ¨. ìœ„ ë©”ì‹œì§€ë¥¼ í™•ì¸í•˜ì„¸ìš”.
 goto :END
 
 :FAILCOMMIT
 echo.
-echo  [¿À·ù] Ä¿¹Ô ½ÇÆÐ. À§ ¸Þ½ÃÁö¸¦ È®ÀÎÇÏ¼¼¿ä.
+echo  [ì˜¤ë¥˜] ì»¤ë°‹ ì‹¤íŒ¨. ìœ„ ë©”ì‹œì§€ë¥¼ í™•ì¸í•˜ì„¸ìš”.
 goto :END
 
 :FAILPUSH
 echo.
-echo  [¿À·ù] Çª½Ã ½ÇÆÐ.
-echo         ·Î±×ÀÎÀÌ ¾È µÈ »óÅÂÀÏ ¼ö ÀÖ½À´Ï´Ù. GitHub Desktop À¸·Î ÇÑ ¹ø ·Î±×ÀÎÇÑ µÚ
-echo         ´Ù½Ã ½ÇÇàÇÏ°Å³ª, ¾Æ·¡ ¸í·ÉÀ¸·Î Á÷Á¢ È®ÀÎÇÏ¼¼¿ä.
-echo             git push -u origin main
+echo  [ì˜¤ë¥˜] í‘¸ì‹œ ì‹¤íŒ¨.
+echo         ë¡œê·¸ì¸ì´ ì•ˆ ëœ ìƒíƒœì¼ ìˆ˜ ìžˆìŠµë‹ˆë‹¤. GitHub Desktop ìœ¼ë¡œ í•œ ë²ˆ ë¡œê·¸ì¸í•œ ë’¤
+echo         ë‹¤ì‹œ ì‹¤í–‰í•´ ì£¼ì„¸ìš”.
 goto :END
 
 :END

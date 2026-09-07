@@ -1,42 +1,43 @@
 @echo off
-chcp 949 >nul
-title ╦╝фВф╝ ╬фд╚юл╨Й - ╥ндц ╧л╦╝╨╦╠Б
+chcp 65001 >nul
+title К╕╛М▐╛М┼╦ Л∙└Л╧╢Л²╢К╦▄ - К╞╦К╕╛КЁ╢Й╦╟
 REM ============================================================
-REM  index.html ю╩ ╠вЁи ©╜╦И reports.json ю╩ ╦Ь юп╫ю╢о╢ы(file:// а╕╬Ю).
-REM  юл ╫╨е╘╦Ёф╝╢б ╥ндц ╪╜╧Ж╦╕ ╤Г©Ж ╫га╕ ╦Я╥о╠НаЖ ╨╦©╘ащ╢о╢ы.
+REM  К╕╛М▐╛М┼╦ К╙╘К║²Л²└ Й╟╠Л▀═М∙≤ЙЁ═ index.html Л²└ К╦▄К²╪Л ╟Л═─К║° Л≈╫К▀┬К▀╓.
+REM  Л≈┘К║°К⌠° Л═└Л≈░ К┬┬Л°╪К║° М≥∙Л²╦М∙═ К∙▄ Л⌠╟Л└╦Л ■.
 REM ============================================================
 setlocal
+cd /d "%~dp0"
 
-set "REPO=C:\Users\LION\Documents\GitHub\projecti"
-set "PORT=8000"
+where powershell >nul 2>nul
+if errorlevel 1 goto :NOPS
 
-set "PY=python"
-where python >nul 2>nul
-if not errorlevel 1 goto :PYOK
-set "PY=py"
-where py >nul 2>nul
-if not errorlevel 1 goto :PYOK
+set "GIT=git"
+where git >nul 2>nul
+if not errorlevel 1 goto :GITOK
+for /d %%D in ("%LocalAppData%\GitHubDesktop\app-*") do set "GIT=%%D\resources\app\git\cmd\git.exe"
+:GITOK
+
 echo.
-echo  [©ю╥Ы] фдюл╫Цю╩ цёю╩ ╪Ж ╬Ь╫ю╢о╢ы. https://www.python.org ©║╪╜ ╪Ёд║го╪╪©Д.
+echo  К╕╛М▐╛М┼╦ К╙╘К║²Л²└ Й╟╠Л▀═М∙╘К▀┬К▀╓...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\build-reports.ps1" -GitExe "%GIT%"
+if errorlevel 1 goto :FAILBUILD
+
 echo.
-pause
+echo  К╦▄К²╪Л ╟Л═─К╔╪ Л≈╫К▀┬К▀╓...
+start "" "%~dp0index.html"
 goto :END
-:PYOK
 
-cd /d "%REPO%"
+:NOPS
+echo.
+echo  [Л≤╓К╔≤] PowerShell Л²└ Л╟╬Л²└ Л┬≤ Л≈├Л┼╣К▀┬К▀╓.
+goto :END
 
+:FAILBUILD
 echo.
-echo  ╦╝фВф╝ ╦Я╥ою╩ ╦уюЗ ╟╩╫егу╢о╢ы...
-"%PY%" scripts\build-reports.py
-
-echo.
-echo ============================================
-echo  http://localhost:%PORT%  ©║╪╜ х╝юнго╪╪©Д
-echo  а╬╥Аго╥а╦И юл ц╒©║╪╜ Ctrl+C
-echo ============================================
-echo.
-start "" "http://localhost:%PORT%"
-"%PY%" -m http.server %PORT%
+echo  [Л≤╓К╔≤] К╕╛М▐╛М┼╦ К╙╘К║² Л┐²Л└╠ Л▀╓М▄╗. Л°└ К╘■Л▀°Л╖─К╔╪ М≥∙Л²╦М∙≤Л└╦Л ■.
+goto :END
 
 :END
+echo.
+pause
 endlocal

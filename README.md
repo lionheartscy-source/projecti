@@ -64,7 +64,7 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 
 `status` 는 `출시` / `출시예정` / `데모` 세 값이 각각 초록 · 크림슨 · 파랑 배지로 나옵니다.
 `PC (Windows)` 처럼 괄호가 붙은 태그는 `PC` 로 자동 정리됩니다. 표기 통일 규칙은
-`scripts/build-reports.py` 의 `TAG_ALIASES` 에서 수정하세요.
+`tools/build-reports.ps1` 의 `$TagAliases` 에서 수정하세요.
 
 ---
 
@@ -73,37 +73,42 @@ index.html 이 reports.json 을 읽어 카드·필터·히어로 생성
 ```
 /
 ├─ index.html                    네비게이션 허브 (히어로 + 그리드 + 필터 레일)
-├─ reports.json                  ← 자동 생성. 직접 수정 금지
-├─ 업로드.bat                     reports.json 갱신 + 커밋 + 푸시
-├─ 미리보기.bat                   로컬 서버로 실제 목록까지 확인
+├─ reports.js                    ← 자동 생성. index.html 이 읽는 목록
+├─ reports.json                  ← 자동 생성. 같은 내용의 JSON 판
+├─ 업로드.bat                     목록 갱신 + 커밋 + 푸시
+├─ 미리보기.bat                   목록 갱신 + 브라우저로 열기
 ├─ .nojekyll
 ├─ reports/
 │  └─ sura-blade-of-eternity.html
-├─ scripts/
-│  └─ build-reports.py           리포트 스캔 → reports.json
+├─ tools/
+│  └─ build-reports.ps1          리포트 스캔 → reports.js / reports.json
 └─ .github/workflows/
-   └─ build-index.yml            push 시 자동 실행
+   └─ build-index.yml            push 시 같은 스크립트를 실행
 ```
+
+파서는 **PowerShell** 로 되어 있습니다. `fps-radar` 와 마찬가지로 별도 설치가 필요 없습니다.
+GitHub Actions 도 같은 `build-reports.ps1` 을 실행하므로 로직이 한 곳에만 있습니다.
+
+`reports.js` 와 `reports.json` 은 내용이 같습니다. `index.html` 이 `.js` 쪽을 읽는 이유는
+`file://` 로 열어도 동작하기 때문입니다 — 로컬 서버 없이 더블클릭만으로 확인됩니다.
 
 ---
 
 ## 로컬에서 확인하기
 
-`index.html` 을 더블클릭해 열면 브라우저가 `reports.json` 을 못 읽습니다(`file://` 제약).
-이때는 `index.html` 안의 `FALLBACK_REPORTS` 목록이 대신 표시됩니다 — 레이아웃 확인용입니다.
+**`미리보기.bat`** 을 실행하면 목록을 갱신하고 브라우저를 엽니다.
 
-실제 목록까지 보려면 **`미리보기.bat`** 을 실행하세요. 수동으로 하려면:
+수동으로 하려면:
 
-```bash
-python scripts/build-reports.py
-python -m http.server 8000
-# → http://localhost:8000
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\build-reports.ps1
 ```
 
 ---
 
 ## 최초 설정
 
-1. **Settings → Pages** → Source: `Deploy from a branch`, Branch: `main` / `(root)`
-2. **Settings → Actions → General** → Workflow permissions:
-   `Read and write permissions` 선택 (Actions가 `reports.json` 을 커밋해야 함)
+1. **Settings → Actions → General** → Workflow permissions:
+   `Read and write permissions` 선택 (Actions가 목록 파일을 커밋해야 함)
+2. `업로드.bat` 실행 — 저장소에 내용이 올라가야 Pages 설정이 열립니다
+3. **Settings → Pages** → Source: `Deploy from a branch`, Branch: `main` / `(root)`
