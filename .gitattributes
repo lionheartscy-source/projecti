@@ -1,0 +1,9 @@
+# 자동 생성 파일 — 줄바꿈을 LF 로 고정한다.
+# 로컬(Windows PowerShell)과 GitHub Actions(Linux pwsh)가
+# 같은 바이트를 만들어야 불필요한 충돌이 생기지 않는다.
+reports.js   text eol=lf
+reports.json text eol=lf
+
+# 아래는 git 이 줄바꿈을 건드리지 않게 둔다.
+*.bat        -text
+tools/*.ps1  -text

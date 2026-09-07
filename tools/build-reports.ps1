@@ -192,6 +192,75 @@ function Get-ReportDate([string]$Path) {
     return (Get-Item -LiteralPath $Path).LastWriteTime.ToString('yyyy-MM-dd')
 }
 
+# ─────────────────────────── JSON 직렬화 ───────────────────────────
+#
+# ConvertTo-Json 을 쓰지 않는다. PowerShell 5.1 은 4칸 들여쓰기,
+# PowerShell 7(Actions)은 2칸을 쓰기 때문에 로컬에서 만든 파일과
+# Actions 가 만든 파일이 내용은 같은데 형식만 달라 매번 충돌이 났다.
+# 형식을 직접 고정해 어디서 돌리든 같은 바이트가 나오게 한다.
+
+function Format-JsonString([string]$Value) {
+    if ($null -eq $Value) { $Value = '' }
+    $sb = New-Object System.Text.StringBuilder
+    [void]$sb.Append('"')
+    foreach ($ch in $Value.ToCharArray()) {
+        $code = [int]$ch
+        if     ($code -eq 34) { [void]$sb.Append('\"') }
+        elseif ($code -eq 92) { [void]$sb.Append('\\') }
+        elseif ($code -eq 8)  { [void]$sb.Append('\b') }
+        elseif ($code -eq 9)  { [void]$sb.Append('\t') }
+        elseif ($code -eq 10) { [void]$sb.Append('\n') }
+        elseif ($code -eq 12) { [void]$sb.Append('\f') }
+        elseif ($code -eq 13) { [void]$sb.Append('\r') }
+        elseif ($code -lt 32) { [void]$sb.Append(('\u{0:x4}' -f $code)) }
+        else                  { [void]$sb.Append($ch) }
+    }
+    [void]$sb.Append('"')
+    return $sb.ToString()
+}
+
+function Format-ReportsJson($Items) {
+    $list = @($Items)
+    if ($list.Count -eq 0) { return '[]' }
+
+    $keys = 'title', 'studio', 'desc', 'href', 'thumb', 'tags', 'status', 'date', 'slug'
+    $out  = New-Object System.Collections.Generic.List[string]
+    [void]$out.Add('[')
+
+    for ($i = 0; $i -lt $list.Count; $i++) {
+        $e = $list[$i]
+        [void]$out.Add('  {')
+        for ($k = 0; $k -lt $keys.Count; $k++) {
+            $key   = $keys[$k]
+            $comma = ''
+            if ($k -lt $keys.Count - 1) { $comma = ',' }
+
+            if ($key -eq 'tags') {
+                $tags = @($e.tags)
+                if ($tags.Count -eq 0) {
+                    [void]$out.Add('    "tags": []' + $comma)
+                } else {
+                    [void]$out.Add('    "tags": [')
+                    for ($t = 0; $t -lt $tags.Count; $t++) {
+                        $tc = ''
+                        if ($t -lt $tags.Count - 1) { $tc = ',' }
+                        [void]$out.Add('      ' + (Format-JsonString $tags[$t]) + $tc)
+                    }
+                    [void]$out.Add('    ]' + $comma)
+                }
+            } else {
+                [void]$out.Add('    ' + (Format-JsonString $key) + ': ' + (Format-JsonString $e.$key) + $comma)
+            }
+        }
+        $tail = ''
+        if ($i -lt $list.Count - 1) { $tail = ',' }
+        [void]$out.Add('  }' + $tail)
+    }
+
+    [void]$out.Add(']')
+    return ($out -join "`n")
+}
+
 # ─────────────────────────── 본체 ───────────────────────────
 
 function Build-Entry([System.IO.FileInfo]$File) {
@@ -266,30 +335,16 @@ foreach ($f in $files) {
 $sorted = @($entries | Sort-Object -Property @{Expression = 'date'; Descending = $true},
                                              @{Expression = 'title'; Descending = $false})
 
-if ($sorted.Count -eq 0) {
-    # 리포트가 하나도 없을 때 ConvertTo-Json 은 null 을 뱉는다
-    $json = '[]'
-} else {
-    $json = ConvertTo-Json -InputObject ([object[]]$sorted) -Depth 6
-    # 항목이 1개면 배열이 아닌 객체로 직렬화되는 경우가 있어 감싸준다
-    if (-not $json.TrimStart().StartsWith('[')) { $json = "[`r`n$json`r`n]" }
-}
+$json = Format-ReportsJson $sorted
 
-# PowerShell 5.1 은 비ASCII를 \uXXXX 로 escape 한다. 한글이 그대로 보이도록 되돌린다.
-$json = [regex]::Replace($json, '\\u([0-9a-fA-F]{4})', {
-    param($m)
-    $code = [Convert]::ToInt32($m.Groups[1].Value, 16)
-    if ($code -gt 127) { [string][char]$code } else { $m.Value }
-})
-
-# BOM 없는 UTF-8 로 저장 (BOM 이 붙으면 브라우저 JSON 파싱이 깨진다)
+# BOM 없는 UTF-8, 줄바꿈은 LF 로 고정 (BOM 이 붙으면 브라우저 JSON 파싱이 깨진다)
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-[System.IO.File]::WriteAllText($OutPath, $json + "`r`n", $utf8NoBom)
+[System.IO.File]::WriteAllText($OutPath, $json + "`n", $utf8NoBom)
 
-# 여기서 here-string 을 쓰면 JSON 안의 $ 문자가 변수로 해석될 수 있어 문자열 연결로 만든다.
+# here-string 을 쓰면 JSON 안의 $ 문자가 변수로 해석될 수 있어 문자열 연결로 만든다.
 $jsHeader = '/* 자동 생성 파일 - 직접 수정하지 마세요. tools/build-reports.ps1 이 만듭니다. */'
-$js = $jsHeader + "`r`n" + 'window.__REPORTS__ = ' + $json + ';'
-[System.IO.File]::WriteAllText($OutJsPath, $js + "`r`n", $utf8NoBom)
+$js = $jsHeader + "`n" + 'window.__REPORTS__ = ' + $json + ";`n"
+[System.IO.File]::WriteAllText($OutJsPath, $js, $utf8NoBom)
 
 Write-Host ''
 Write-Host ("  리포트 {0}편 -> reports.json / reports.js" -f $sorted.Count) -ForegroundColor Green
