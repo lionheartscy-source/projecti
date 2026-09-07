@@ -181,13 +181,28 @@
     .lightbox{display:none !important}
     .sidenav{display:none !important}
   }
+
+  /* 아카이브(메인) 복귀 버튼 */
+  .navleft{display:flex; align-items:center; gap:12px; min-width:0}
+  .homelink{display:inline-flex; align-items:center; gap:6px; flex:none;
+    font-size:12.5px; font-weight:700; color:var(--muted);
+    background:var(--surface); border:1px solid var(--line);
+    padding:7px 12px; border-radius:8px; white-space:nowrap;
+    transition:color .16s, background .16s, border-color .16s}
+  .homelink:hover{color:var(--accent-ink); background:var(--accent-soft);
+    border-color:transparent; text-decoration:none}
+  .homelink svg{flex:none}
+  @media(max-width:560px){ .homelink span{display:none} .homelink{padding:7px 9px} }
 </style>
 </head>
 <body>
 
 <header class="topnav">
   <div class="topnav-inner">
-    <a href="#top" class="brand"><span class="star">🐉</span> Project BS <small>분석 리포트</small></a>
+    <div class="navleft">
+      <a class="homelink" href="../../index.html" title="리포트 아카이브로 돌아가기"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.5 2.5 4 7l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>아카이브</span></a>
+      <a href="#top" class="brand"><span class="star">🐉</span> Project BS <small>분석 리포트</small></a>
+    </div>
     <nav class="navlinks" aria-label="목차">
       <a href="#summary">01 요약</a>
       <a href="#studio">02 개발사</a>
