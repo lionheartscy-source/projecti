@@ -143,6 +143,8 @@
   .badge.released{background:rgba(11,138,78,.9)}
   .badge.upcoming{background:rgba(192,42,60,.9)}
   .badge.demo{background:rgba(47,107,214,.9)}
+  .badge.early{background:rgba(156,107,46,.92)}
+  .tag.plat{color:var(--accent-ink); background:var(--accent-soft)}
   .cstudio{font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--dim)}
   .ctitle{font-size:15px; font-weight:800; line-height:1.35; margin:0; letter-spacing:-.02em}
   .card:hover .ctitle{color:var(--accent-ink)}
@@ -304,10 +306,11 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
   ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const initials = t => (t || "?").replace(/[^A-Za-z0-9가-힣 ]/g, "").trim()
   .split(/\s+/).slice(0,2).map(w => w[0]).join("").toUpperCase();
-const STATUS_CLASS = { "출시":"released", "출시예정":"upcoming", "데모":"demo" };
+const STATUS_CLASS = { "출시":"released", "출시예정":"upcoming", "데모":"demo", "앞서 해보기":"early" };
 const byDateDesc = (a,b) => String(b.date).localeCompare(String(a.date));
 
-const state = { q:"", sort:"new", tags:new Set(), status:new Set() };
+const state = { q:"", sort:"new", status:new Set(), platforms:new Set(), topics:new Set() };
+const FILTER_KEYS = ["status", "platforms", "topics"];
 
 /* ──────────── HERO ──────────── */
 let heroIdx = 0;
@@ -346,16 +349,23 @@ function renderHero(){
 }
 
 /* ──────────── FILTER RAIL ──────────── */
-function buildRail(){
-  const tagCounts = {}, statusCounts = {};
-  REPORTS.forEach(r => {
-    (r.tags||[]).forEach(t => tagCounts[t] = (tagCounts[t]||0)+1);
-    if (r.status) statusCounts[r.status] = (statusCounts[r.status]||0)+1;
-  });
+// 상태 / 플랫폼 / 장르 세 그룹. 항목은 편수가 많은 순으로 정렬한다.
+const STATUS_ORDER = ["출시", "앞서 해보기", "데모", "출시예정"];
 
-  const group = (key, label, counts) => {
-    const opts = Object.keys(counts).sort((a,b)=>a.localeCompare(b,"ko"));
+function countBy(key){
+  const c = {};
+  REPORTS.forEach(r => {
+    const v = r[key];
+    (Array.isArray(v) ? v : (v ? [v] : [])).forEach(x => c[x] = (c[x]||0)+1);
+  });
+  return c;
+}
+
+function buildRail(){
+  const group = (key, label, counts, order) => {
+    let opts = Object.keys(counts);
     if (!opts.length) return "";
+    opts.sort(order || ((a,b) => counts[b]-counts[a] || a.localeCompare(b,"ko")));
     return `<div class="fgroup" data-key="${key}">
       <button type="button">${label}
         <svg class="chev" width="11" height="11" viewBox="0 0 12 12" fill="none">
@@ -370,7 +380,15 @@ function buildRail(){
     </div>`;
   };
 
-  $("#railGroups").innerHTML = group("status","상태",statusCounts) + group("tags","장르 · 플랫폼",tagCounts);
+  const statusOrder = (a,b) => {
+    const ia = STATUS_ORDER.indexOf(a), ib = STATUS_ORDER.indexOf(b);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  };
+
+  $("#railGroups").innerHTML =
+      group("status",    "상태",   countBy("status"), statusOrder)
+    + group("platforms", "플랫폼", countBy("platforms"))
+    + group("topics",    "장르",   countBy("topics"));
 
   $("#railGroups").querySelectorAll(".fgroup > button").forEach(b =>
     b.addEventListener("click", () => b.parentElement.classList.toggle("closed")));
@@ -383,7 +401,7 @@ function buildRail(){
 }
 
 function renderActiveFilters(){
-  const items = [...[...state.status].map(v=>["status",v]), ...[...state.tags].map(v=>["tags",v])];
+  const items = FILTER_KEYS.flatMap(k => [...state[k]].map(v => [k, v]));
   const box = $("#activeFilters");
   box.innerHTML = items.map(([k,v]) =>
     `<button class="afchip" data-key="${k}" data-val="${esc(v)}">${esc(v)} <b>×</b></button>`).join("");
@@ -397,7 +415,8 @@ function renderActiveFilters(){
 }
 
 function clearAll(){
-  state.q = ""; state.tags.clear(); state.status.clear();
+  state.q = "";
+  FILTER_KEYS.forEach(k => state[k].clear());
   $("#q").value = "";
   document.querySelectorAll("#railGroups input[type=checkbox]").forEach(cb => cb.checked = false);
   render();
@@ -414,7 +433,10 @@ function cardHTML(r){
     ${r.studio ? `<span class="cstudio">${esc(r.studio)}</span>` : ""}
     <h3 class="ctitle">${esc(r.title)}</h3>
     <p class="cdesc">${esc(r.desc)}</p>
-    <div class="ctags">${(r.tags||[]).slice(0,3).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>
+    <div class="ctags">${
+      (r.tags||[]).slice(0,2).map(t=>`<span class="tag">${esc(t)}</span>`).join("") +
+      (r.platforms||[]).slice(0,2).map(p=>`<span class="tag plat">${esc(p)}</span>`).join("")
+    }</div>
     <span class="cdate">${esc(r.date||"")}</span>
   </a>`;
 }
@@ -422,10 +444,13 @@ function cardHTML(r){
 function render(){
   const q = state.q.trim().toLowerCase();
   let list = REPORTS.filter(r => {
-    const hay = [r.title, r.studio, r.desc, r.status, ...(r.tags||[])].join(" ").toLowerCase();
+    const hay = [r.title, r.studio, r.desc, r.status,
+                 ...(r.tags||[]), ...(r.platforms||[]), ...(r.topics||[])].join(" ").toLowerCase();
     if (q && !hay.includes(q)) return false;
     if (state.status.size && !state.status.has(r.status)) return false;
-    if (state.tags.size && ![...state.tags].every(t => (r.tags||[]).includes(t))) return false;
+    // 같은 그룹 안에서는 OR, 그룹끼리는 AND
+    if (state.platforms.size && !(r.platforms||[]).some(p => state.platforms.has(p))) return false;
+    if (state.topics.size    && !(r.topics||[]).some(t => state.topics.has(t)))       return false;
     return true;
   });
 
@@ -447,15 +472,19 @@ function render(){
 
 /* ──────────── INIT ──────────── */
 function normalize(list){
+  const arr = v => Array.isArray(v) ? v.filter(Boolean) : [];
   return (list || []).filter(r => r && r.title && r.href).map(r => ({
-    title:  String(r.title),
-    studio: r.studio || "",
-    desc:   r.desc   || "",
-    href:   String(r.href),
-    thumb:  r.thumb  || "",
-    tags:   Array.isArray(r.tags) ? r.tags.filter(Boolean) : [],
-    status: r.status || "",
-    date:   r.date   || ""
+    title:     String(r.title),
+    studio:    r.studio || "",
+    desc:      r.desc   || "",
+    href:      String(r.href),
+    thumb:     r.thumb  || "",
+    tags:      arr(r.tags),
+    // 예전 형식(platforms/topics 없음)도 그대로 뜨도록 tags 로 대체한다
+    platforms: r.platforms ? arr(r.platforms) : [],
+    topics:    r.topics    ? arr(r.topics)    : arr(r.tags),
+    status:    r.status || "",
+    date:      r.date   || ""
   }));
 }
 

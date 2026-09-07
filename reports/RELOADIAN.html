@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RELOADIAN · Bucketplay — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#eef6f9; --surface2:#f7fbfc;
+    --ink:#0f1720; --ink2:#1e2b34; --muted:#4f606b; --dim:#8aa0ab;
+    --line:#e0edf1; --line2:#eef6f9;
+    --accent:#0891b2; --accent-ink:#0b6f86; --accent-soft:#dcf1f6;
+    --gold:#e08b0a; --gold-soft:#fbeecf; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(10,30,40,.05),0 1px 3px rgba(10,30,40,.08);
+    --shadow:0 4px 8px -2px rgba(10,30,40,.08),0 2px 4px -2px rgba(10,30,40,.05);
+    --shadow-lg:0 16px 32px -10px rgba(10,30,40,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#22c3e6); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  @media(max-width:820px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  .shot{border-radius:11px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; background:var(--surface); box-shadow:var(--shadow-sm)}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#e9f6fa; border:1px solid #cfeaf1; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#eef8fb !important; border-color:#cfeaf1; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(6,20,26,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#c2e4ee; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    .shot:hover img{transform:none}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">⚡</span> RELOADIAN <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">⚡ Early Access · Developer &amp; Market Analysis</span>
+    <h1>RELOADIAN —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">한국 게임사 <b>Bucketplay(버킷플레이)</b>의 신작 「RELOADIAN(리로디안)」 — 전설의 무기를 조합해 혼돈의 우주에 질서를 되찾는 <b>고속 액션 로그라이크</b>. 솔로 또는 <b>최대 3인 온라인 협동</b>, 거대 보스를 두고 경쟁·협동하는 <b>PvPvE 배틀 아레나</b>이자 <b>PC·PS5·Xbox 크로스플랫폼</b> 타이틀. 2026년 6월 <b>앞서 해보기(Early Access)로 출시된</b> 게임에 대한 개발사·게임·시장성 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>액션 로그라이크 (로그바니아)</b></span>
+      <span class="chip">상태 <b>Early Access (2026.06.18)</b></span>
+      <span class="chip">플랫폼 <b>PC · PS5 · Xbox</b></span>
+      <span class="chip">협동 <b>최대 3인 온라인</b></span>
+      <span class="chip">가격 <b>$9.99</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="RELOADIAN 대표 이미지" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/bffffdad8ab315fcae82de2fba4d3c73e75dfaec/ss_bffffdad8ab315fcae82de2fba4d3c73e75dfaec.1920x1080.jpg?t=1781809813">
+    </div>
+    <div class="figcap">▲ 「RELOADIAN」 인게임 화면 (출처: Steam 공식) · 전체 스크린샷·트레일러는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>Bucketplay(버킷플레이)</b>는 2015년 설립된 한국 게임 개발사로, 앞서 해보기(Early Access)로 출시한 신작 <span class="hg">「RELOADIAN(리로디안)」</span>을 개발·자체 퍼블리싱합니다. 게임은 <b>고속 근·원거리 전투를 중심으로 한 액션 로그라이크</b>로, 매 판마다 <b>전설의 무기·‘코어(Core)’·코덱스(Codex) 업그레이드</b>를 조합해 새로운 빌드를 만들어 나가는 리플레이성이 핵심입니다. 개발사는 이를 <b>‘로그바니아 배틀 아레나(Roguevania Battle Arena)’</b>로 규정하며, 거대 보스를 두고 전리품을 <b>경쟁하면서 협동하는 PvPvE</b> 구조를 특징으로 내세웁니다.</p>
+      <p style="margin-bottom:0">솔로 또는 <b>최대 3인 온라인 협동</b>을 지원하고, <b>PC·PS5·Xbox 크로스플랫폼 플레이</b>를 지향하는 등 <b>멀티플랫폼 라이브 설계</b>가 두드러집니다. Bucketplay는 <b>2002년 국내 최초급 3D 엔진 상용화</b>에 뿌리를 둔 약 25인 규모의 검증된 개발사(My Little Paradise·Swing Dunk·Metaball 등)로, <span class="hl">개발 역량·멀티플랫폼 대응력이 강점</span>입니다. 다만 2026년 6월 EA 출시 직후 <b>Steam 초기 평가가 ‘복합적(Mixed)’</b>으로, <b>초반 완성도·리텐션에 대한 시장 검증은 진행 중</b>이라는 점이 관전 포인트입니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n">3인</div><div class="l">온라인 협동(Co-op)</div></div>
+      <div class="kpi"><div class="n o">PvPvE</div><div class="l">경쟁+협동 아레나</div></div>
+      <div class="kpi"><div class="n g">3플랫폼</div><div class="l">PC·PS5·Xbox 크로스</div></div>
+      <div class="kpi"><div class="n">$9.99</div><div class="l">앞서 해보기 가격</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>차별화 훅</b></td><td>로그바니아 + PvPvE 배틀 아레나 + 무기/코어 조합 빌드</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>개발사 역량</b></td><td>Bucketplay 10년+·3D엔진 뿌리·다수 상용화 이력</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>멀티플랫폼·협동</b></td><td>3인 온라인 협동·PC/PS5/Xbox 크로스플레이</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>초기 시장 반응</b></td><td>EA 출시 직후 Steam ‘복합적(Mixed)’ 평가</td><td><span class="pill pl-mid">주의</span></td></tr>
+          <tr><td><b>콘텐츠 볼륨</b></td><td>앞서 해보기 초기 — 캐릭터·스테이지·보스 확장 예정</td><td><span class="pill pl-mid">확장 대기</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>견고한 개발사·멀티플랫폼 vs 초기 리뷰 혼조</td><td><span class="pill pl-cond">조건부 관찰</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>앞서 해보기(Early Access)</b> 단계로, 콘텐츠·밸런스가 계속 확장·개선됩니다(예정 기간 6~12개월). 초기 평가는 EA 특성상 변동성이 크므로, <b>업데이트 로드맵 이행·리뷰 추이·콘솔 정식 출시</b>를 함께 추적하는 것이 바람직합니다. 본 리포트는 Steam 공식 정보·매체 자료 기반 분석입니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Bucketplay</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>Bucketplay Inc. (버킷플레이 · 대한민국)</td></tr>
+            <tr><th>설립·소재</th><td>2015년 · 경기 부천</td></tr>
+            <tr><th>규모</th><td>약 25인 · 대표 현호진</td></tr>
+            <tr><th>뿌리</th><td>2002년 국내 최초급 3D 게임엔진 상용화 팀에 기반</td></tr>
+            <tr><th>대표작</th><td>My Little Paradise(2019, 500만 DL) · Swing Dunk(2021) · Metaball(2024)</td></tr>
+            <tr><th>플랫폼 경험</th><td>PC · 모바일 · 콘솔(PlayStation·Xbox)</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ 수치·이력은 공개 매체(인디게임닷컴 등) 및 Steam 정보 기준입니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">Bucketplay는 <b>3D 엔진 기술에 뿌리를 둔 10년 차 개발사</b>로, 모바일 히트작(My Little Paradise 500만 DL)부터 물리 기반 스포츠(Swing Dunk)·멀티플레이 배틀(Metaball)까지 <b>다양한 장르·플랫폼을 상용화</b>한 트랙레코드를 갖췄습니다.</p>
+          <ul class="clean">
+            <li><b>멀티플랫폼 상용화 경험</b> — PC·모바일·PS·Xbox 전반</li>
+            <li>PS5 <b>오픈 베타(2025.12)</b> 선공개 — 사전 검증·화제몰이</li>
+            <li>Steam <b>넥스트 페스트</b> 참가 — 글로벌 노출 확보</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘기술·멀티플랫폼 역량을 갖춘 중견 인디’. 관건은 축적된 개발력을 <b>라이브 로그라이크의 콘텐츠 볼륨·밸런스·리텐션</b>으로 전환하고, EA 초기 평가를 정식 출시까지 끌어올리는 실행력입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — RELOADIAN</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/87c79feb4a81ed9d47a03646cd0775dae6c4ec8c/header.jpg?t=1781809813'); background-size:contain; background-repeat:no-repeat; background-position:center; background-color:#08222b"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">액션 로그라이크</span><span class="tag">로그바니아</span><span class="tag">온라인 협동</span><span class="tag">PvPvE</span><span class="tag">SF·핵앤슬래시</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">혼돈에 빠진 <b>SF 우주</b>를 무대로, 보스를 처치해 <b>전설의 무기·능력</b>을 해금하고 매 판 새로운 빌드를 구성하는 고속 액션 로그라이크. <b>대시·타격·스킬 타이밍</b> 중심의 움직임 전투가 핵심입니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0">거대 보스를 두고 <b>전리품을 경쟁하며 협동</b>하는 PvPvE, 훅체인·드론·힐링완드 등 <b>보조 도구</b>와 코어·코덱스 조합으로 <b>매 런 다른 플레이스타일</b>을 만듭니다. 솔로 및 최대 3인 온라인 협동을 지원합니다.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>액션 · 인디 · 앞서 해보기 (로그라이크·로그바니아)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/3125690/RELOADIAN/" target="_blank" rel="noopener">Steam</a>, Windows) · PS5 · Xbox</td></tr>
+            <tr><th>출시</th><td>2026.06.18 (Early Access · 6~12개월 예정)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>Bucketplay Inc. (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>보스 처치 → 전설 무기·코어·코덱스 조합 → 빌드 실험 반복</td></tr>
+            <tr><th>멀티플레이</th><td>솔로 · 최대 3인 온라인 협동 · PvPvE · 크로스플레이</td></tr>
+            <tr><th>가격</th><td>$9.99 (EA 기간 접근성 가격)</td></tr>
+            <tr><th>지원 언어</th><td>한국어·영어·일본어·중국어(간체/번체)·프랑스·독일·스페인·포르투갈(브라질)·폴란드·러시아 등 12개</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>초기 반응 관찰</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px"><b>2026년 6월 EA 출시</b> 이후 Steam 이용자 평가는 현재 <b>‘복합적(Mixed)’</b> 구간(초기 리뷰 소수)입니다. 로그라이크·협동·크로스플레이 등 <b>야심 찬 설계</b>에 대한 기대와, EA 초기 <b>콘텐츠 볼륨·밸런스·최적화</b>에 대한 지적이 공존합니다.</p>
+          <ul class="clean a">
+            <li>강점 — <b>고속 전투·빌드 다양성·협동/크로스플레이</b></li>
+            <li>과제 — EA 초기 <b>콘텐츠량·난이도 커브·안정성</b></li>
+            <li>변수 — <b>업데이트 이행·콘솔 정식 출시</b> 전환</li>
+          </ul>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>선행지표 권장</b> — EA 특성상 <b>리뷰 추이·동시접속·업데이트 주기·콘솔 출시 반응</b>을 추적하면 정식 출시 흥행을 가늠하기 좋습니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>공식 스크린샷</div>
+    <div class="gallery">
+      <div class="shot"><img loading="lazy" alt="RELOADIAN 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/205159fc970fa941c6b82a1c0025371219425ea0/ss_205159fc970fa941c6b82a1c0025371219425ea0.1920x1080.jpg?t=1781809813"></div>
+      <div class="shot"><img loading="lazy" alt="RELOADIAN 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/6a45d787305cd32f596455d60c7b7ec0ac6923f1/ss_6a45d787305cd32f596455d60c7b7ec0ac6923f1.1920x1080.jpg?t=1781809813"></div>
+      <div class="shot"><img loading="lazy" alt="RELOADIAN 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/284c10c1b8f83aa920c70fd54ad1dd501c6a5eb9/ss_284c10c1b8f83aa920c70fd54ad1dd501c6a5eb9.1920x1080.jpg?t=1781809813"></div>
+      <div class="shot"><img loading="lazy" alt="RELOADIAN 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/4dd6d7feb27689cdb8e574da15afd4bc1e7e9c48/ss_4dd6d7feb27689cdb8e574da15afd4bc1e7e9c48.1920x1080.jpg?t=1781809813"></div>
+      <div class="shot"><img loading="lazy" alt="RELOADIAN 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/44d2ea5217430a770eab169220c1ff9a3454811e/ss_44d2ea5217430a770eab169220c1ff9a3454811e.1920x1080.jpg?t=1781809813"></div>
+      <div class="shot"><img loading="lazy" alt="RELOADIAN 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125690/64925e3e1d68f94a41df63e6f3209592c0319336/ss_64925e3e1d68f94a41df63e6f3209592c0319336.1920x1080.jpg?t=1781809813"></div>
+    </div>
+    <div class="cap" style="margin-top:12px">▲ 「RELOADIAN」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/3125690/RELOADIAN/" target="_blank" rel="noopener">Steam 상점에서 전체 보기 →</a></div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 액션 로그라이크 · 협동</h2></div>
+    <p class="lead"><span class="hl">인디의 최대 흥행 장르 중 하나인 로그라이크</span> × <span class="hl">협동·크로스플레이 라이브</span> — 상방은 크지만 경쟁·콘텐츠 볼륨 요구가 높은 레드오션.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>액션 로그라이크</b>는 <b>Hades·Vampire Survivors·Risk of Rain</b> 등 인디 초대박이 나온 핵심 장르로, <b>리플레이성·빌드 다양성·손맛</b>이 성패를 좌우합니다. RELOADIAN은 여기에 <b>PvPvE·3인 협동·크로스플레이</b>를 얹어 <b>‘소셜 로그라이크’</b>로 차별화합니다.</p>
+          <ul class="clean g">
+            <li>빌드 조합·리플레이 → <b>높은 플레이타임·스트리밍성</b></li>
+            <li>협동·크로스플레이 → <b>친구 초대 바이럴·리텐션</b></li>
+            <li>$9.99 접근성 가격 → <b>초기 진입장벽 완화</b></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">협동 로그라이크는 매력적 훅이지만, <b>로그라이크는 콘텐츠 볼륨·밸런스가 곧 수명</b>이고 경쟁작이 매우 많습니다. 온라인 협동·크로스플레이는 <b>서버·매칭·안정성</b> 부담도 큽니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 로그라이크는 <b>‘손맛·빌드 다양성·콘텐츠 볼륨·업데이트’</b>가 성패를 좌우합니다. RELOADIAN은 훅·멀티플랫폼은 확보, 관건은 <b>EA 로드맵 이행·초기 평가 반등·라이브 운영</b>입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>검증된 개발사(10년+·3D엔진·멀티플랫폼 상용화)</li>
+        <li>뚜렷한 훅(로그바니아·PvPvE·무기/코어 조합)</li>
+        <li>3인 협동·PC/PS5/Xbox 크로스플레이 설계</li>
+        <li>12개 언어·$9.99 접근성으로 넓은 초기 저변</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>EA 출시 직후 Steam ‘복합적(Mixed)’ 평가</li>
+        <li>로그라이크 특유의 콘텐츠 볼륨·밸런스 부담</li>
+        <li>온라인 협동·크로스플레이의 서버·안정성 비용</li>
+        <li>정식 출시·수익모델(라이브) 검증 미완</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>PS5·Xbox 정식 출시로 콘솔 신규 유저 확보</li>
+        <li>시즌·코스메틱 등 라이브서비스 수익화</li>
+        <li>협동 바이럴·스트리머 픽업 확산</li>
+        <li>추가 캐릭터·무기·스테이지·보스 업데이트</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>로그라이크·협동 레드오션의 치열한 경쟁</li>
+        <li>초기 평가 고착 시 동접·리텐션 하락</li>
+        <li>라이브 운영 실패 시 유지비 부담</li>
+        <li>환율·플랫폼 수수료 등 외부 변수</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>RELOADIAN은 <span class="hl">검증된 개발사와 뚜렷한 멀티플랫폼·협동 훅을 갖췄으나, EA 출시 초기 평가가 혼조</span>인 ‘실행 검증 단계’ 타이틀입니다. 투자·퍼블리싱 관점에서는 <b>개발사 역량과 로드맵 이행에 대한 신뢰 + 콘솔·라이브 상방</b>을 보되, <b>초기 리뷰 반등과 콘텐츠 볼륨 확보</b>를 확인하는 조건부 접근이 합리적입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
+          <ul class="clean g">
+            <li>10년+ 개발사·멀티플랫폼 상용화 트랙레코드</li>
+            <li>협동·크로스플레이로 바이럴·리텐션 상방</li>
+            <li>콘솔(PS5/Xbox) 정식 출시로 시장 확대</li>
+            <li>시즌·코스메틱 라이브 수익화 여지</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>EA 리뷰 추이·동시접속·리텐션</b>(핵심 지표)</li>
+            <li>업데이트 로드맵 이행 속도·콘텐츠 볼륨</li>
+            <li><b>서버·매칭·크로스플레이 안정성</b> 비용</li>
+            <li>콘솔 정식 출시 일정·플랫폼 심사</li>
+            <li>수익모델(라이브) 설계·과금 수용도</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘조건부 관찰’</b>. 개발사 역량·멀티플랫폼 설계는 뚜렷한 강점이나, EA 초기 평가가 혼조라 <b>리뷰 반등·콘텐츠 볼륨·콘솔 정식 출시</b>를 확인한 뒤 판단하는 것이 바람직합니다. 로드맵 이행과 초기 평가 개선이 확인되면 <b>콘솔·라이브 확장 관점</b>에서 매력이 커집니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 설계 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 액션 로그라이크 · 협동</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">초대박</div><div class="l">인디 핵심 장르</div></div>
+          <div class="kpi"><div class="n o">협동</div><div class="l">바이럴·리텐션 동력</div></div>
+          <div class="kpi"><div class="n g">$10~20</div><div class="l">인디 로그라이크 가격대</div></div>
+          <div class="kpi"><div class="n">볼륨</div><div class="l">콘텐츠=수명</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 상방 큰 핵심 장르이나 콘텐츠 볼륨·경쟁이 관건.</b> 로그라이크는 <b>Hades·Vampire Survivors</b>처럼 초대박이 나오지만, 그만큼 신작이 쏟아지는 레드오션입니다. RELOADIAN은 <b>협동·PvPvE·크로스플레이</b>라는 소셜 차별화로 승부하며, <b>친구 초대 바이럴</b>이 강점이 될 수 있습니다.</p>
+        <div class="note gold" style="font-size:13px"><b>RELOADIAN의 위치</b> — ‘소셜 로그라이크(협동·PvPvE·크로스플레이)’라는 <b>또렷한 차별화</b>. 관건은 이를 <b>콘텐츠 볼륨·밸런스·라이브 운영</b>으로 뒷받침해 초기 평가를 반등시키는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘검증된 개발사 + 멀티플랫폼 협동 설계 + 상방 큰 로그라이크 장르’의 결합</b>입니다. Bucketplay의 개발·상용화 역량과 크로스플레이 설계는 강한 자산이나, 로그라이크는 <b>콘텐츠 볼륨·업데이트</b>가 곧 수명이고 EA 초기 평가가 혼조라, <b>시장성은 ‘역량은 검증, 실행은 진행 중’의 조건부형</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>역량 검증형(상방 있음)</b> — 개발사·멀티플랫폼·협동 훅</li>
+        <li>관건 — <b>초기 평가 반등·콘텐츠 볼륨·콘솔/라이브 확장</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔 정식 출시 + 시즌·코스메틱 라이브서비스’</b><br>협동·크로스플레이 로그라이크는 <b>PS5·Xbox 정식 출시</b>로 신규 유저·매출을 크게 넓힐 수 있고(이미 콘솔 대응 설계), 동시에 <b>시즌·배틀패스·코스메틱</b> 등 라이브서비스 수익화가 자연스러운 구조입니다. (초기 평가 반등을 전제로) 1순위 미개척 수익원은 <b>콘솔 동시 확장 + 코스메틱/시즌 라이브</b>이며, 2순위는 <b>추가 캐릭터·무기·스테이지·보스 DLC 및 협동 콘텐츠</b> 확장, 3순위는 <b>e스포츠·랭킹/토너먼트 이벤트</b>로 커뮤니티를 묶는 것입니다. 단, 현재는 <b>‘EA 콘텐츠 볼륨과 초기 평가 개선(최적화·밸런스)’이 최우선</b>입니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 설계 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎮 설계</p>
+        <ul class="clean">
+          <li><b>SF·핵앤슬래시 아트</b>와 고속 이동전투 — 스트리밍·클립 소구</li>
+          <li><b>PvPvE 배틀 아레나</b> — 경쟁+협동의 긴장감 있는 소셜 훅</li>
+          <li>PC/PS5/Xbox <b>크로스플레이</b>로 유저 풀 통합·매칭 확보</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>전설 무기 + 코어 + 코덱스</b> 조합으로 매 런 빌드 변화</li>
+          <li>훅체인·드론·힐링완드 등 <b>보조 도구</b>로 전술 폭 확장</li>
+          <li>과제 — 로그라이크 특유의 <b>콘텐츠 볼륨·밸런스·안정성</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 상방 큰 로그라이크 장르에 <span class="hl">검증된 개발사·협동/PvPvE·크로스플레이</span>를 얹은 야심작입니다. 다만 <b>EA 초기·평가 혼조·레드오션</b>인 만큼, 리뷰 반등·콘텐츠 볼륨·라이브 운영과 콘솔 정식 출시 실행력이 시장성의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">4건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/3125690/RELOADIAN/" target="_blank" rel="noopener">Steam — RELOADIAN (리로디안)</a>
+          <a href="https://indiegame.com/en/archives/20133" target="_blank" rel="noopener">인디게임닷컴 — Bucketplay ‘Reloadian’ OBT·넥스트 페스트</a>
+          <a href="https://www.inven.co.kr/webzine/news/?news=313816" target="_blank" rel="noopener">인벤 — 스팀 넥스트 페스트 한국 게임 출전작</a>
+          <a href="https://store.steampowered.com/app/3125690/RELOADIAN/?l=koreana" target="_blank" rel="noopener">Steam — 리로디안 (한국어 상점)</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © Bucketplay Inc. / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>앞서 해보기(Early Access, 2026.06.18)</b> 단계로 콘텐츠·밸런스·평가가 계속 변동됩니다. 초기 리뷰·수치는 시점에 따라 달라질 수 있으므로 실제 투자 검토 시 최신 리뷰 추이·동시접속·업데이트 로드맵·콘솔 출시 일정 확인이 필요합니다. · 기준일 2026.08.13</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.gallery .shot img, .hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>

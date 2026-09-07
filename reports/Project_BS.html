@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project BS · DDish — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#f8f0ee; --surface2:#fcf7f6;
+    --ink:#1c1413; --ink2:#2f2321; --muted:#6b5450; --dim:#a9928d;
+    --line:#f0e2df; --line2:#f7edeb;
+    --accent:#b23a48; --accent-ink:#8f2c39; --accent-soft:#f7e3e5;
+    --gold:#c2891a; --gold-soft:#f8ecd0; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(40,15,15,.05),0 1px 3px rgba(40,15,15,.08);
+    --shadow:0 4px 8px -2px rgba(40,15,15,.08),0 2px 4px -2px rgba(40,15,15,.05);
+    --shadow-lg:0 16px 32px -10px rgba(40,15,15,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#d1596a); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  @media(max-width:820px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  .shot{border-radius:11px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; background:var(--surface); box-shadow:var(--shadow-sm)}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#fbeef0; border:1px solid #f2d6da; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#fcf0f2 !important; border-color:#f2d6da; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(28,8,10,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#e6c6ca; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    .shot:hover img{transform:none}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">🐉</span> Project BS <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">🐉 Pre-Launch · Developer &amp; Market Analysis</span>
+    <h1>Project BS —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">인디 개발사 <b>DDish</b>의 신작 「Project BS」 — 드래고뉴트 소녀 <b>시에나(Sienna)</b>가 아름답지만 위험한 <b>정령의 섬</b>에서 강적·라이벌과 싸우며 정령의 힘을 되찾는 <b>3D 판타지 소울라이크 액션 RPG</b>. 애니메이션풍 아트와 <b>속성 스킬·보스 러시</b> 전투를 내세운 <b>출시 전(Pre-Launch)</b> 타이틀에 대한 개발사·게임·시장성 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>소울라이크 액션 RPG</b></span>
+      <span class="chip">상태 <b>Coming Soon (출시일 미정)</b></span>
+      <span class="chip">플랫폼 <b>PC (Steam)</b></span>
+      <span class="chip">언어 <b>한국어·영어·일본어</b></span>
+      <span class="chip">특징 <b>속성 스킬·보스 러시</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="Project BS 대표 이미지" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_25568aa4cd0792b83855b97fd1676cf00d9da78b.1920x1080.jpg?t=1749301066">
+    </div>
+    <div class="figcap">▲ 「Project BS」 인게임 화면 (출처: Steam 공식) · 전체 스크린샷·트레일러는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>DDish</b>는 미출시(Coming Soon) 신작 <span class="hg">「Project BS」</span>를 개발·자체 퍼블리싱하는 인디 개발사입니다. 게임은 <b>드래고뉴트(용인族) 소녀 시에나</b>가 <b>‘정령의 섬 — 아름답지만 위험하고 신비로운 곳’</b>에서 정령의 힘을 모아 균형을 되찾고, 같은 목표를 노리는 <b>강적·라이벌들과 겨루는 3D 소울라이크 액션 RPG</b>입니다. 정령의 힘으로 얻는 <b>속성 스킬을 커스터마이즈·강화</b>해 전투에서 우위를 점하는 것이 핵심이며, <b>보스 러시</b> 성격의 도전적 전투를 지향합니다.</p>
+      <p style="margin-bottom:0">비주얼은 <b>스타일리시한 애니메이션풍 3D</b>로, 3인칭 전투에 초점을 맞춘 <b>싱글플레이·풀 컨트롤러 지원</b> 구성입니다. 현재 <span class="hl">Steam·itch.io에 상점/개발 페이지가 공개된 미출시 단계</span>로, 출시일·가격·판매·리뷰 등 상업 지표는 아직 없습니다. <b>또렷한 소울라이크 훅과 매력적인 주인공 IP(시에나)</b>가 강점이나, <b>개발사 정보가 제한적이고 소울라이크는 완성도 요구가 매우 높은 하드코어 장르</b>라는 점에서 검증 과제가 남아 있습니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n">3D</div><div class="l">소울라이크 액션 RPG</div></div>
+      <div class="kpi"><div class="n o">속성 스킬</div><div class="l">커스터마이즈·강화</div></div>
+      <div class="kpi"><div class="n g">보스 러시</div><div class="l">도전적 전투</div></div>
+      <div class="kpi"><div class="n">3개</div><div class="l">언어(한·영·일)</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>차별화 훅</b></td><td>드래고뉴트 주인공·정령의 섬 세계관 + 속성 스킬·보스 러시</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>아트·IP</b></td><td>애니메이션풍 3D·매력적 주인공(시에나) — 캐릭터 소구</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>장르 적합성</b></td><td>소울라이크 코어 팬덤 존재하나 완성도 요구 매우 높음</td><td><span class="pill pl-mid">검증 필요</span></td></tr>
+          <tr><td><b>개발사 검증</b></td><td>DDish 트랙레코드·팀 규모 등 공개 정보 제한적</td><td><span class="pill pl-mid">정보 부족</span></td></tr>
+          <tr><td><b>상업 검증</b></td><td>미출시 — 판매·리뷰 부재, 위시리스트·데모가 선행지표</td><td><span class="pill pl-mid">미검증</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>또렷한 훅·IP vs 하드코어 장르·개발사 정보 부족·미출시</td><td><span class="pill pl-cond">관찰(정보 확인 필요)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>미출시(Coming Soon)</b>로 출시일·가격·판매·리뷰 등 지표가 아직 없으며, 개발사(DDish) 상세 정보도 제한적입니다. 본 리포트는 Steam·itch.io 공식 정보와 장르 시장 분석 기반의 <b>출시 전 전망</b>이며, 실제 검토 시 개발 진척·데모·트레일러 확인이 필요합니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — DDish</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>DDish (인디)</td></tr>
+            <tr><th>성격</th><td>인디 게임 개발 · 자체 퍼블리싱</td></tr>
+            <tr><th>대표작</th><td>Project BS (미출시 · 개발 중)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Steam) · itch.io(개발 페이지)</td></tr>
+            <tr><th>노출 경로</th><td>‘Indie Games from Korea’ 큐레이터 · itch.io</td></tr>
+            <tr><th>공개 정보</th><td>팀 규모·소재지·이력 등 상세 프로필 제한적</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ DDish는 현재 공개된 배경 정보가 제한적입니다. Steam·itch.io 페이지 외 상세 이력 확인이 필요합니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">DDish는 <b>자체 개발·퍼블리싱</b> 구조의 인디로 판단되며, 데뷔 프로젝트에서 <b>소울라이크 액션 RPG라는 뚜렷한 장르 훅 + 애니메이션풍 3D 아트</b>를 전면에 내세웠습니다. itch.io에 <b>트레일러·스크린샷</b>을 공개해 개발 방향성을 노출하고 있습니다.</p>
+          <ul class="clean">
+            <li><b>또렷한 장르 정체성</b> — ‘판타지 소울라이크 액션’</li>
+            <li>매력적 <b>주인공 IP(드래고뉴트 시에나)</b> 중심 설계</li>
+            <li>Steam·itch.io <b>이중 노출</b>로 초기 관심 확보 시도</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘캐릭터·아트가 강한 인디 소울라이크’. 관건은 소울라이크가 요구하는 <b>전투 손맛·밸런스·완성도</b>를 소규모 팀이 확보하고, <b>개발사 트랙레코드·개발 진척</b>을 투명하게 검증받는 것입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Project BS</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/header.jpg?t=1749301066'); background-size:contain; background-repeat:no-repeat; background-position:center; background-color:#1a0e10"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">소울라이크</span><span class="tag">액션 RPG</span><span class="tag">3D</span><span class="tag">판타지·애니풍</span><span class="tag">보스 러시</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">드래고뉴트 소녀 <b>시에나</b>가 <b>정령의 섬</b>에서 정령의 힘을 모아 균형을 되찾는 3D 소울라이크 액션 RPG. 같은 목표를 노리는 <b>라이벌·강적</b>과의 대결이 서사의 축입니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0"><b>정령의 힘으로 얻는 속성 스킬</b>을 커스터마이즈·강화해 전투를 유리하게 풀어가며, <b>보스 러시</b> 성격의 도전적 전투를 지향합니다. 3인칭·풀 컨트롤러 지원의 싱글플레이 구성입니다.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>액션 · 어드벤처 · 인디 · RPG (소울라이크)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/2087980/Project_BS/" target="_blank" rel="noopener">Steam</a>, Windows)</td></tr>
+            <tr><th>출시</th><td>미정 (Coming Soon · 개발 중)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>DDish (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>탐험·전투 → 정령의 힘 획득 → 속성 스킬 강화 → 보스 도전</td></tr>
+            <tr><th>주인공</th><td>드래고뉴트 소녀 시에나(Sienna)</td></tr>
+            <tr><th>지원 언어</th><td>한국어·영어·일본어 — 자막·인터페이스</td></tr>
+            <tr><th>기능</th><td>싱글플레이 · Steam 도전과제 · 풀 컨트롤러 지원 · 패밀리 셰어링</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>출시 전 관찰</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px">아직 <b>정식 출시 전</b>이라 판매·리뷰 지표는 없습니다. 공개된 스크린샷·트레일러 기준으로 <b>애니메이션풍 3D 아트와 속성 스킬 기반 전투</b>가 시각적 훅으로 부각됩니다. 다만 소울라이크는 <b>전투 손맛·타격감·밸런스</b>가 평가를 좌우합니다.</p>
+          <ul class="clean g">
+            <li>애니풍 3D 아트·주인공 IP → <b>스크린샷·클립 소구</b></li>
+            <li>속성 스킬 커스터마이즈 → <b>빌드·전략 다양성</b></li>
+            <li>또렷한 소울라이크 정체성 → <b>코어 팬덤 타겟</b></li>
+          </ul>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>선행지표 권장</b> — 출시 전망을 위해 <b>데모·트레일러 반응·위시리스트·전투 시연 영상의 손맛 평가</b>를 추적하면 좋습니다(현재 공개 수치 제한적).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>공식 스크린샷</div>
+    <div class="gallery">
+      <div class="shot"><img loading="lazy" alt="Project BS 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_4b003c8e7e0c13259b648e608e2689a91970a41f.1920x1080.jpg?t=1749301066"></div>
+      <div class="shot"><img loading="lazy" alt="Project BS 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_0141a8d03d4e0d783c02bfb9ceb99ab4094136ee.1920x1080.jpg?t=1749301066"></div>
+      <div class="shot"><img loading="lazy" alt="Project BS 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_0f5b60d13e53952264ffda1e4958f217ccc264f4.1920x1080.jpg?t=1749301066"></div>
+      <div class="shot"><img loading="lazy" alt="Project BS 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_a43218c16e8054397bebc176dbffd39314f1702b.1920x1080.jpg?t=1749301066"></div>
+      <div class="shot"><img loading="lazy" alt="Project BS 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_c11655f4dfa2259d862496f3ba8f1c60d35b3761.1920x1080.jpg?t=1749301066"></div>
+      <div class="shot"><img loading="lazy" alt="Project BS 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2087980/ss_dde789b976d069742ee363d47ccc28d82d316393.1920x1080.jpg?t=1749301066"></div>
+    </div>
+    <div class="cap" style="margin-top:12px">▲ 「Project BS」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/2087980/Project_BS/" target="_blank" rel="noopener">Steam 상점에서 전체 보기 →</a></div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 소울라이크 액션 RPG</h2></div>
+    <p class="lead"><span class="hl">충성도 높은 코어 팬덤의 소울라이크</span> × <span class="hl">애니풍 캐릭터 액션</span> — 상방은 크지만 완성도 문턱이 가장 높은 하드코어 장르.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>소울라이크</b>는 <b>Elden Ring</b>의 대성공 이후 인디까지 확산된 인기 장르로, <b>Lies of P·Nine Sols</b> 등 아시아권 인디·중견의 성공 사례도 뚜렷합니다. 코어 팬덤의 <b>충성도·구매력·스트리밍성</b>이 강점입니다. Project BS는 여기에 <b>애니풍 드래고뉴트 주인공·속성 스킬</b>로 차별화합니다.</p>
+          <ul class="clean g">
+            <li>도전적 전투·보스 → <b>스트리밍·클립</b> 확산성</li>
+            <li>애니풍 캐릭터 → <b>비(非)하드코어층까지 소구</b></li>
+            <li>속성 스킬 빌드 → <b>전략·리플레이 다양성</b></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">소울라이크는 매력적이지만 <b>완성도 문턱이 가장 높은 장르</b>입니다. <b>타격감·히트박스·보스 패턴·밸런스</b>가 조금만 어긋나도 코어 팬덤의 냉정한 평가를 받고, 대작·인디 경쟁도 치열합니다. 소규모 팀에는 리스크가 큽니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 소울라이크는 <b>‘전투 손맛·보스 설계·밸런스·완성도’</b>가 성패를 좌우합니다. 훅·아트·IP는 확보, 관건은 <b>전투 완성도 검증(데모·시연)·개발사 역량·개발 진척</b>입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>또렷한 장르 훅(판타지 소울라이크 액션 RPG)</li>
+        <li>애니메이션풍 3D 아트·매력적 주인공 IP(시에나)</li>
+        <li>속성 스킬 커스터마이즈로 빌드·전략 다양성</li>
+        <li>한·영·일 지원으로 아시아 코어 시장 타겟</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>미출시 — 상업성(판매·리뷰·위시리스트) 미검증</li>
+        <li>개발사(DDish) 트랙레코드·팀 규모 정보 부족</li>
+        <li>소울라이크의 매우 높은 완성도·밸런스 문턱</li>
+        <li>전투 손맛·보스 설계 등 핵심 검증 자료 제한적</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>애니풍 소울라이크의 아시아·글로벌 수요</li>
+        <li>주인공(시에나) IP·굿즈·미디어 확장</li>
+        <li>데모·트레일러로 코어 팬덤 사전 결집</li>
+        <li>콘솔(PS/Xbox/Switch) 이식 여지</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>대작·인디 소울라이크와의 치열한 경쟁</li>
+        <li>전투 완성도 미흡 시 코어 팬덤의 냉정한 평가</li>
+        <li>소규모 팀의 개발 리스크·일정 불확실성</li>
+        <li>환율·플랫폼 수수료 등 외부 변수</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>Project BS는 <span class="hl">또렷한 소울라이크 훅과 매력적 아트·주인공 IP를 갖췄으나, 개발사 정보가 부족하고 상업적으로 미검증</span>인 ‘초기 관찰’ 단계 타이틀입니다. 투자·퍼블리싱 관점에서는 <b>전투 완성도(손맛·보스·밸런스)와 개발사 역량·진척을 실사로 확인</b>하는 것이 선결 과제이며, 이후 아트·IP의 상방을 저울질하는 접근이 합리적입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
+          <ul class="clean g">
+            <li>충성도·구매력 높은 소울라이크 코어 팬덤</li>
+            <li>애니풍 아트·주인공 IP의 시각적·확장 소구</li>
+            <li>속성 스킬 빌드로 전략·리플레이 다양성</li>
+            <li>아시아권 언어 지원·콘솔 이식 여지</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>개발사(DDish) 실체·팀 규모·트랙레코드</b>(최우선)</li>
+            <li><b>전투 손맛·보스 설계·밸런스</b> 시연 검증</li>
+            <li>데모·트레일러 반응·위시리스트·출시 일정</li>
+            <li>개발 진척·자금·완성 로드맵</li>
+            <li>콘텐츠 볼륨(맵·보스·엔드콘텐츠) 설계</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(정보 확인 필요)’</b>. 장르 훅·아트·IP는 매력적이나, <b>개발사 정보 부족·하드코어 장르·미출시</b>라는 불확실성이 큽니다. <b>개발사 실체 확인과 전투 완성도(데모·시연) 검증</b>을 선행한 뒤 판단하는 것이 바람직하며, 이 두 축이 확인되면 애니풍 소울라이크로서 상방을 재평가할 수 있습니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 소울라이크 액션 RPG</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">코어</div><div class="l">충성도 높은 팬덤</div></div>
+          <div class="kpi"><div class="n o">완성도</div><div class="l">문턱 가장 높음</div></div>
+          <div class="kpi"><div class="n g">$20~40</div><div class="l">인디 소울라이크 가격대</div></div>
+          <div class="kpi"><div class="n">보스</div><div class="l">스트리밍 확산</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 상방은 크지만 완성도 문턱이 가장 높은 하드코어 장르.</b> Elden Ring 이후 <b>Lies of P·Nine Sols</b> 등 아시아 인디·중견의 성공이 이어졌지만, 그만큼 <b>전투 완성도에 대한 코어 팬덤의 기준</b>이 냉정합니다. Project BS는 <b>애니풍 캐릭터·속성 스킬</b>로 차별화를 시도합니다.</p>
+        <div class="note gold" style="font-size:13px"><b>Project BS의 위치</b> — ‘애니풍 드래고뉴트 소울라이크 + 속성 스킬 빌드’라는 <b>또렷한 캐릭터 훅</b>. 관건은 이를 뒷받침할 <b>전투 손맛·보스 설계·밸런스·완성도</b>를 소규모 팀이 확보하는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘충성도 높은 소울라이크 팬덤 + 애니풍 캐릭터 IP + 속성 스킬 빌드’의 결합</b>입니다. 아트·주인공 IP·장르 훅은 매력적이나, 소울라이크는 <b>전투 완성도가 곧 평가</b>이고 개발사(DDish) 정보가 제한적이라, <b>시장성은 ‘훅은 매력적, 실행·개발사 검증은 미완’의 관찰형</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>훅 매력형(검증 대기)</b> — 아트·IP·장르 정체성은 강점</li>
+        <li>관건 — <b>개발사 실체·전투 완성도·데모·개발 진척</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔 이식 + 주인공(시에나) IP 확장’</b><br>애니풍 캐릭터가 강한 소울라이크는 <b>콘솔(PS5·Xbox·Switch) 이식</b>으로 코어 액션 수요가 큰 시장을 넓힐 수 있고, 매력적 주인공 <b>시에나 IP</b>를 아트북·굿즈·OST·캐릭터 미디어로 확장할 여지가 있습니다. (출시·완성도 확보를 전제로) 1순위 미개척 수익원은 <b>콘솔 이식 + 캐릭터 IP 상품화</b>이며, 2순위는 <b>추가 보스·스킬·난이도·엔드콘텐츠 DLC</b>로 코어 팬덤의 플레이타임을 늘리는 것, 3순위는 <b>아트북·OST 등 부가 판매</b>입니다. 단, 현재는 <b>‘전투 완성도 높은 출시(손맛·보스·밸런스)와 개발사 신뢰 확보’가 최우선</b>입니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>스타일리시한 애니메이션풍 3D·판타지 세계관</b> — 강한 시각 훅</li>
+          <li><b>드래고뉴트 주인공 시에나</b> — 캐릭터성으로 IP·굿즈 확장 여지</li>
+          <li>‘정령의 섬’ 세계관 — 아트·서사 확장의 토대</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>속성 스킬 커스터마이즈·강화</b> 중심의 빌드 전투</li>
+          <li><b>보스 러시</b>형 도전적 전투·3인칭 액션</li>
+          <li>과제 — 소울라이크 핵심인 <b>손맛·히트박스·보스·밸런스</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 충성도 높은 소울라이크 장르에 <span class="hl">애니풍 아트·매력적 주인공 IP·속성 스킬 빌드</span>를 얹은 훅이 또렷한 신작입니다. 다만 <b>미출시·개발사 정보 부족·완성도 문턱이 높은 하드코어 장르</b>인 만큼, 개발사 실체와 전투 완성도(데모·시연) 검증, 그리고 콘솔·IP 확장 실행력이 시장성의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">3건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/2087980/Project_BS/" target="_blank" rel="noopener">Steam — Project BS</a>
+          <a href="https://ddish.itch.io/project-bs" target="_blank" rel="noopener">itch.io — DDish, Project BS (개발 페이지)</a>
+          <a href="https://store.steampowered.com/app/2087980/Project_BS/?l=koreana" target="_blank" rel="noopener">Steam — Project BS (한국어 상점)</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © DDish / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>미출시(Coming Soon)</b>로 출시일·가격·판매·리뷰 등 상업 지표가 없어 콘셉트·장르 시장성 중심의 출시 전 전망입니다. 개발사(DDish) 상세 정보는 공개가 제한적이므로 실제 투자 검토 시 개발사 실체·개발 진척·데모·전투 완성도 확인이 필요합니다. · 기준일 2026.08.13</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.gallery .shot img, .hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>

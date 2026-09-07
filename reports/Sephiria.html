@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sephiria · TEAM HORAY — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#f3f2fb; --surface2:#faf9fe;
+    --ink:#16141f; --ink2:#2a2740; --muted:#57536e; --dim:#8b88a3;
+    --line:#e7e5f3; --line2:#f0eff8;
+    --accent:#6d5ae0; --accent-ink:#5140bf; --accent-soft:#eae7fb;
+    --gold:#0e9488; --gold-soft:#daf1ee; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(25,15,50,.05),0 1px 3px rgba(25,15,50,.08);
+    --shadow:0 4px 8px -2px rgba(25,15,50,.08),0 2px 4px -2px rgba(25,15,50,.05);
+    --shadow-lg:0 16px 32px -10px rgba(25,15,50,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#9d8cf0); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  /* compare bars */
+  .cmp{display:flex; flex-direction:column; gap:13px; padding:6px 2px 0}
+  .cmp-row{display:grid; grid-template-columns:120px 1fr 74px; align-items:center; gap:14px}
+  .cmp-name{font-size:13.5px; color:var(--ink2); font-weight:600}
+  .track{height:12px; background:var(--surface); border-radius:6px; overflow:hidden}
+  .fill{height:100%; border-radius:6px; background:linear-gradient(90deg,var(--accent),#9d8cf0)}
+  .cmp-val{font-size:13px; font-weight:800; text-align:right; color:var(--ink2)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#f4f2fc; border:1px solid #e6e2f7; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#f5f3fd !important; border-color:#e6e2f7; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(14,10,28,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#cfc7e6; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">🐰</span> Sephiria <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 성과·투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 성과·투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">⚔️ Post-Launch · Review &amp; Market Analysis</span>
+    <h1>Sephiria —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">한국 인디 스튜디오 <b>TEAM HORAY(팀호레이)</b>와 신작 「Sephiria(세피리아)」 — 「던그리드」 개발진이 만든 <b>탑다운 액션 로그라이트 RPG</b>. 토끼 마을을 지키기 위해 탑을 오르고, 아티팩트·석판 인벤토리를 조합해 악마 군단과 싸우는 <b>4인 코옵</b> 로그라이트에 대한 개발사·게임·시장성 중심 <b>출시 후(Post-Launch)</b> 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>액션 로그라이트 RPG</b></span>
+      <span class="chip">1.0 출시 <b>2026.07.31</b></span>
+      <span class="chip">가격 <b>$14.99</b></span>
+      <span class="chip">플랫폼 <b>PC · macOS</b></span>
+      <span class="chip">평가 <b>압도적으로 긍정적</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="Sephiria 대표 이미지" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2436940/cb7dc6f4ed2f0012eb557365966be9b69815f7ae/header.jpg?t=1786421771">
+    </div>
+    <div class="figcap">▲ 「Sephiria」 키 아트 (출처: Steam 공식) · 전체 스크린샷·트레일러는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>TEAM HORAY</b>는 2018년 히트작 「던그리드(Dungreed)」로 이름을 알린 <b>경기 용인 소재 4인 한국 인디 스튜디오</b>로, 두 번째 정식작 <span class="hg">「Sephiria」</span>를 2026년 7월 31일 정식(1.0) 출시했습니다(앞서 해보기 2025년 4월 시작). 플레이어는 파멸의 운명에 놓인 <b>토끼 마을(Bunnyville)</b>을 지키기 위해 탑의 심층을 탐험하고, <b>6종 무기·50+ 강화·10+ 보스·6개 챕터</b>를 돌파합니다. 시그니처는 <b>석판(Tablet) 인벤토리 시스템</b> — 도형·숫자 배치로 아티팩트 시너지를 짜는 <b>‘공간 퍼즐형 빌드 구성’</b>이 핵심 재미입니다.</p>
+      <p style="margin-bottom:0">최대 <b>4인 온라인 코옵</b>을 지원하며, 「던그리드」의 액세서리 시스템을 발전시킨 아티팩트 조합(Hades·Noita 영향)으로 깊이와 접근성을 동시에 잡았습니다. 출시 성적은 <span class="hl">Steam ‘압도적으로 긍정적’(영문 리뷰 97%), 최고 동시접속 34,000명으로 전작 던그리드를 상회</span> — <b>‘전작 팬덤 + 독창적 빌드 시스템’으로 검증된 인디 성공작</b>입니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n">압도적<br>긍정적</div><div class="l">Steam 종합 평가 (1.0)</div></div>
+      <div class="kpi"><div class="n g">97%</div><div class="l">영문 리뷰 긍정률</div></div>
+      <div class="kpi"><div class="n o">34,000</div><div class="l">최고 동시접속 (전작 상회)</div></div>
+      <div class="kpi"><div class="n">$14.99</div><div class="l">가격 (출시 40% 할인 $8.99)</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>개발사 역량</b></td><td>던그리드(2018) 성공 경험 + 4인 정예의 완성도 높은 두 번째 작품</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>유저 평가</b></td><td>압도적으로 긍정적 · 영문 97% · 종합 매우 긍정적(8천+ 리뷰)</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>상업 성과</b></td><td>최고 동접 34,000 — 전작 던그리드 초과 달성</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>독창성(빌드 시스템)</b></td><td>석판 인벤토리·공간 퍼즐형 아티팩트 시너지 — 차별화된 훅</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>리텐션·롱런</b></td><td>코옵·리플레이 강점 vs 소규모 팀의 업데이트 여력·페이스</td><td><span class="pill pl-mid">양호</span></td></tr>
+          <tr><td><b>IP·투자 매력도</b></td><td>검증된 팀·팬덤·판매력 vs 4인 소규모·라이브 운영 한계</td><td><span class="pill pl-good">우수(관찰)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 동접·리뷰 수치는 Steam 공식 표기 및 서드파티 집계 기준으로, 시점에 따라 변동될 수 있습니다. 본 리포트는 Steam 공식 정보와 공개 인터뷰·리뷰를 바탕으로 한 출시 직후 시점 분석입니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — TEAM HORAY (팀호레이)</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>TEAM HORAY (팀호레이)</td></tr>
+            <tr><th>소재지</th><td>대한민국 경기 용인</td></tr>
+            <tr><th>규모</th><td>4인 인디 팀</td></tr>
+            <tr><th>리더</th><td>안태현 (Ahn Tae-hyun)</td></tr>
+            <tr><th>대표작</th><td>던그리드(Dungreed, 2018) · Sephiria(2026)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Steam) · macOS</td></tr>
+            <tr><th>퍼블리싱</th><td>자체 (TEAM HORAY)</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징 & 스토리</div>
+        <div class="card">
+          <p style="font-size:14.5px">팀호레이는 리더 <b>안태현</b>이 입대 전 포트폴리오로 만든 <b>「던그리드」(2018)</b>가 상업적으로 크게 성공하며 친구들이 합류해 꾸려진 팀입니다. 던그리드 이후 로그라이트를 접으려 전략 게임 「Fairy Lights」를 시도했으나 접고, <b>2021년부터 탑다운 로그라이트로 회귀</b>해 세피리아를 완성했습니다.</p>
+          <ul class="clean">
+            <li>안태현: “횡스크롤이 어렵다고 생각했는데, <b>탑다운은 완전 지옥</b>” — 2D 드로우 오더 등 기술 난제</li>
+            <li>멀티플레이는 <b>기획 후반 추가</b> → 코드 대수술(5~6개월), 2024년 중반 안정화</li>
+            <li>1.5년 집중 개발 후 <b>정기 콘텐츠·밸런스 패치</b> 방침, <b>스팀 창작마당(Workshop)</b> 검토 중</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘검증된 로그라이트 명가의 완성형 2호작’. 전작 팬덤·노하우 위에 <b>독창적 빌드 시스템</b>을 얹어 재도약에 성공했습니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Sephiria</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2436940/cb7dc6f4ed2f0012eb557365966be9b69815f7ae/header.jpg?t=1786421771')"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">액션 로그라이트</span><span class="tag">픽셀 아트</span><span class="tag">인벤토리 관리</span><span class="tag">4인 코옵</span><span class="tag">탑다운</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">파멸의 운명에 놓인 <b>토끼 마을</b>을 구하기 위해 탑의 심층을 탐험하는 <b>탑다운 액션 로그라이트 RPG</b>. 무기와 아티팩트를 모아 강화하고, 악마 무리와 보스를 처치하며 마을을 지킵니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0">핵심은 <b>석판(Tablet) 인벤토리</b> — 도형·숫자 배치로 아티팩트 보너스를 짜는 <b>공간 퍼즐형 빌드</b>. 결합 아티팩트로 불/얼음 등 이질적 조합을 잇는 시너지가 깊이를 더합니다. 6무기·50+ 강화, 60+ 적, 10+ 보스, 6챕터, 최대 4인 코옵.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>액션 · 어드벤처 · RPG (로그라이트 · 탑다운 · 픽셀)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Windows 64-bit) · macOS</td></tr>
+            <tr><th>출시</th><td>1.0 2026.07.31 (앞서 해보기 2025.04.03)</td></tr>
+            <tr><th>가격</th><td>$14.99 (출시 40% 할인 $8.99)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>TEAM HORAY (자체)</td></tr>
+            <tr><th>볼륨</th><td>6무기·50+ 강화 · 60+ 적 · 10+ 보스 · 6챕터</td></tr>
+            <tr><th>기능</th><td>싱글 · 최대 4인 온라인 코옵 · 27 도전과제 · 클라우드 · 패밀리 셰어링</td></tr>
+            <tr><th>지원 언어</th><td>한국어·영어·일본어·중국어(간체) 등 12개 언어</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>출시 성과 & 반응</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px">약 <b>16개월의 앞서 해보기</b>를 거쳐 마지막 6챕터를 더해 1.0로 출시하자마자 <b>‘압도적으로 긍정적’</b>에 진입했습니다. 유저는 <b>석판 빌드의 깊이·코옵 재미·전작 대비 완성도</b>를 호평합니다.</p>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>지표</th><th style="width:40%">값</th></tr></thead><tbody>
+              <tr><td>종합 평가</td><td><span class="pill pl-good">매우 긍정적</span></td></tr>
+              <tr><td>1.0 시점</td><td><span class="pill pl-good">압도적으로 긍정적</span></td></tr>
+              <tr><td>영문 리뷰</td><td><b>97% 긍정</b></td></tr>
+              <tr><td>누적 리뷰</td><td><b>8,000+ 건</b></td></tr>
+              <tr><td>최고 동접</td><td><b>34,000명</b></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>강점 & 관찰 포인트</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--green); margin:0 0 8px">▲ 강점</p>
+        <ul class="clean g">
+          <li><b>석판 인벤토리 빌드</b> — 공간 퍼즐형 아티팩트 시너지의 독창성·깊이</li>
+          <li><b>4인 온라인 코옵</b> — 친구와 즐기는 리플레이·확산성</li>
+          <li><b>던그리드 팬덤·노하우</b> — 검증된 전투감과 완성도</li>
+          <li><b>가성비($14.99)·픽셀 아트·풍부한 볼륨</b>(6챕터·10+ 보스)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--amber); margin:0 0 8px">◆ 관찰 포인트</p>
+        <ul class="clean a">
+          <li>탑다운 특유의 <b>드로우 오더·시인성</b> — 개발진도 최대 난제로 언급</li>
+          <li>로그라이트 공통의 <b>RNG·밸런스</b> 논쟁 여지(아티팩트 절반 컷)</li>
+          <li>4인 팀 특성상 <b>업데이트 페이스</b>는 정기적·완만(빈번 X)</li>
+          <li>창작마당(Workshop)은 <b>멀티 연동 이슈</b>로 검토 단계</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>미디어</div>
+    <div class="card">
+      <p style="font-size:14px; margin-bottom:0">전체 스크린샷·게임플레이 트레일러는 <a href="https://store.steampowered.com/app/2436940/Sephiria/" target="_blank" rel="noopener">Steam 상점 페이지</a>에서 확인할 수 있습니다. <span class="cap">(개별 인게임 스크린샷은 Steam 정책상 외부 임베드가 제한되어 본 리포트에는 공식 키 아트만 포함했습니다.)</span></p>
+    </div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 액션 로그라이트</h2></div>
+    <p class="lead"><span class="hl">코어 충성도 높은 액션 로그라이트</span> × <span class="hl">독창적 빌드 시스템 + 전작 팬덤</span> — 재구매·리플레이·입소문이 강한 조합.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>액션 로그라이트</b>는 <b>Hades</b>·<b>Enter the Gungeon</b>·<b>Vampire Survivors</b> 등으로 검증된 <b>높은 리플레이·스트리밍 친화</b> 장르입니다. 세피리아는 여기에 <b>Noita식 배치·Hades식 시너지</b>를 결합한 <b>석판 빌드</b>와 <b>4인 코옵</b>으로 차별화했고, <b>던그리드 팬덤</b>이라는 선(先)수요를 보유했습니다.</p>
+          <ul class="clean g">
+            <li>강한 리플레이·빌드 다양성 → <b>플레이타임·입소문 유리</b></li>
+            <li>코옵 → <b>친구 초대·동반 구매·스트리밍</b> 확산</li>
+            <li>픽셀·가성비 → <b>글로벌 대중 접근성</b>(12개 언어)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>전작 대비 성과</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:10px">개발진이 “전작 절반만 해도 대성공”이라 예상했으나, <b>최고 동접에서 던그리드를 넘어섰습니다.</b> 전작 팬덤 계승 + 독창적 훅이 유효했다는 신호입니다.</p>
+          <div class="cmp">
+            <div class="cmp-row"><span class="cmp-name">Sephiria (2026)</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="cmp-val">34,000<br>최고동접</span></div>
+            <div class="cmp-row"><span class="cmp-name">Dungreed (2018)</span><div class="track"><div class="fill" style="width:62%;background:linear-gradient(90deg,#b7add9,#cfc7e6)"></div></div><span class="cmp-val">전작<br>초과 달성</span></div>
+          </div>
+          <p class="cap">▲ 세피리아 최고 동접이 전작 던그리드를 상회(개발사 인터뷰 기준, 던그리드 수치는 비공개·상대 표기)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>성과 · 투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>검증된 팀(던그리드)·전작 팬덤·자체 IP 통제</li>
+        <li>압도적으로 긍정적·영문 97%·최고 동접 34K</li>
+        <li>석판 인벤토리라는 독창적·차별화 빌드 시스템</li>
+        <li>4인 코옵·풍부한 볼륨·가성비($14.99)</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>4인 소규모 → 라이브 운영·업데이트 여력 제약</li>
+        <li>탑다운 시인성·드로우 오더 등 기술적 난제</li>
+        <li>로그라이트 공통 RNG·밸런스 논쟁 여지</li>
+        <li>창작마당 등 확장 기능은 멀티 연동 이슈로 지연</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>콘솔(Switch·PS·Xbox) 이식 — 로그라이트 최적 확장</li>
+        <li>정기 콘텐츠(무기·아이템·밸런스) 업데이트로 롱테일</li>
+        <li>스팀 창작마당(모드)로 커뮤니티 수명 연장</li>
+        <li>토끼 마을 IP·굿즈·후속작 확장</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>로그라이트 신작 과잉 속 노출 경쟁</li>
+        <li>업데이트 페이스 완만 → 코어 이탈 리스크</li>
+        <li>출시 화제 소진 후 동접 자연 감소</li>
+        <li>환율·플랫폼 수수료 등 외부 변수</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>Sephiria는 <span class="hl">검증된 팀·전작 팬덤·독창적 빌드 시스템으로 상업성과 완성도를 모두 입증한 ‘인디 성공작’</span>입니다. 4인 팀이 전작을 뛰어넘는 동접·압도적 평가를 만든 점은 명확한 성취이며, 투자·협업 관점에서 <b>‘검증된 로그라이트 명가’로서의 신뢰도</b>가 높습니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자·IP 매력 요인</div>
+          <ul class="clean g">
+            <li>연속 흥행(던그리드→세피리아)으로 입증된 <b>기획·완성 역량</b></li>
+            <li>재현 어려운 <b>독창적 빌드 시스템·전투감</b></li>
+            <li>충성 팬덤·글로벌 12개 언어 대중성</li>
+            <li>콘솔·창작마당·후속작 <b>확장 상방</b></li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>정식 판매량·매출·롱테일</b> 추이(동접 이후)</li>
+            <li>4인 팀의 <b>운영·업데이트 여력</b>과 번아웃 관리</li>
+            <li>콘솔 이식·창작마당 <b>로드맵과 일정</b></li>
+            <li>후속작·IP 확장 계획, 인력 확충 여부</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — <b>‘우수(관찰)’</b>. 검증된 팀·독창성·성과가 뚜렷해 인디 협업/투자 매력도가 높습니다. 다만 4인 규모의 <b>운영 여력·업데이트 페이스</b>가 롱테일과 라이브 확장의 관건이므로, <b>판매 롱테일·콘솔/창작마당 로드맵·인력 계획</b>을 확인해 스케일업 여지를 판단하는 것이 바람직합니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 액션 로그라이트</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">코어</div><div class="l">충성 리플레이</div></div>
+          <div class="kpi"><div class="n o">코옵</div><div class="l">확산·동반구매</div></div>
+          <div class="kpi"><div class="n g">$10~20</div><div class="l">인디 로그 가격대</div></div>
+          <div class="kpi"><div class="n">스트리밍</div><div class="l">빌드 다양성 확산</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 리플레이·확산성 강한 검증 장르, 차별화가 성패를 가른다.</b> 액션 로그라이트는 Hades·뱀서 이후 <b>가장 두꺼운 인디 흥행 장르</b> 중 하나입니다. 다만 신작이 쏟아져 <b>‘한 방 훅’과 완성도</b>가 필수인데, 세피리아는 <b>석판 빌드 + 코옵 + 던그리드 신뢰</b>로 이를 충족했습니다.</p>
+        <div class="note gold" style="font-size:13px"><b>Sephiria의 위치</b> — ‘공간 퍼즐로 짜는 로그라이트 빌드 + 토끼 마을 세계관’이라는 <b>명료한 차별화</b>로 붐비는 장르에서 존재감 확보. 관건은 이 강점을 <b>콘텐츠 업데이트·창작마당·콘솔</b>로 롱테일화하는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘검증된 로그라이트 명가 + 독창적 빌드 시스템 + 코옵 확산성’의 결합</b>입니다. 이 조합이 전작을 넘는 동접과 압도적 평가를 만들었고, 12개 언어로 글로벌 대중성까지 확보했습니다. 남은 변수는 <b>4인 팀의 운영 여력</b> — 롱테일과 라이브 확장(콘솔·창작마당·후속작)을 어디까지 감당하느냐가 <b>지속 시장성·IP 가치</b>를 좌우합니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>상업·완성도 동시 검증형</b> — 전작 상회 성과·압도적 평가</li>
+        <li>관건 — <b>콘텐츠 롱테일·콘솔 확장·운영 여력·후속 IP</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔 이식 + 창작마당(모드)’</b><br>세피리아의 최대 상방은 <b>①콘솔(Switch·PS5·Xbox) 이식</b>으로 로그라이트·코옵 수요를 새 플랫폼에서 흡수하는 것과, <b>②스팀 창작마당(Workshop) 지원</b>으로 유저 제작 콘텐츠를 통해 게임 수명을 크게 늘리는 것입니다(현재 멀티 연동 이슈로 검토 중). 2순위는 <b>정기 무기·아이템·밸런스 업데이트</b>로 동접 롱테일을 방어하는 것, 3순위는 <b>토끼 마을 IP·굿즈·후속작</b> 확장입니다. 단, 4인 팀의 <b>운영 여력</b>이 제약이므로, 확장 우선순위와 인력 계획을 명확히 하는 것이 실행의 핵심입니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>정갈한 픽셀 아트·귀여운 토끼 세계관</b> — 대중·SNS 소구</li>
+          <li>탑다운 전장의 <b>시인성 확보</b>가 최대 아트 난제(드로우 오더)</li>
+          <li>던그리드 계보의 <b>손맛 있는 액션 연출</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>석판 인벤토리</b>(Noita 배치 영감) — 공간 퍼즐형 빌드 구성</li>
+          <li><b>아티팩트·결합 시너지</b>(Hades·디아블로 부적 영감)로 조합 깊이</li>
+          <li><b>4인 코옵</b> — 후반 추가·코드 대수술로 안정화한 확산 핵심</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 검증된 로그라이트 명가가 <span class="hl">독창적 석판 빌드 시스템과 4인 코옵</span>으로 전작을 뛰어넘은 성공작입니다. 상업·완성도·독창성을 모두 입증했고, 남은 과제는 <b>4인 팀의 운영 여력 안에서 콘솔·창작마당·콘텐츠 업데이트로 롱테일과 IP를 확장</b>하는 실행력입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">6건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/2436940/Sephiria/" target="_blank" rel="noopener">Steam — Sephiria (세피리아)</a>
+          <a href="https://www.gamemeca.com/en/view.php?gid=1778935" target="_blank" rel="noopener">Gamemeca — 던그리드 개발진 인터뷰(개발 비화·성과)</a>
+          <a href="https://www.back2gaming.com/games/sephiria-hits-1-0-on-steam-after-a-year-in-early-access-with-97-positive-reviews/" target="_blank" rel="noopener">Back2Gaming — 1.0 출시·리뷰</a>
+          <a href="https://bbs.ruliweb.com/news/read/186439" target="_blank" rel="noopener">루리웹 — BIC 팀호레이 세피리아 인터뷰</a>
+          <a href="https://thebigbois.com/news/sephiria-1-0-launch-out-now/" target="_blank" rel="noopener">TheBigBois — 한국 로그라이트 히트작 1.0</a>
+          <a href="https://knowplus.co.kr/sephiria-game-review/" target="_blank" rel="noopener">knowplus — 세피리아 리뷰(공간 퍼즐·코옵)</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © TEAM HORAY / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아닙니다. 동접·리뷰·판매 수치는 Steam 공식 표기 및 공개 인터뷰·서드파티 집계 기준으로 시점에 따라 변동될 수 있으며, 던그리드 동접은 비공개로 상대 표기했습니다. · 기준일 2026.08.12</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transpawt Train · ORIN SOFT — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#fbf1e8; --surface2:#fdf8f3;
+    --ink:#1f1611; --ink2:#33261d; --muted:#6c5949; --dim:#ad9483;
+    --line:#f2e4d7; --line2:#f8efe6;
+    --accent:#d97a2b; --accent-ink:#b7621d; --accent-soft:#fbe6d2;
+    --gold:#2f8f5b; --gold-soft:#e4f3ea; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(40,25,10,.05),0 1px 3px rgba(40,25,10,.08);
+    --shadow:0 4px 8px -2px rgba(40,25,10,.08),0 2px 4px -2px rgba(40,25,10,.05);
+    --shadow-lg:0 16px 32px -10px rgba(40,25,10,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#eaa05e); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  .rate{display:flex; align-items:baseline; gap:9px}
+  .rate .big{font-size:26px; font-weight:800; color:var(--green)}
+  .ratebar{height:9px; border-radius:999px; background:var(--line); overflow:hidden; margin:10px 0 5px}
+  .ratebar>i{display:block; height:100%; background:linear-gradient(90deg,var(--green),#3ec97e); border-radius:999px}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  @media(max-width:820px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  .shot{border-radius:11px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; background:var(--surface); box-shadow:var(--shadow-sm)}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#fdf0e3; border:1px solid #f6ddc7; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#fdf3ea !important; border-color:#f6ddc7; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(30,18,8,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#e6d2be; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    .shot:hover img{transform:none}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">🚂</span> Transpawt Train <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">🚂 Post-Launch · Developer &amp; Market Analysis</span>
+    <h1>Transpawt Train —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">인디 개발사 <b>ORIN SOFT</b>의 출시작 「Transpawt Train」 — 동물 마을 <b>‘포시티(Paw-City)’</b>에 첫 철도를 놓는 <b>캐주얼 코지 전략·퍼즐</b> 게임. 마을 사이에 <b>철도를 손으로 그려</b> 기차를 운행하고, 새 마을·재난에 맞춰 노선을 다시 설계합니다. 2026년 5월 <b>정식 출시된</b> 아기자기한 힐링 타이틀에 대한 개발사·게임·시장성 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>캐주얼 코지 전략·퍼즐</b></span>
+      <span class="chip">상태 <b>출시 (2026.05.24)</b></span>
+      <span class="chip">평가 <b>긍정적 (소표본)</b></span>
+      <span class="chip">가격 <b>$6.99</b></span>
+      <span class="chip">언어 <b>7개 (한국어 포함)</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="Transpawt Train 대표 이미지" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/2123c938d8c1602fa2518ff91822316c2af40965/ss_2123c938d8c1602fa2518ff91822316c2af40965.1920x1080.jpg?t=1779715771">
+    </div>
+    <div class="figcap">▲ 「Transpawt Train」 인게임 화면 (출처: Steam 공식) · 전체 스크린샷·데모는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>ORIN SOFT</b>는 출시작 <span class="hg">「Transpawt Train」</span>을 개발·자체 퍼블리싱하는 인디 개발사입니다. 게임은 동물들이 사는 <b>‘포시티(Paw-City)’</b>에 첫 철도를 설계하는 <b>캐주얼 코지 전략·퍼즐</b>로, 마을과 마을 사이에 <b>철도를 손으로 그려</b> 기차를 운행하는 것이 핵심입니다. 도시가 성장해 새 마을이 생기면 <b>노선을 지우고 다시 설계</b>하고, 인프라를 파괴하는 <b>돌발 재난에 대응</b>하며, <b>시간제 아이템</b>으로 계획을 돕습니다.</p>
+      <p style="margin-bottom:0">강아지·기차 소재의 <b>귀엽고 손그림(hand-drawn)풍 아트</b>와 <b>릴랙싱한 코지 감성</b>이 강점으로, 2026년 5월 24일 <b>정식 출시</b>되어 <span class="hl">스팀 평가 ‘긍정적’(현재 소표본)</span>을 기록 중이고 <b>데모</b>도 공개되어 있습니다. <b>$6.99의 접근성 가격·7개 언어(한국어 포함)</b>로 넓은 저변을 겨냥합니다. <span class="hl">뚜렷한 코지 훅과 초기 호평</span>이 긍정적이나, <b>리뷰 표본이 작고 규모가 크지 않은 저가 캐주얼</b>이라는 점은 감안이 필요합니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n g">긍정적</div><div class="l">스팀 평가(소표본)</div></div>
+      <div class="kpi"><div class="n">$6.99</div><div class="l">판매가(접근성)</div></div>
+      <div class="kpi"><div class="n o">데모</div><div class="l">공개(체험 가능)</div></div>
+      <div class="kpi"><div class="n">7개</div><div class="l">지원 언어(한국어 포함)</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>차별화 훅</b></td><td>동물 마을 철도 ‘그리기’ + 재난 대응의 코지 전략·퍼즐</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>아트·감성</b></td><td>강아지·기차 소재 손그림풍·릴랙싱 코지 톤</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>초기 반응</b></td><td>스팀 ‘긍정적’·데모 공개 — 다만 리뷰 표본 작음</td><td><span class="pill pl-mid">긍정(소표본)</span></td></tr>
+          <tr><td><b>접근성</b></td><td>$6.99·마우스 전용·7개 언어 — 넓은 대중 친화</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>규모·수익</b></td><td>저가 캐주얼 — 개당 단가·시장 규모 제한</td><td><span class="pill pl-mid">보통</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>뚜렷한 코지 훅·초기 호평 vs 저가·소규모·표본 한계</td><td><span class="pill pl-cond">관찰(소규모 유망)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>정식 출시작(2026.05.24)</b>이나 <b>리뷰 표본이 작아</b> 평가·수치의 변동성이 있습니다. 본 리포트는 Steam 공식 정보 기반이며, 판매·리텐션 등은 향후 추이 확인이 필요합니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — ORIN SOFT</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>ORIN SOFT (인디 · 한국 인디 씬 노출)</td></tr>
+            <tr><th>성격</th><td>인디 게임 개발 · 자체 퍼블리싱</td></tr>
+            <tr><th>대표작</th><td>Transpawt Train (2026.05.24 출시)</td></tr>
+            <tr><th>연관 타이틀</th><td>Lazy Train Game (번들 구성 — 기차 소재 시리즈성)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Steam, Windows 64-bit)</td></tr>
+            <tr><th>노출 경로</th><td>‘Indie Games from Korea’ 큐레이터 · 한국 인디 커뮤니티(IGG Korea 등)</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ 팀 규모·소재지 등 상세 프로필은 공개가 제한적입니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">ORIN SOFT는 <b>자체 개발·퍼블리싱</b> 구조의 인디로, <b>기차·철도 소재의 캐주얼 게임</b>에 집중하는 방향성을 보입니다(Transpawt Train·Lazy Train Game 등). <b>귀엽고 릴랙싱한 코지 톤</b>과 <b>손쉬운 조작(마우스 전용)</b>으로 대중 접근성을 확보했습니다.</p>
+          <ul class="clean">
+            <li><b>코지·캐주얼 정체성</b> — 기차/철도 소재 특화</li>
+            <li><b>데모 공개</b>로 구매 전 체험 제공 — 전환 설계</li>
+            <li>7개 언어·저가($6.99)로 <b>글로벌 대중</b> 겨냥</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘기차 소재에 특화된 코지 캐주얼 인디’. 관건은 초기 호평을 <b>판매량·리뷰 볼륨</b>으로 키우고, 콘텐츠 팩·후속작으로 <b>브랜드(포시티/기차 IP)</b>를 이어가는 것입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Transpawt Train</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/4707972eed918499da66d3580260e94562b58cb1/header.jpg?t=1779715771'); background-size:contain; background-repeat:no-repeat; background-position:center; background-color:#2a1c10"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">코지</span><span class="tag">전략·퍼즐</span><span class="tag">시뮬레이션</span><span class="tag">강아지·기차</span><span class="tag">손그림풍</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">동물 마을 <b>‘포시티’</b>에 첫 철도를 놓는 코지 전략·퍼즐. 마을 사이에 <b>철도를 손으로 그려</b> 기차를 운행하고, 새 마을이 생기면 노선을 지우고 <b>다시 설계</b>합니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0">인프라를 파괴하는 <b>돌발 재난에 대응</b>하고 <b>시간제 아이템</b>으로 계획을 돕는 것이 재미 포인트. 마우스 전용·릴랙싱 톤으로 <b>부담 없는 힐링 플레이</b>를 지향합니다.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>캐주얼 · 인디 · 시뮬레이션 · 전략 (코지 퍼즐)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/3422460/Transpawt_Train/" target="_blank" rel="noopener">Steam</a>, Windows 64-bit)</td></tr>
+            <tr><th>출시</th><td>2026년 5월 24일 (정식 출시)</td></tr>
+            <tr><th>가격</th><td>$6.99 (Lazy Train Game 번들 별도)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>ORIN SOFT (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>철도 그리기 → 기차 운행 → 마을 확장 → 노선 재설계·재난 대응</td></tr>
+            <tr><th>조작·기능</th><td>마우스 전용 · Steam 도전과제 · 패밀리 셰어링 · 데모 공개</td></tr>
+            <tr><th>지원 언어</th><td>한국어·영어·일본어·중국어(간체/번체)·스페인·러시아 등 7개</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>시장 반응 및 평가</div>
+        <div class="card">
+          <div class="rate"><span class="big">긍정적</span><span style="color:var(--muted); font-size:14px">100% · 소표본(리뷰 12여 개)</span></div>
+          <div class="ratebar"><i style="width:100%"></i></div>
+          <div style="font-size:12px; color:var(--dim); margin-bottom:14px">초기 호평이나 <b>리뷰 표본이 작아</b> 지표 변동성 유의</div>
+          <ul class="clean g">
+            <li>귀여운 아트·릴랙싱 톤 → <b>코지 팬층 소구</b></li>
+            <li>철도 ‘그리기’ 퍼즐 → <b>직관적 재미·리플레이</b></li>
+            <li>데모·저가 → <b>구매 전환·진입장벽 완화</b></li>
+          </ul>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>유의점</b> — 저가 캐주얼 특성상 <b>개당 단가·볼륨 한계</b>가 있어, 판매량·리텐션·업데이트 추이를 함께 봐야 합니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>공식 스크린샷</div>
+    <div class="gallery">
+      <div class="shot"><img loading="lazy" alt="Transpawt Train 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/396dda44c805e1a776f8c7e71c28cfdb578738eb/ss_396dda44c805e1a776f8c7e71c28cfdb578738eb.1920x1080.jpg?t=1779715771"></div>
+      <div class="shot"><img loading="lazy" alt="Transpawt Train 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/8dd42ec025282b2c3edcefa1067cdf7b454caa9b/ss_8dd42ec025282b2c3edcefa1067cdf7b454caa9b.1920x1080.jpg?t=1779715771"></div>
+      <div class="shot"><img loading="lazy" alt="Transpawt Train 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/877c0f181fdbeb0ed9c2ebfb5a321b2de2121171/ss_877c0f181fdbeb0ed9c2ebfb5a321b2de2121171.1920x1080.jpg?t=1779715771"></div>
+      <div class="shot"><img loading="lazy" alt="Transpawt Train 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/30eebc1c35833f718a853cbcaf175fd493791eca/ss_30eebc1c35833f718a853cbcaf175fd493791eca.1920x1080.jpg?t=1779715771"></div>
+      <div class="shot"><img loading="lazy" alt="Transpawt Train 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/1fa508d5e294863fb09fc3c0d2552187ab437e3b/ss_1fa508d5e294863fb09fc3c0d2552187ab437e3b.1920x1080.jpg?t=1779715771"></div>
+      <div class="shot"><img loading="lazy" alt="Transpawt Train 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/3cb0fd60fe2e90ad557d7a34489154a40dc39c3d/ss_3cb0fd60fe2e90ad557d7a34489154a40dc39c3d.1920x1080.jpg?t=1779715771"></div>
+    </div>
+    <div class="cap" style="margin-top:12px">▲ 「Transpawt Train」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/3422460/Transpawt_Train/" target="_blank" rel="noopener">Steam 상점에서 데모·전체 보기 →</a></div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 코지 · 캐주얼 퍼즐</h2></div>
+    <p class="lead"><span class="hl">성장하는 코지·힐링 시장</span> × <span class="hl">저가·데모 친화 캐주얼</span> — 파이는 크지만 저단가·포화 경쟁으로 볼륨·차별화가 관건.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>코지·캐주얼 퍼즐</b>은 <b>Unpacking·Dorfromantik·Mini Motorways</b>처럼 <b>‘아기자기한 아트 + 직관적 퍼즐’</b>이 컬트 흥행을 내는 대중 친화 장르입니다. Transpawt Train은 특히 <b>Mini Motorways류 노선 그리기</b>에 <b>동물·기차 코지 테마</b>를 얹어 차별화합니다.</p>
+          <ul class="clean g">
+            <li>귀여운 아트 → <b>스크린샷·SNS·클립 확산성</b></li>
+            <li>직관적 ‘그리기’ 퍼즐 → <b>넓은 대중 접근성</b></li>
+            <li>저가·데모 → <b>충동구매·전환 유리</b></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">코지 퍼즐은 진입장벽이 낮고 호감도가 높지만, <b>저단가($6.99)라 개당 매출이 작고</b> 유사 코지 신작이 매우 많습니다. <b>판매 볼륨·리텐션·후속 콘텐츠</b>가 수익을 좌우합니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 코지 캐주얼은 <b>‘아트·직관성·볼륨·확산성’</b>이 성패를 좌우합니다. 아트·훅·데모는 확보, 관건은 <b>판매 볼륨·콘텐츠 팩·모바일 확장</b>입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>뚜렷한 코지 훅(동물·기차 철도 그리기 퍼즐)</li>
+        <li>귀엽고 릴랙싱한 손그림풍 아트·강한 감성 소구</li>
+        <li>출시 후 초기 ‘긍정적’ 평가·데모 공개</li>
+        <li>$6.99·마우스 전용·7개 언어의 넓은 접근성</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>리뷰 표본이 작아 지표 신뢰도 제한</li>
+        <li>저가 캐주얼 — 개당 단가·시장 규모 한계</li>
+        <li>개발사(ORIN SOFT) 규모·트랙레코드 정보 제한</li>
+        <li>콘텐츠 볼륨·리텐션(반복성) 확보 과제</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>모바일 이식 — 코지 퍼즐 수요가 가장 큰 플랫폼</li>
+        <li>콘텐츠 팩(새 맵·모드)·시즌 업데이트</li>
+        <li>기차/포시티 IP·굿즈·후속작 확장</li>
+        <li>세일·번들(Lazy Train)로 판매 볼륨 확대</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>코지·캐주얼 퍼즐의 포화 경쟁</li>
+        <li>저단가로 인한 수익 규모 제약</li>
+        <li>초기 화제 이후 롱테일 유지의 어려움</li>
+        <li>환율·플랫폼 수수료 등 외부 변수</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>Transpawt Train은 <span class="hl">뚜렷한 코지 훅과 초기 호평을 갖췄으나, 저가·소규모 캐주얼로 규모의 상방이 제한</span>되는 ‘소규모 유망’ 타이틀입니다. 투자·퍼블리싱 관점에서는 <b>판매 볼륨·리텐션과 모바일·콘텐츠 팩 확장 여지</b>를 확인하되, 개당 단가가 낮은 만큼 <b>‘볼륨·롱테일·플랫폼 확장’</b> 전제로 접근하는 것이 합리적입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
+          <ul class="clean g">
+            <li>귀여운 아트·직관적 퍼즐의 강한 대중 소구</li>
+            <li>데모·저가로 검증된 초기 전환 효율</li>
+            <li>모바일·콘텐츠 팩으로 확장 용이</li>
+            <li>기차/포시티 IP·후속작 시리즈화 여지</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>실제 판매량·리텐션·리뷰 볼륨 추이</b>(핵심)</li>
+            <li>개발사(ORIN SOFT) 규모·개발 여력</li>
+            <li><b>콘텐츠 볼륨·업데이트 로드맵</b></li>
+            <li>모바일 이식·콘텐츠 팩 계획</li>
+            <li>번들·세일 전략과 마케팅 효율</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(소규모 유망)’</b>. 코지 훅·초기 호평은 긍정적이나 저가·소규모·표본 한계가 있어, <b>판매 볼륨·리텐션·모바일 확장 여지</b>를 확인한 뒤 판단하는 것이 바람직합니다. 볼륨과 롱테일이 확인되면 <b>모바일·콘텐츠 팩 확장 관점</b>에서 매력이 커집니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 코지 · 캐주얼 퍼즐</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">대중</div><div class="l">넓은 코지 저변</div></div>
+          <div class="kpi"><div class="n o">아트</div><div class="l">구매 결정 요인</div></div>
+          <div class="kpi"><div class="n g">$5~10</div><div class="l">코지 캐주얼 가격대</div></div>
+          <div class="kpi"><div class="n">볼륨</div><div class="l">수익=판매량</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 파이는 크지만 저단가·포화라 볼륨·차별화가 관건.</b> 코지·캐주얼 퍼즐은 <b>Mini Motorways·Dorfromantik</b>처럼 대중적 흥행이 가능하지만, 저가라 <b>판매 볼륨</b>이 곧 수익입니다. Transpawt Train은 <b>동물·기차 코지 테마 + 철도 그리기</b>로 차별화된 출발선에 섰습니다.</p>
+        <div class="note gold" style="font-size:13px"><b>Transpawt Train의 위치</b> — ‘동물 마을 철도 그리기 코지 퍼즐’이라는 <b>귀엽고 직관적인 훅</b>. 관건은 초기 호평을 <b>판매 볼륨·롱테일·모바일 확장</b>으로 잇는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘성장하는 코지 대중 시장 + 귀여운 아트/직관 훅 + 저가·데모 접근성’의 결합</b>입니다. 아트·훅·접근성은 강점이나, 저가 캐주얼은 <b>개당 단가가 낮아 볼륨이 곧 수익</b>이고 경쟁이 포화라, <b>시장성은 ‘호감·훅은 확보, 규모는 볼륨·확장에 의존’의 소규모 유망형</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>대중 호감형(볼륨 의존)</b> — 아트·직관·저가 접근성</li>
+        <li>관건 — <b>판매 볼륨·롱테일·모바일/콘텐츠 팩 확장</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘모바일 이식 + 콘텐츠 팩’</b><br>코지·직관 퍼즐은 <b>모바일 이식</b>으로 수요가 가장 큰 플랫폼을 공략할 수 있고, 마우스 전용의 ‘그리기’ 조작은 <b>터치 UI와 궁합이 좋습니다.</b> 1순위 미개척 수익원은 <b>모바일 이식 + 새 맵·모드 콘텐츠 팩</b>이며, 2순위는 <b>기차/포시티 IP 굿즈·후속작(시리즈화)</b>, 3순위는 <b>번들·시즌 세일로 판매 볼륨</b>을 키우는 것입니다. 단, 현재는 <b>‘초기 호평을 판매 볼륨·리텐션으로 전환’하는 것이 최우선</b>입니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>강아지·동물·기차의 귀여운 손그림풍</b> — 강한 시각 훅·SNS 소구</li>
+          <li>릴랙싱한 코지 톤앤매너 — 코지 시장에서 <b>구매 결정 요인</b></li>
+          <li>‘포시티’ 세계관·동물 캐릭터로 <b>IP·굿즈 확장</b> 여지</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>철도 그리기 + 노선 재설계</b>의 직관적 공간 퍼즐</li>
+          <li><b>재난 대응·시간제 아이템</b>으로 긴장·전략 요소 가미</li>
+          <li>과제 — 캐주얼 특유의 <b>콘텐츠 볼륨·반복 리텐션</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 성장하는 코지 대중 장르에 <span class="hl">귀여운 아트·직관적 철도 퍼즐·저가 접근성</span>을 얹은 호감형 타이틀입니다. 다만 <b>저가·소규모·표본 한계</b>인 만큼, 판매 볼륨·롱테일·리텐션과 모바일·콘텐츠 팩 확장 실행력이 시장성의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">3건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/3422460/Transpawt_Train/" target="_blank" rel="noopener">Steam — Transpawt Train</a>
+          <a href="https://www.instagram.com/transpawt_train/" target="_blank" rel="noopener">Instagram — @transpawt_train (개발사 공식)</a>
+          <a href="https://store.steampowered.com/app/3422460/Transpawt_Train/?l=koreana" target="_blank" rel="noopener">Steam — Transpawt Train (한국어 상점)</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © ORIN SOFT / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>정식 출시작(2026.05.24)</b>이나 리뷰 표본이 작아 평가·수치의 변동성이 있습니다. 실제 투자 검토 시 최신 판매·리텐션·리뷰 볼륨 추이 확인이 필요합니다. · 기준일 2026.08.13</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.gallery .shot img, .hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>

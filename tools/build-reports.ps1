@@ -151,39 +151,120 @@ function Get-Chips([string]$Src) {
     return $chips
 }
 
-# 같은 뜻인데 표기가 갈리는 태그를 하나로 모은다. 필요하면 여기에 추가.
-$TagAliases = @{
+# 플랫폼 표기를 소수의 값으로 모은다. 필요하면 여기에 추가.
+$PlatformAliases = @{
     'windows' = 'PC'; '윈도우' = 'PC'; '스팀' = 'PC'; 'steam' = 'PC'
-    'playstation' = '콘솔'; 'xbox' = '콘솔'; 'switch' = '콘솔'; '닌텐도 스위치' = '콘솔'
+    'steamos' = 'PC'; 'linux' = 'PC'; 'pc' = 'PC'
+    'macos' = 'Mac'; 'mac' = 'Mac'; 'osx' = 'Mac'
+    'playstation' = '콘솔'; 'ps4' = '콘솔'; 'ps5' = '콘솔'; 'xbox' = '콘솔'
+    'switch' = '콘솔'; '닌텐도 스위치' = '콘솔'; '콘솔' = '콘솔'
+    '모바일' = '모바일'; 'ios' = '모바일'; 'android' = '모바일'
 }
 
-function Normalize-Tag([string]$Tag) {
-    $t = $Tag.Trim()
-    # "PC (Windows)" → "PC" · 괄호 부연은 필터를 쪼개기만 한다
-    $stripped = ([regex]'\s*[（(][^）)]*[）)]\s*$').Replace($t, '').Trim()
-    if ($stripped) { $t = $stripped }
-    $k = $t.ToLowerInvariant()
-    if ($TagAliases.ContainsKey($k)) { return $TagAliases[$k] }
-    return $t
-}
+# 장르 구절에서 필터용 키워드를 뽑는다. 카드에는 원문 구절이 그대로 나가고,
+# 필터 레일에는 여기서 나온 키워드만 쓴다. 위에서부터 순서대로 검사한다.
+$TopicRules = @(
+    @{ Pattern = '로그라이크|로그라이트|로그바니아'; Topics = @('로그라이크') }
+    @{ Pattern = '소울라이크';                      Topics = @('소울라이크') }
+    @{ Pattern = '슈터|불릿헬|트윈스틱';             Topics = @('슈터') }
+    @{ Pattern = '플랫포머';                        Topics = @('플랫포머') }
+    @{ Pattern = 'SRPG';                            Topics = @('전략', 'RPG') }
+    @{ Pattern = 'RPG';                             Topics = @('RPG') }
+    @{ Pattern = '전략|택티컬';                      Topics = @('전략') }
+    @{ Pattern = '퍼즐';                            Topics = @('퍼즐') }
+    @{ Pattern = '액션';                            Topics = @('액션') }
+    @{ Pattern = '어드벤처';                        Topics = @('어드벤처') }
+    @{ Pattern = '시뮬';                            Topics = @('시뮬레이션') }
+    @{ Pattern = '호러';                            Topics = @('호러') }
+    @{ Pattern = '리듬';                            Topics = @('리듬') }
+    @{ Pattern = '캐주얼';                          Topics = @('캐주얼') }
+    @{ Pattern = '코지';                            Topics = @('코지') }
+    @{ Pattern = '서바이버';                        Topics = @('서바이버') }
+    @{ Pattern = '보스 러시';                       Topics = @('보스 러시') }
+    @{ Pattern = '픽셀';                            Topics = @('픽셀 아트') }
+    @{ Pattern = '턴제';                            Topics = @('턴제') }
+)
 
+# 괄호 부연은 값을 쪼개기 전에 통째로 걷어낸다.
+# 먼저 쉼표로 자르면 "전략 RPG (택티컬·레이드)" 가 "전략 RPG (택티컬" 로 깨진다.
 function Split-TagValues([string]$Text) {
+    if (-not $Text) { return @() }
+    $cleaned = ([regex]'\s*[（(][^）)]*[）)]').Replace($Text, '')
     $sep = '[' + [char]0x00B7 + ',/]|\s\|\s'
-    return @($Text -split $sep | ForEach-Object { Normalize-Tag $_ } | Where-Object { $_ })
+    return @($cleaned -split $sep | ForEach-Object { $_.Trim() } | Where-Object { $_ })
 }
 
+function Normalize-Platform([string]$Value) {
+    $v = $Value.Trim()
+    $k = $v.ToLowerInvariant()
+    if ($PlatformAliases.ContainsKey($k)) { return $PlatformAliases[$k] }
+    return $v
+}
+
+function Get-Topics($Phrases) {
+    $found = New-Object System.Collections.Generic.List[string]
+    foreach ($p in @($Phrases)) {
+        foreach ($rule in $TopicRules) {
+            if ($p -match $rule.Pattern) {
+                foreach ($t in $rule.Topics) {
+                    if (-not $found.Contains($t)) { [void]$found.Add($t) }
+                }
+            }
+        }
+    }
+    return $found.ToArray()
+}
+
+# 상태 표기가 리포트마다 제각각이라 다섯 가지로 모은다.
+#   출시 / 앞서 해보기 / 데모 / 출시예정
+# 날짜만 적힌 경우( "2026.03.03" )는 오늘과 비교해 판단한다.
 function Normalize-Status([string]$Raw) {
     if (-not $Raw) { return '' }
     $low = $Raw.ToLowerInvariant()
-    if ($Raw -match '미출시|예정|출시 전' -or $low -match 'pre-launch') { return '출시예정' }
-    if ($Raw -match '데모' -or $low -match 'demo')                      { return '데모' }
-    if ($Raw -match '출시' -or $low -match 'released')                  { return '출시' }
+
+    $notYet = ($Raw -match '미출시|예정|미정|출시 전') -or ($low -match 'coming soon|pre-launch|tba')
+
+    if ($Raw -match '데모' -or $low -match 'demo')                     { return '데모' }
+    if (($low -match 'early access' -or $Raw -match '앞서 해보기') -and -not $notYet) { return '앞서 해보기' }
+    if ($notYet)                                                        { return '출시예정' }
+    if ($Raw -match '출시' -or $low -match 'released|out now')          { return '출시' }
+
+    # 날짜만 있는 경우
+    $m = [regex]::Match($Raw, '(\d{4})[.\-/](\d{1,2})(?:[.\-/](\d{1,2}))?')
+    if ($m.Success) {
+        $y = [int]$m.Groups[1].Value
+        $mo = [int]$m.Groups[2].Value
+        $d = 1
+        if ($m.Groups[3].Success) { $d = [int]$m.Groups[3].Value }
+        try {
+            $dt = Get-Date -Year $y -Month $mo -Day $d -Hour 0 -Minute 0 -Second 0
+            if ($dt -le (Get-Date)) { return '출시' } else { return '출시예정' }
+        } catch { }
+    }
+    if ($Raw -match '^\s*\d{4}\s*$') {
+        if ([int]$Raw.Trim() -le (Get-Date).Year) { return '출시' } else { return '출시예정' }
+    }
     return $Raw.Trim()
 }
 
+# "2026.07.15" / "2026-07-15" → "2026-07-15"
+function ConvertTo-IsoDate([string]$Raw) {
+    if (-not $Raw) { return '' }
+    $m = [regex]::Match($Raw, '(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})')
+    if ($m.Success) {
+        return ('{0:0000}-{1:00}-{2:00}' -f [int]$m.Groups[1].Value, [int]$m.Groups[2].Value, [int]$m.Groups[3].Value)
+    }
+    $m = [regex]::Match($Raw, '(\d{4})[.\-/](\d{1,2})')
+    if ($m.Success) {
+        return ('{0:0000}-{1:00}-01' -f [int]$m.Groups[1].Value, [int]$m.Groups[2].Value)
+    }
+    return ''
+}
+
 function Get-ReportDate([string]$Path) {
+    # 파일이 처음 추가된 커밋일. 마지막 커밋일을 쓰면 한 번 손댈 때마다 날짜가 밀린다.
     try {
-        $d = & $GitExe -C $Root log -1 --format=%cs -- $Path 2>$null
+        $d = & $GitExe -C $Root log --diff-filter=A --format=%cs -1 -- $Path 2>$null
         if ($LASTEXITCODE -eq 0 -and $d) {
             $d = ($d | Select-Object -First 1).ToString().Trim()
             if ($d -match '^\d{4}-\d{2}-\d{2}$') { return $d }
@@ -223,8 +304,9 @@ function Format-ReportsJson($Items) {
     $list = @($Items)
     if ($list.Count -eq 0) { return '[]' }
 
-    $keys = 'title', 'studio', 'desc', 'href', 'thumb', 'tags', 'status', 'date', 'slug'
-    $out  = New-Object System.Collections.Generic.List[string]
+    $keys      = 'title', 'studio', 'desc', 'href', 'thumb', 'tags', 'platforms', 'topics', 'status', 'date', 'slug'
+    $arrayKeys = 'tags', 'platforms', 'topics'
+    $out       = New-Object System.Collections.Generic.List[string]
     [void]$out.Add('[')
 
     for ($i = 0; $i -lt $list.Count; $i++) {
@@ -235,16 +317,16 @@ function Format-ReportsJson($Items) {
             $comma = ''
             if ($k -lt $keys.Count - 1) { $comma = ',' }
 
-            if ($key -eq 'tags') {
-                $tags = @($e.tags)
-                if ($tags.Count -eq 0) {
-                    [void]$out.Add('    "tags": []' + $comma)
+            if ($arrayKeys -contains $key) {
+                $vals = @($e.$key)
+                if ($vals.Count -eq 0) {
+                    [void]$out.Add('    ' + (Format-JsonString $key) + ': []' + $comma)
                 } else {
-                    [void]$out.Add('    "tags": [')
-                    for ($t = 0; $t -lt $tags.Count; $t++) {
+                    [void]$out.Add('    ' + (Format-JsonString $key) + ': [')
+                    for ($t = 0; $t -lt $vals.Count; $t++) {
                         $tc = ''
-                        if ($t -lt $tags.Count - 1) { $tc = ',' }
-                        [void]$out.Add('      ' + (Format-JsonString $tags[$t]) + $tc)
+                        if ($t -lt $vals.Count - 1) { $tc = ',' }
+                        [void]$out.Add('      ' + (Format-JsonString $vals[$t]) + $tc)
                     }
                     [void]$out.Add('    ]' + $comma)
                 }
@@ -279,11 +361,12 @@ function Build-Entry([System.IO.FileInfo]$File) {
     $desc = if ($rep['desc']) { $rep['desc'] } elseif ($og['description']) { $og['description'] } else { Get-Description $src }
     $thumb = if ($rep['thumb']) { $rep['thumb'] } elseif ($og['image']) { $og['image'] } else { Get-Thumbnail $src }
 
+    # ── 장르(카드에 그대로 보일 원문 구절) ──
     if ($rep['tags']) {
         $tags = Split-TagValues $rep['tags']
     } else {
         $collected = New-Object System.Collections.Generic.List[string]
-        foreach ($label in '장르', '플랫폼', '태그') {
+        foreach ($label in '장르', '태그') {
             if ($chips[$label]) {
                 foreach ($v in (Split-TagValues $chips[$label])) {
                     if (-not $collected.Contains($v)) { [void]$collected.Add($v) }
@@ -293,20 +376,67 @@ function Build-Entry([System.IO.FileInfo]$File) {
         $tags = $collected.ToArray()
     }
 
-    $statusRaw = if ($chips['상태']) { $chips['상태'] } elseif ($chips['출시']) { $chips['출시'] } else { '' }
+    # ── 플랫폼 (별도 필터 그룹) ──
+    if ($rep['platforms']) {
+        $platRaw = Split-TagValues $rep['platforms']
+    } else {
+        $platRaw = @()
+        foreach ($key in $chips.Keys) {
+            if ($key -match '플랫폼') { $platRaw += Split-TagValues $chips[$key] }
+        }
+    }
+    $platforms = New-Object System.Collections.Generic.List[string]
+    foreach ($p in $platRaw) {
+        $n = Normalize-Platform $p
+        if ($n -and -not $platforms.Contains($n)) { [void]$platforms.Add($n) }
+    }
+    # 플랫폼 chip 이 없어도 Steam 상점 링크가 있으면 PC 로 본다.
+    if ($platforms.Count -eq 0 -and $src -match 'store\.steampowered\.com') {
+        [void]$platforms.Add('PC')
+    }
+
+    # ── 장르 키워드 (필터 전용) ──
+    if ($rep['topics']) { $topics = Split-TagValues $rep['topics'] }
+    else                { $topics = Get-Topics $tags }
+
+    # ── 상태 ──
+    # 상태 chip 이 없으면 '출시' 가 들어간 라벨(정식 출시 / 1.0 출시 …)을 본다.
+    $statusRaw = ''
+    if ($chips['상태']) {
+        $statusRaw = $chips['상태']
+    } else {
+        foreach ($key in $chips.Keys) {
+            if ($key -match '출시') { $statusRaw = $chips[$key]; break }
+        }
+    }
     $status = if ($rep['status']) { $rep['status'] } else { Normalize-Status $statusRaw }
-    $date   = if ($rep['date'])   { $rep['date'] }   else { Get-ReportDate $File.FullName }
+
+    # ── 날짜 ── 리포트 안의 작성일/기준일 chip 이 가장 정확하다.
+    $date = ''
+    if ($rep['date']) {
+        $date = $rep['date']
+    } else {
+        foreach ($key in $chips.Keys) {
+            if ($key -match '작성일|기준일|작성') {
+                $date = ConvertTo-IsoDate $chips[$key]
+                if ($date) { break }
+            }
+        }
+    }
+    if (-not $date) { $date = Get-ReportDate $File.FullName }
 
     return [pscustomobject][ordered]@{
-        title  = [string]$title
-        studio = [string]$studio
-        desc   = [string]$desc
-        href   = 'reports/' + $File.Name
-        thumb  = [string]$thumb
-        tags   = @($tags)
-        status = [string]$status
-        date   = [string]$date
-        slug   = $slug
+        title     = [string]$title
+        studio    = [string]$studio
+        desc      = [string]$desc
+        href      = 'reports/' + $File.Name
+        thumb     = [string]$thumb
+        tags      = @($tags)
+        platforms = @($platforms.ToArray())
+        topics    = @($topics)
+        status    = [string]$status
+        date      = [string]$date
+        slug      = $slug
     }
 }
 
@@ -324,8 +454,9 @@ foreach ($f in $files) {
     try {
         $e = Build-Entry $f
         [void]$entries.Add($e)
-        $tagText = if ($e.tags.Count) { ($e.tags -join ', ') } else { '-' }
-        Write-Host ("  [OK] {0,-34} {1}  [{2}]  {3}" -f $e.slug, $e.title, $e.status, $tagText)
+        $tagText = if ($e.topics.Count) { ($e.topics -join ', ') } else { '-' }
+        $stText  = if ($e.status) { $e.status } else { '-' }
+        Write-Host ("  [OK] {0,-32} {1,-26} {2,-6} {3,-8} {4}" -f $e.slug, $e.title, $stText, $e.date, $tagText)
     } catch {
         # 한 파일이 깨져도 전체가 죽지 않게
         Write-Host ("  [!!] {0} 파싱 실패: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow

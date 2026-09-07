@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharma Noctis · Yudiko Studio — 개발사·게임·시장성 분석 리포트</title>
+<style>
+  :root{
+    --bg:#ffffff; --surface:#eef3f3; --surface2:#f7fafa;
+    --ink:#111917; --ink2:#212d2b; --muted:#4e605d; --dim:#8ba09c;
+    --line:#dfebe9; --line2:#eef4f3;
+    --accent:#2f7d78; --accent-ink:#22615d; --accent-soft:#daeeec;
+    --gold:#b23b3b; --gold-soft:#f6e2e2; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(10,25,22,.05),0 1px 3px rgba(10,25,22,.08);
+    --shadow:0 4px 8px -2px rgba(10,25,22,.08),0 2px 4px -2px rgba(10,25,22,.05);
+    --shadow-lg:0 16px 32px -10px rgba(10,25,22,.16);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; color:var(--ink); background:var(--bg); font-family:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,-apple-system,sans-serif; line-height:1.7; letter-spacing:-.01em; font-size:16px; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent-ink); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:0 0 14px; color:var(--ink2)}
+  h2,h3,h4{letter-spacing:-.02em}
+  .hl{color:var(--accent-ink); font-weight:700}
+  .hg{color:var(--gold); font-weight:700}
+
+  .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#4aa39c); color:#fff; border-radius:8px; font-size:14px}
+  .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
+  .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:13px; color:var(--muted); font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap}
+  .navlinks a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+  .navlinks a.active{color:var(--accent-ink); background:var(--accent-soft); font-weight:700}
+  @media(max-width:760px){ .topnav-inner{height:auto; flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px} .navlinks{justify-content:flex-start} }
+
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px 80px}
+  section{scroll-margin-top:78px; margin-top:64px}
+
+  .sidenav{display:none}
+  @media(min-width:1380px){
+    .sidenav{display:flex; position:fixed; top:120px; left:calc((100vw - 1120px)/2 - 154px); z-index:40; flex-direction:column; gap:2px; padding:12px 10px; width:134px; background:var(--bg); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+    .sidenav .sn-cap{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--dim); padding:2px 10px 8px; text-transform:uppercase}
+    .sidenav a{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; text-decoration:none; transition:background .18s,color .18s}
+    .sidenav a .n{font-size:10.5px; font-weight:800; color:var(--dim); min-width:14px}
+    .sidenav a:hover{background:var(--surface); color:var(--ink); text-decoration:none}
+    .sidenav a.active{background:var(--accent-soft); color:var(--accent-ink)}
+    .sidenav a.active .n{color:var(--accent-ink)}
+  }
+
+  .hero{padding:56px 0 8px}
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:6px 13px; border-radius:999px}
+  .hero h1{font-size:clamp(28px,4.4vw,44px); line-height:1.15; margin:20px 0 12px; font-weight:800; color:var(--ink)}
+  .hero .sub{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:760px; margin:0}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:9px; margin-top:24px}
+  .chip{font-size:12.5px; color:var(--ink2); background:var(--surface); border:1px solid var(--line); padding:7px 13px; border-radius:999px; font-weight:600}
+  .chip b{color:var(--accent-ink)}
+  .hero-figure{margin-top:32px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-lg); aspect-ratio:21/9; background:var(--surface)}
+  .hero-figure img{width:100%; height:100%; object-fit:cover; display:block}
+  .figcap{font-size:12px; color:var(--dim); margin:8px 2px 0}
+
+  .shead{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+  .snum{font-size:13px; font-weight:800; color:#fff; background:var(--accent); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; flex:none}
+  .shead h2{font-size:clamp(20px,2.7vw,27px); margin:0; font-weight:800; color:var(--ink)}
+  .lead{font-size:16px; color:var(--muted); margin:0 0 22px; padding-left:48px}
+  @media(max-width:560px){.lead{padding-left:0}}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:var(--shadow-sm)}
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .subh{font-size:14px; font-weight:800; color:var(--ink); margin:0 0 12px; display:flex; align-items:center; gap:8px}
+  .subh .bar{width:4px; height:15px; border-radius:2px; background:var(--accent)}
+
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--line); border-radius:12px; padding:18px 16px; text-align:center; background:var(--surface2)}
+  .kpi .n{font-size:clamp(19px,3vw,27px); font-weight:800; line-height:1.05; color:var(--accent-ink)}
+  .kpi .n.g{color:var(--green)} .kpi .n.o{color:var(--gold)}
+  .kpi .l{font-size:12px; color:var(--muted); margin-top:7px; font-weight:600}
+
+  .tbl-wrap{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line2); vertical-align:top}
+  thead th{background:var(--surface); color:var(--ink); font-weight:700; font-size:12.5px; border-bottom:2px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even) td{background:var(--surface2)}
+  .kv th{width:34%; background:var(--surface); color:var(--ink2); font-weight:700; border-right:1px solid var(--line2)}
+  .kv td{color:var(--ink2)}
+  .kv tr:nth-child(even) td,.kv tr:nth-child(even) th{background:var(--surface2)}
+  @media(max-width:560px){.kv th{width:42%}}
+
+  .pill{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+  .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
+  .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
+
+  ul.clean{list-style:none; margin:0; padding:0}
+  ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  ul.clean.g li::before{background:var(--green)} ul.clean.a li::before{background:var(--amber)} ul.clean.r li::before{background:var(--red)}
+
+  .note{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14px; color:var(--ink2)}
+  .note.gold{border-left-color:var(--gold); background:var(--gold-soft)} .note b{color:var(--ink)}
+
+  .case-feat{display:grid; grid-template-columns:1.05fr 1fr; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  @media(max-width:760px){.case-feat{grid-template-columns:1fr}}
+  .case-feat .cf-img{background:var(--surface); min-height:210px; background-size:cover; background-position:center}
+  .case-feat .cf-body{padding:22px 24px}
+  .case-tags{display:flex; gap:5px; flex-wrap:wrap}
+
+  .swot{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:680px){.swot{grid-template-columns:1fr}}
+  .quad{border:1px solid var(--line); border-radius:12px; padding:18px 20px; background:var(--surface2)}
+  .quad h4{margin:0 0 10px; font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px}
+  .quad ul{margin:0; padding-left:18px} .quad li{margin:6px 0; font-size:13.5px; color:var(--ink2)}
+  .q-s{border-top:3px solid var(--green)} .q-s h4{color:var(--green)}
+  .q-w{border-top:3px solid var(--red)} .q-w h4{color:var(--red)}
+  .q-o{border-top:3px solid var(--blue)} .q-o h4{color:var(--blue)}
+  .q-t{border-top:3px solid var(--amber)} .q-t h4{color:var(--amber)}
+
+  .cap{font-size:12px; color:var(--dim); margin-top:8px}
+
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  @media(max-width:820px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  .shot{border-radius:11px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/9; background:var(--surface); box-shadow:var(--shadow-sm)}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+
+  details.acc{border:1px solid var(--line); border-radius:12px; background:var(--bg); overflow:hidden; box-shadow:var(--shadow-sm)}
+  details.acc>summary{list-style:none; cursor:pointer; padding:15px 20px; display:flex; align-items:center; gap:12px; font-weight:800; color:var(--ink); font-size:14.5px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:hover{background:var(--surface)}
+  details.acc>summary .cnt{font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:2px 9px; border-radius:999px; margin-left:auto}
+  details.acc>summary .arw{color:var(--muted); font-size:11px; transition:transform .3s}
+  details.acc[open]>summary .arw{transform:rotate(180deg)}
+  .acc-body{padding:4px 20px 20px; border-top:1px solid var(--line)}
+
+  footer{margin-top:70px; padding-top:26px; border-top:1px solid var(--line)}
+  .sources{display:grid; grid-template-columns:repeat(2,1fr); gap:8px 22px; margin:14px 0}
+  @media(max-width:640px){.sources{grid-template-columns:1fr}}
+  .sources a{font-size:13px; color:var(--accent-ink); display:inline-flex; gap:7px; align-items:baseline}
+  .sources a::before{content:"↗"; color:var(--dim); font-size:11px}
+  .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
+  .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
+
+  .emph{background:#e9f4f3; border:1px solid #cfe6e3; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph > .shead{margin-bottom:10px}
+  @media(max-width:560px){.emph{padding:20px 16px 24px}}
+  @media print{.emph{background:#eef7f6 !important; border-color:#cfe6e3; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(6,18,16,.92); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox.open{display:flex; opacity:1}
+  .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.6); cursor:zoom-out; object-fit:contain}
+  .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#c4d6d3; font-size:12px}
+
+  @media print{
+    @page{margin:14mm}
+    html{scroll-behavior:auto}
+    body{font-size:11pt; color:#000; background:#fff}
+    .topnav{display:none !important}
+    .wrap{max-width:none; padding:0}
+    section{margin-top:22px; scroll-margin-top:0}
+    .hero{padding:0 0 6px}
+    .hero-figure{box-shadow:none; aspect-ratio:auto; max-height:150mm}
+    .card,.quad,.kpi,.note,.tbl-wrap,.case-feat,details.acc{box-shadow:none !important; break-inside:avoid; page-break-inside:avoid}
+    .shot:hover img{transform:none}
+    a{color:#000; text-decoration:none}
+    .sources a::after{content:" (" attr(href) ")"; font-size:9pt; color:#444; word-break:break-all}
+    .sources a::before{content:""}
+    .backtop{display:none}
+    .snum,.kicker,.chip b,.pill{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    details.acc>summary .arw{display:none}
+    .shead h2,.hero h1{color:#000}
+    .lightbox{display:none !important}
+    .sidenav{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="star">☾</span> Pharma Noctis <small>분석 리포트</small></a>
+    <nav class="navlinks" aria-label="목차">
+      <a href="#summary">01 요약</a>
+      <a href="#studio">02 개발사</a>
+      <a href="#game">03 게임</a>
+      <a href="#market">04 시장성</a>
+      <a href="#invest">05 투자</a>
+      <a href="#deep">06 심화</a>
+      <a href="#sources">출처</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="섹션 바로가기">
+  <span class="sn-cap">Contents</span>
+  <a href="#summary"><span class="n">01</span> 요약</a>
+  <a href="#studio"><span class="n">02</span> 개발사</a>
+  <a href="#game"><span class="n">03</span> 게임</a>
+  <a href="#market"><span class="n">04</span> 시장성</a>
+  <a href="#invest"><span class="n">05</span> 투자</a>
+  <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#sources"><span class="n">·</span> 출처</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="margin-top:0">
+    <span class="kicker">☾ Pre-Launch · Developer &amp; Market Analysis</span>
+    <h1>Pharma Noctis —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">인디 개발사 <b>Yudiko Studio</b>의 신작 「Pharma Noctis」 — <b>야간 약국의 약사</b>가 되어 처방을 조제하고 질서를 지키는 <b>심리 호러 시뮬레이션</b>. 루틴에 깊이 빠져들수록 <b>이 벽 안에 무언가 잘못돼 있다는 감각</b>이 커진다. 점프스케어가 아닌 <b>분위기·불안</b>으로 조여오는 ‘직업 시뮬 + 심리 호러’ <b>출시 전(Pre-Launch)</b> 타이틀 분석.</p>
+    <div class="hero-meta">
+      <span class="chip">장르 <b>심리 호러 · 시뮬레이션</b></span>
+      <span class="chip">상태 <b>Coming Soon · 데모 공개</b></span>
+      <span class="chip">플랫폼 <b>PC (Steam)</b></span>
+      <span class="chip">시점 <b>1인칭</b></span>
+      <span class="chip">언어 <b>10개 (한국어 포함)</b></span>
+    </div>
+    <div class="hero-figure">
+      <img loading="lazy" alt="Pharma Noctis 대표 이미지" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/9112f8268a0cbafa51a5ab4bd2b231ae581afedb/ss_9112f8268a0cbafa51a5ab4bd2b231ae581afedb.1920x1080.jpg?t=1771490394">
+    </div>
+    <div class="figcap">▲ 「Pharma Noctis」 인게임 화면 (출처: Steam 공식) · 전체 스크린샷·데모는 Steam 상점 참고</div>
+  </section>
+
+  <!-- 01 SUMMARY -->
+  <section id="summary">
+    <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
+    <div class="card">
+      <p><b>Yudiko Studio</b>는 미출시(Coming Soon) 신작 <span class="hg">「Pharma Noctis」</span>를 개발·자체 퍼블리싱하는 인디 개발사입니다. 게임은 <b>야간 약국에서 일하는 약사</b>가 되어 손님을 응대하고 재고·질서를 관리하는 <b>심리 호러 시뮬레이션</b>으로, <b>‘점프스케어 없는’ 분위기 공포</b>를 표방합니다. 처방을 조제하고 <b>위조 문서·약물 상호작용(금기 조합)</b>을 감별하며, 재료를 섞어 <b>직접 약을 제조</b>하고 재고 점검·보고서·금고 관리 같은 <b>실제 약국 업무</b>를 수행합니다.</p>
+      <p style="margin-bottom:0">배경은 <b>차가운 형광등·멸균된 진열대·창밖의 텅 빈 거리</b>가 감도는 동유럽풍 약국으로, <b>단순화된 리얼리즘·어둡고 미니멀한 색조</b>가 불안을 자아냅니다. 루틴을 반복할수록 <b>‘무언가 잘못됐다’는 감각</b>이 커지는 <span class="hl">직업 시뮬 + 심리 호러 + 미스터리</span> 구조입니다. 현재 <span class="hl">미출시로 Steam에 데모를 공개</span>했고 <b>10개 언어(한국어 포함)</b>를 지원합니다. <span class="hl">트렌디한 ‘직업 시뮬 호러’ 훅과 강한 분위기</span>가 강점이나, 상업 검증·개발사 정보는 아직 제한적입니다.</p>
+    </div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="n o">심리 호러</div><div class="l">점프스케어 없는 불안</div></div>
+      <div class="kpi"><div class="n">약국 시뮬</div><div class="l">조제·감별·재고</div></div>
+      <div class="kpi"><div class="n g">데모</div><div class="l">공개(체험 가능)</div></div>
+      <div class="kpi"><div class="n">10개</div><div class="l">지원 언어(한국어 포함)</div></div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
+        <tbody>
+          <tr><td><b>차별화 훅</b></td><td>‘야간 약국 직업 시뮬 + 심리 호러’ + 위조·금기 조합 감별</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>분위기·연출</b></td><td>형광등·멸균·동유럽풍의 강한 불안 무드·1인칭 몰입</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>트렌드 적합성</b></td><td>‘직업 시뮬 호러’(Papers類·야간 근무物) 스트리밍 인기</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>볼륨·리플레이</b></td><td>내러티브 호러 특유의 짧은 분량·재플레이성 과제</td><td><span class="pill pl-mid">검증 필요</span></td></tr>
+          <tr><td><b>상업 검증</b></td><td>미출시 — 판매·리뷰 부재, 데모·위시리스트가 선행지표</td><td><span class="pill pl-mid">미검증</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>트렌디한 훅·강한 분위기 vs 미출시·개발사 정보 제한</td><td><span class="pill pl-cond">관찰(유망)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>미출시(Coming Soon · 데모 공개)</b>로 출시일·가격·판매·리뷰 등 지표가 아직 없습니다. 본 리포트는 Steam 공식 정보·데모 소개 기반의 출시 전 전망이며, 개발사(Yudiko Studio) 상세 정보는 제한적입니다.</div>
+  </section>
+
+  <!-- 02 STUDIO -->
+  <section id="studio">
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Yudiko Studio</h2></div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 프로필</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>개발사</th><td>Yudiko Studio (인디)</td></tr>
+            <tr><th>성격</th><td>인디 게임 개발 · 자체 퍼블리싱</td></tr>
+            <tr><th>대표작</th><td>Pharma Noctis (미출시 · 데모 공개)</td></tr>
+            <tr><th>플랫폼</th><td>PC (Steam, Windows 10 64-bit)</td></tr>
+            <tr><th>배경 설정</th><td>동유럽풍 야간 약국 — 단순화된 리얼리즘·미니멀 다크 톤</td></tr>
+            <tr><th>노출 경로</th><td>Steam 데모 · K-인디/글로벌 인디 페스티벌 큐레이션</td></tr>
+          </tbody></table>
+        </div>
+        <p class="cap" style="margin-top:8px">※ Yudiko Studio의 국적·팀 규모 등 상세 프로필은 공개가 제한적입니다.</p>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>개발사 특징</div>
+        <div class="card">
+          <p style="font-size:14.5px">Yudiko Studio는 <b>자체 개발·퍼블리싱</b> 구조의 인디로, 데뷔 프로젝트에서 <b>‘직업 시뮬 + 심리 호러’라는 트렌디한 훅 + 강한 분위기 연출</b>을 전면에 내세웠습니다. <b>10개 언어 지원·데모 공개</b>로 글로벌 초기 관심을 확보하려는 방향성이 보입니다.</p>
+          <ul class="clean">
+            <li><b>또렷한 콘셉트</b> — 야간 약국 직업 시뮬 심리 호러</li>
+            <li>플레이 가능한 <b>데모</b>로 손맛·분위기 사전 검증</li>
+            <li>10개 언어 예고 — <b>글로벌 출시</b>를 겨냥한 설계</li>
+          </ul>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘분위기·직업 시뮬이 강한 심리 호러 인디’. 관건은 강한 무드를 <b>볼륨·리플레이성·완성도</b>로 뒷받침하고, 데모·위시리스트 반응을 출시 흥행으로 전환하는 실행력입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAME -->
+  <section id="game">
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Pharma Noctis</h2></div>
+
+    <div class="case-feat">
+      <div class="cf-img" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/97c84e96fac10bde228f5c66d893dc1ad7472525/header.jpg?t=1771490394'); background-size:contain; background-repeat:no-repeat; background-position:center; background-color:#0e1a18"></div>
+      <div class="cf-body">
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">심리 호러</span><span class="tag">직업 시뮬</span><span class="tag">1인칭</span><span class="tag">미스터리</span><span class="tag">분위기</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px">야간 약국의 약사가 되어 처방을 조제하고 질서를 지키는 <b>심리 호러 시뮬레이션</b>. <b>점프스케어 대신 분위기·불안</b>으로 조여오며, 루틴에 빠져들수록 <b>‘무언가 잘못됐다’</b>는 감각이 커집니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0"><b>위조 문서·금기 약물 조합 감별</b>, 재료를 섞는 <b>수동 조제</b>, 재고 점검·보고서·금고 관리 등 <b>실제 약국 업무</b>를 수행하며 미스터리를 풀어갑니다. 1인칭·강한 무드가 핵심입니다.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px; align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>제품 개요</div>
+        <div class="tbl-wrap">
+          <table class="kv"><tbody>
+            <tr><th>장르</th><td>어드벤처 · 캐주얼 · 인디 · 시뮬레이션 (심리 호러)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/3886590/Pharma_Noctis/" target="_blank" rel="noopener">Steam</a>, Windows 10 64-bit)</td></tr>
+            <tr><th>출시</th><td>미정 (Coming Soon · 데모 공개)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>Yudiko Studio (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>손님 응대 → 처방 감별·조제 → 재고·질서 관리 → 미스터리 단서</td></tr>
+            <tr><th>분위기</th><td>동유럽풍 약국·형광등·멸균·미니멀 다크 톤(1인칭)</td></tr>
+            <tr><th>지원 언어</th><td>한국어·영어·일본어·중국어(번체)·프랑스·독일·이탈리아·스페인·포르투갈·러시아 등 10개</td></tr>
+            <tr><th>기능</th><td>싱글플레이 · 패밀리 셰어링 · 데모 공개</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>출시 전 관찰</div>
+        <div class="card">
+          <p style="font-size:14.5px; margin-bottom:8px">아직 <b>정식 출시 전</b>이라 판매·리뷰 지표는 없습니다. 공개된 스크린샷·데모 기준으로 <b>‘직업 시뮬 + 심리 호러’의 트렌디한 훅과 강한 분위기</b>가 부각됩니다. 이 계열은 <b>스트리밍·클립에서 강한 확산성</b>을 보입니다.</p>
+          <ul class="clean g">
+            <li>강한 분위기·미스터리 → <b>스트리머·클립 소구</b></li>
+            <li>직업 시뮬 조작(감별·조제) → <b>긴장·몰입</b></li>
+            <li>데모·10개 언어 → <b>글로벌 사전 검증·저변</b></li>
+          </ul>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>선행지표 권장</b> — 출시 전망을 위해 <b>데모 반응·위시리스트·스트리머 픽업·분량(볼륨)</b>을 추적하면 좋습니다(현재 공개 수치 제한적).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>공식 스크린샷</div>
+    <div class="gallery">
+      <div class="shot"><img loading="lazy" alt="Pharma Noctis 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/604baa86e2c6ff4b450a845c42fbd3ab0ea34303/ss_604baa86e2c6ff4b450a845c42fbd3ab0ea34303.1920x1080.jpg?t=1771490394"></div>
+      <div class="shot"><img loading="lazy" alt="Pharma Noctis 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/241a0d0c1505c3d0e22e9436393a69a907d69263/ss_241a0d0c1505c3d0e22e9436393a69a907d69263.1920x1080.jpg?t=1771490394"></div>
+      <div class="shot"><img loading="lazy" alt="Pharma Noctis 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/8ef0d653be14b96b8be2bfc38f329e1b51570498/ss_8ef0d653be14b96b8be2bfc38f329e1b51570498.1920x1080.jpg?t=1771490394"></div>
+      <div class="shot"><img loading="lazy" alt="Pharma Noctis 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/b95e29e1b986b824ca0f8f4bc0bda3af40c97925/ss_b95e29e1b986b824ca0f8f4bc0bda3af40c97925.1920x1080.jpg?t=1771490394"></div>
+      <div class="shot"><img loading="lazy" alt="Pharma Noctis 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/18c7c6a1ebd7632f8f60b73d20b97c1f7563734d/ss_18c7c6a1ebd7632f8f60b73d20b97c1f7563734d.1920x1080.jpg?t=1771490394"></div>
+      <div class="shot"><img loading="lazy" alt="Pharma Noctis 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3886590/5dccd7f68ebd3b8e62fb2854047447b047e7a8bb/ss_5dccd7f68ebd3b8e62fb2854047447b047e7a8bb.1920x1080.jpg?t=1771490394"></div>
+    </div>
+    <div class="cap" style="margin-top:12px">▲ 「Pharma Noctis」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/3886590/Pharma_Noctis/" target="_blank" rel="noopener">Steam 상점에서 데모·전체 보기 →</a></div>
+  </section>
+
+  <!-- 04 MARKET -->
+  <section id="market">
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 직업 시뮬 · 심리 호러</h2></div>
+    <p class="lead"><span class="hl">스트리밍에 강한 심리 호러</span> × <span class="hl">‘직업 시뮬’ 트렌드</span> — 분위기·훅이 강하면 저예산으로도 컬트 흥행이 나오는 확산성 큰 시장.</p>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="subh"><span class="bar"></span>장르 포지션</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px"><b>심리 호러·직업 시뮬</b>은 <b>Papers, Please·Phasmophobia·야간 근무物(Night Shift類)</b>처럼 <b>‘단순한 직업 루틴 + 서서히 조여오는 이상’</b>이 스트리밍·클립에서 폭발적으로 확산되는 장르입니다. Pharma Noctis는 <b>‘야간 약국’</b>이라는 신선한 소재로 차별화합니다.</p>
+          <ul class="clean g">
+            <li>강한 분위기·미스터리 → <b>스트리밍·클립</b> 확산성</li>
+            <li>직업 시뮬 조작 → <b>몰입·긴장의 반복 루프</b></li>
+            <li>10개 언어 → <b>글로벌 호러 팬 저변</b></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="subh"><span class="bar"></span>기회와 한계</div>
+        <div class="card">
+          <p style="font-size:14px; margin-bottom:8px">직업 시뮬 호러는 저예산으로도 컬트 흥행이 가능한 매력적 장르이지만, <b>분량(볼륨)이 짧고 재플레이성이 낮은</b> 내러티브 호러의 약점이 있습니다. <b>‘한 번 클리어하면 끝’</b>이 되지 않도록 설계가 중요합니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 직업 시뮬 호러는 <b>‘분위기·훅·확산성·볼륨’</b>이 성패를 좌우합니다. 훅·분위기·데모는 확보, 관건은 <b>분량·리플레이성·스트리머 노출</b>입니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INVEST -->
+  <section id="invest" class="emph">
+    <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
+    <div class="swot">
+      <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
+        <li>트렌디한 훅(야간 약국 직업 시뮬 + 심리 호러)</li>
+        <li>형광등·멸균·동유럽풍의 강한 분위기·1인칭 몰입</li>
+        <li>스트리밍·클립 확산에 유리한 미스터리 구조</li>
+        <li>데모 공개·10개 언어로 글로벌 사전 검증·저변</li>
+      </ul></div>
+      <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
+        <li>미출시 — 상업성(판매·리뷰·위시리스트) 미검증</li>
+        <li>내러티브 호러 특유의 짧은 분량·낮은 재플레이성</li>
+        <li>개발사(Yudiko Studio) 국적·규모·트랙레코드 정보 제한</li>
+        <li>‘직업 시뮬 호러’ 유사작 다수 — 차별화 유지 과제</li>
+      </ul></div>
+      <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
+        <li>스트리머·호러 채널 픽업으로 저비용 바이럴</li>
+        <li>콘솔(PS/Xbox/Switch) 이식 — 호러 친화 시장</li>
+        <li>추가 챕터·에피소드·시즌 스토리 DLC</li>
+        <li>10개 언어로 글로벌 위시리스트 확대</li>
+      </ul></div>
+      <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
+        <li>직업 시뮬·심리 호러 신작의 치열한 경쟁</li>
+        <li>분량 부족 시 ‘한 번 하고 끝’ 리텐션 급락</li>
+        <li>강한 훅의 출시 흥행 전환 불확실성</li>
+        <li>환율·플랫폼 수수료 등 외부 변수</li>
+      </ul></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <p>Pharma Noctis는 <span class="hl">트렌디한 ‘직업 시뮬 호러’ 훅과 강한 분위기를 갖췄으나, 볼륨·상업성은 미검증</span>인 ‘출시 전 유망주’입니다. 투자·퍼블리싱 관점에서는 <b>데모의 분위기·손맛과 분량(볼륨)·리플레이 설계, 개발사 실체를 확인</b>하되, <b>스트리밍 확산성이라는 저비용 마케팅 상방</b>을 함께 보는 접근이 합리적입니다.</p>
+      <div class="grid g2" style="margin-top:4px">
+        <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
+          <ul class="clean g">
+            <li>스트리밍 친화 훅으로 저비용 바이럴 잠재력</li>
+            <li>신선한 소재(야간 약국)·강한 분위기 차별화</li>
+            <li>데모·10개 언어로 글로벌 확장 여지</li>
+            <li>챕터·에피소드 DLC·콘솔 이식 상방</li>
+          </ul>
+        </div>
+        <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
+          <ul class="clean a">
+            <li><b>데모 반응·위시리스트·스트리머 픽업</b>(핵심)</li>
+            <li>개발사(Yudiko Studio) 실체·규모·개발 진척</li>
+            <li><b>분량(볼륨)·리플레이성·엔딩 구조</b> 설계</li>
+            <li>출시 일정·가격 정책</li>
+            <li>콘솔 이식·추가 챕터 로드맵</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(유망)’</b>. 훅·분위기·확산성은 뚜렷하나 미출시·볼륨·개발사 정보 제한이라, <b>데모 반응·분량·개발 진척을 확인한 뒤</b> 판단하는 것이 바람직합니다. 데모·스트리머 반응이 양호하면 특히 <b>스트리밍 바이럴·콘솔·챕터 확장 관점</b>에서 검토 여지가 큽니다.</div>
+    </div>
+  </section>
+
+  <!-- 06 DEEP -->
+  <section id="deep" class="emph">
+    <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
+
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 직업 시뮬 · 심리 호러</div>
+    <div class="grid g2" style="align-items:start">
+      <div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="n">확산성</div><div class="l">스트리밍 폭발력</div></div>
+          <div class="kpi"><div class="n o">저예산</div><div class="l">컬트 흥행 가능</div></div>
+          <div class="kpi"><div class="n g">$5~15</div><div class="l">인디 호러 가격대</div></div>
+          <div class="kpi"><div class="n">볼륨</div><div class="l">리텐션 병목</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:8px"><b>결론 — 분위기·훅이 강하면 저예산으로 컬트 대박이 가능한 장르.</b> <b>Papers Please·Phasmophobia·야간 근무物</b>처럼 직업 시뮬·심리 호러는 <b>스트리밍 확산성</b>이 강력한 마케팅 엔진입니다. Pharma Noctis는 <b>‘야간 약국’ 소재·강한 무드</b>로 유리한 출발선에 섰습니다.</p>
+        <div class="note gold" style="font-size:13px"><b>Pharma Noctis의 위치</b> — ‘야간 약국 직업 시뮬 심리 호러’라는 <b>신선하고 확산성 큰 훅</b>. 관건은 강한 분위기를 <b>분량·리플레이·완성도</b>로 뒷받침해 데모·위시리스트를 판매까지 잇는 실행력.</div>
+      </div>
+    </div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
+    <div class="card">
+      <p>시장성의 핵심은 <b>‘스트리밍 확산성 큰 심리 호러 + 트렌디한 직업 시뮬 + 신선한 소재(야간 약국)’의 결합</b>입니다. 훅·분위기·확산성은 강한 자산이나, 내러티브 호러는 <b>분량·리플레이성</b>이 리텐션의 병목이고 개발사(Yudiko Studio) 정보가 제한적이라, <b>시장성은 ‘훅·확산성은 강력, 볼륨·검증은 미완’의 유망형</b>입니다.</p>
+      <ul class="clean g" style="margin-top:2px">
+        <li><b>확산성 강형(상방 있음)</b> — 스트리밍 친화 훅·강한 분위기</li>
+        <li>관건 — <b>데모 반응·분량·리플레이·콘솔/챕터 확장</b></li>
+      </ul>
+    </div>
+
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔 이식 + 추가 챕터/에피소드 DLC’</b><br>스트리밍 친화 심리 호러는 <b>콘솔(PS·Xbox·Switch) 이식</b>으로 호러 수요가 큰 시장을 넓힐 수 있고, 짧은 분량의 약점을 <b>추가 챕터·에피소드·시즌 스토리 DLC</b>로 보완하면 리텐션·수익을 함께 키울 수 있습니다. (출시 성공을 전제로) 1순위 미개척 수익원은 <b>콘솔 이식 + 챕터/에피소드 DLC</b>이며, 2순위는 <b>스트리머 협업·시즌 이벤트</b>로 바이럴을 재점화하는 것, 3순위는 <b>사운드트랙·아트 등 부가 판매</b>입니다. 단, 현재는 <b>‘강한 분위기와 충분한 분량·리플레이의 완성도 높은 출시’가 최우선</b>입니다.</div>
+
+    <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
+    <div class="grid g2">
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
+        <ul class="clean">
+          <li><b>차가운 형광등·멸균 진열대·동유럽풍</b> — 강한 불안 무드·1인칭 몰입</li>
+          <li>단순화된 리얼리즘·미니멀 다크 톤 — <b>저예산 대비 높은 분위기 효율</b></li>
+          <li>정적인 공간·미스터리 연출로 <b>스크린샷·클립 소구</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
+        <ul class="clean">
+          <li><b>처방 감별·위조/금기 조합·수동 조제</b>의 직업 시뮬 루프</li>
+          <li><b>재고·보고서·금고 관리 + 미스터리 단서</b> 결합</li>
+          <li>과제 — 내러티브 호러의 <b>분량·리플레이성·긴장 유지</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 스트리밍 확산성이 강한 심리 호러에 <span class="hl">신선한 ‘야간 약국’ 직업 시뮬·강한 분위기·10개 언어</span>를 얹은 유망 신작입니다. 다만 <b>미출시·볼륨·개발사 정보 제한</b>인 만큼, 데모 반응·분량·리플레이 설계와 콘솔·챕터 확장 실행력이 시장성의 열쇠입니다.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <footer id="sources">
+    <details class="acc">
+      <summary><span>참고 출처</span><span class="cnt">2건</span><span class="arw">▼</span></summary>
+      <div class="acc-body">
+        <div class="sources">
+          <a href="https://store.steampowered.com/app/3886590/Pharma_Noctis/" target="_blank" rel="noopener">Steam — Pharma Noctis</a>
+          <a href="https://store.steampowered.com/app/3886590/Pharma_Noctis/?l=koreana" target="_blank" rel="noopener">Steam — Pharma Noctis (한국어 상점)</a>
+        </div>
+      </div>
+    </details>
+    <p class="disc" style="margin-top:16px">이미지 © Yudiko Studio / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>미출시(Coming Soon, 데모 공개)</b>로 출시일·가격·판매·리뷰 등 상업 지표가 없어 콘셉트·장르 시장성 중심의 출시 전 전망입니다. 개발사(Yudiko Studio) 국적·규모 등 상세 정보는 공개가 제한적이므로 실제 투자 검토 시 데모·분량·개발 진척 확인이 필요합니다. · 기준일 2026.08.13</p>
+    <a href="#top" class="backtop">↑ 맨 위로</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="확대 이미지">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img id="lb-img" alt="확대 이미지">
+  <div class="lb-cap">이미지·바깥 영역 클릭 또는 Esc로 닫기</div>
+</div>
+
+<script>
+(function(){
+  var links = [].slice.call(document.querySelectorAll('.navlinks a[href^="#"], .sidenav a[href^="#"]'));
+  var byId = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(id!=='top' && document.getElementById(id)){ (byId[id]=byId[id]||[]).push(a); } });
+  var order=['summary','studio','game','market','invest','deep','sources'];
+  var secs=order.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var lastId=null, ticking=false;
+  function spy(){
+    ticking=false;
+    var line=140, cur=secs.length?secs[0].id:null;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top - line <= 0) cur=secs[i].id; }
+    if(cur===lastId) return; lastId=cur;
+    links.forEach(function(l){ l.classList.remove('active'); });
+    (byId[cur]||[]).forEach(function(a){ a.classList.add('active'); if(a.parentNode.classList.contains('navlinks')) a.scrollIntoView({block:'nearest',inline:'nearest'}); });
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+
+  var lb=document.getElementById('lightbox'), lbImg=document.getElementById('lb-img');
+  document.querySelectorAll('.gallery .shot img, .hero-figure img').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(){ lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt||'확대 이미지'; lb.classList.add('open'); document.body.style.overflow='hidden'; });
+  });
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; setTimeout(function(){ if(!lb.classList.contains('open')) lbImg.removeAttribute('src'); },200); }
+  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbImg || e.target.classList.contains('lb-close')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+
+  var opened=[];
+  window.addEventListener('beforeprint', function(){ opened=[]; document.querySelectorAll('details.acc').forEach(function(d){ if(!d.open){ opened.push(d); d.open=true; } }); });
+  window.addEventListener('afterprint', function(){ opened.forEach(function(d){ d.open=false; }); opened=[]; });
+})();
+</script>
+</body>
+</html>
