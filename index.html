@@ -63,15 +63,18 @@
   .hero{display:grid; grid-template-columns:1fr 320px; gap:16px; margin:28px 0 8px}
   .hero-main{position:relative; border-radius:var(--r); overflow:hidden; aspect-ratio:16/8;
     background:var(--surface); box-shadow:var(--shadow-lg); display:block}
-  .hero-main img{width:100%; height:100%; object-fit:cover; display:block;
+  /* 겹치는 레이어는 z-index 를 명시한다. 이미지를 static 으로 두면
+     position:absolute 인 플레이스홀더가 항상 위에 그려져 이미지를 가린다. */
+  .hero-main img{position:absolute; inset:0; z-index:1;
+    width:100%; height:100%; object-fit:cover; display:block;
     transition:transform .5s cubic-bezier(.2,.7,.3,1)}
   .hero-main:hover img{transform:scale(1.03)}
-  .hero-main .veil{position:absolute; inset:0;
+  .hero-main .veil{position:absolute; inset:0; z-index:2;
     background:linear-gradient(90deg,rgba(12,6,8,.86) 0%,rgba(12,6,8,.62) 42%,rgba(12,6,8,.06) 78%)}
-  .hero-main .ph{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  .hero-main .ph{position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center;
     font-size:72px; font-weight:800; color:rgba(255,255,255,.22);
     background:linear-gradient(135deg,#7c1a2a,#3a0d16)}
-  .hero-body{position:absolute; left:0; bottom:0; padding:30px 34px; max-width:60%; color:#fff}
+  .hero-body{position:absolute; left:0; bottom:0; z-index:3; padding:30px 34px; max-width:60%; color:#fff}
   .hero-kick{display:inline-flex; align-items:center; gap:7px; font-size:10.5px; font-weight:800;
     letter-spacing:.16em; text-transform:uppercase; color:#fff;
     background:rgba(255,255,255,.16); backdrop-filter:blur(6px);
@@ -127,13 +130,15 @@
     background:var(--surface); box-shadow:var(--shadow-sm);
     transition:box-shadow .22s ease, transform .22s ease}
   .card:hover .shot{transform:translateY(-3px); box-shadow:var(--shadow-lg)}
-  .card .shot img{width:100%; height:100%; object-fit:cover; display:block;
+  /* 히어로와 같은 이유로 이미지에도 position/z-index 를 준다. */
+  .card .shot img{position:absolute; inset:0; z-index:1;
+    width:100%; height:100%; object-fit:cover; display:block;
     transition:transform .4s cubic-bezier(.2,.7,.3,1)}
   .card:hover .shot img{transform:scale(1.05)}
-  .card .ph{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  .card .ph{position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center;
     font-size:34px; font-weight:800; color:rgba(255,255,255,.85); letter-spacing:-.04em;
     background:linear-gradient(135deg,#c02a3c,#7c1a2a)}
-  .badge{position:absolute; top:9px; left:9px; font-size:10.5px; font-weight:800; letter-spacing:.02em;
+  .badge{position:absolute; top:9px; left:9px; z-index:2; font-size:10.5px; font-weight:800; letter-spacing:.02em;
     padding:4px 9px; border-radius:5px; background:rgba(26,19,21,.74); color:#fff; backdrop-filter:blur(6px)}
   .badge.released{background:rgba(11,138,78,.9)}
   .badge.upcoming{background:rgba(192,42,60,.9)}
