@@ -312,6 +312,98 @@ function Get-ReportDate([string]$Path) {
     return (Get-Item -LiteralPath $Path).LastWriteTime.ToString('yyyy-MM-dd')
 }
 
+# ─────────────────────────── 팀 평점 ───────────────────────────
+#
+# ratings.csv 는 손으로 고치는 파일이다. 헤더는 다음과 같고,
+# '게임' 칸에는 슬러그(파일명)나 리포트 제목 어느 쪽을 써도 된다.
+#
+#   게임,평가자,완성도,차별화,적합성,검증,역량,확장성
+#   SURA_Blade_of_Eternity,창연,8,9,7,,6,8
+#
+# 판단할 근거가 없는 축은 비워두면 그 사람의 평균에서 빠진다.
+# (미출시작의 '검증' 축이 대표적인 경우)
+
+$AxisColumns = [ordered]@{
+    '완성도' = 'quality'; '차별화' = 'unique'; '적합성' = 'fit'
+    '검증'   = 'proof';   '역량'   = 'team';   '확장성' = 'scale'
+}
+
+function Get-Ratings([string]$Path) {
+    $byKey = @{}
+    if (-not (Test-Path -LiteralPath $Path)) { return $byKey }
+
+    $raw = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+    if (-not $raw -or -not $raw.Trim()) { return $byKey }
+    $raw = $raw.TrimStart([char]0xFEFF)          # 엑셀이 붙이는 BOM
+
+    $rows = @($raw | ConvertFrom-Csv)
+    foreach ($r in $rows) {
+        $game = ('' + $r.'게임').Trim()
+        if (-not $game) { continue }
+        $rater = ('' + $r.'평가자').Trim()
+        if (-not $rater) { $rater = '익명' }
+
+        $scores = @{}
+        foreach ($col in $AxisColumns.Keys) {
+            $cell = ('' + $r.$col).Trim()
+            if (-not $cell) { continue }
+            $n = 0.0
+            if ([double]::TryParse($cell, [ref]$n) -and $n -ge 1 -and $n -le 10) {
+                $scores[$AxisColumns[$col]] = [math]::Round($n, 2)
+            } else {
+                Write-Host ("  [!!] ratings.csv: '{0}' 의 {1} 값 '{2}' 을(를) 건너뜁니다 (1~10 숫자만)" -f $game, $col, $cell) -ForegroundColor Yellow
+            }
+        }
+        if ($scores.Count -eq 0) { continue }
+
+        $key = $game.ToLowerInvariant()
+        if (-not $byKey.ContainsKey($key)) { $byKey[$key] = New-Object System.Collections.Generic.List[object] }
+        [void]$byKey[$key].Add([pscustomobject]@{ rater = $rater; scores = $scores })
+    }
+    return $byKey
+}
+
+function Get-RatingSummary($Entries) {
+    $overalls = New-Object System.Collections.Generic.List[double]
+    $perAxis  = @{}
+    foreach ($k in $AxisColumns.Values) { $perAxis[$k] = New-Object System.Collections.Generic.List[double] }
+
+    foreach ($e in $Entries) {
+        $vals = New-Object System.Collections.Generic.List[double]
+        foreach ($k in $AxisColumns.Values) {
+            if ($e.scores.ContainsKey($k)) {
+                [void]$vals.Add([double]$e.scores[$k])
+                [void]$perAxis[$k].Add([double]$e.scores[$k])
+            }
+        }
+        if ($vals.Count -gt 0) {
+            $mean = ($vals | Measure-Object -Average).Average
+            [void]$overalls.Add($mean)
+        }
+    }
+    if ($overalls.Count -eq 0) { return $null }
+
+    $avg = ($overalls | Measure-Object -Average).Average
+    $sd  = 0.0
+    if ($overalls.Count -gt 1) {
+        $sum = 0.0
+        foreach ($v in $overalls) { $sum += [math]::Pow($v - $avg, 2) }
+        $sd = [math]::Sqrt($sum / $overalls.Count)
+    }
+    $axes = [ordered]@{}
+    foreach ($k in $AxisColumns.Values) {
+        if ($perAxis[$k].Count -gt 0) {
+            $axes[$k] = [math]::Round(($perAxis[$k] | Measure-Object -Average).Average, 2)
+        }
+    }
+    return [pscustomobject][ordered]@{
+        avg   = [math]::Round($avg, 2)
+        sd    = [math]::Round($sd, 2)
+        count = $overalls.Count
+        axes  = $axes
+    }
+}
+
 # ─────────────────────────── JSON 직렬화 ───────────────────────────
 #
 # ConvertTo-Json 을 쓰지 않는다. PowerShell 5.1 은 4칸 들여쓰기,
@@ -339,11 +431,18 @@ function Format-JsonString([string]$Value) {
     return $sb.ToString()
 }
 
+# 숫자는 지역 설정과 무관하게 항상 '.' 소수점으로 쓴다.
+function Format-JsonNumber($Value) {
+    $d = [double]$Value
+    if ([math]::Floor($d) -eq $d) { return [string][int]$d }
+    return $d.ToString('0.##', [System.Globalization.CultureInfo]::InvariantCulture)
+}
+
 function Format-ReportsJson($Items) {
     $list = @($Items)
     if ($list.Count -eq 0) { return '[]' }
 
-    $keys      = 'title', 'studio', 'desc', 'href', 'region', 'thumb', 'tags', 'platforms', 'topics', 'status', 'date', 'slug'
+    $keys      = 'title', 'studio', 'desc', 'href', 'region', 'thumb', 'tags', 'platforms', 'topics', 'status', 'date', 'rating', 'slug'
     $arrayKeys = 'tags', 'platforms', 'topics'
     $out       = New-Object System.Collections.Generic.List[string]
     [void]$out.Add('[')
@@ -356,7 +455,32 @@ function Format-ReportsJson($Items) {
             $comma = ''
             if ($k -lt $keys.Count - 1) { $comma = ',' }
 
-            if ($arrayKeys -contains $key) {
+            if ($key -eq 'rating') {
+                $r = $e.rating
+                if ($null -eq $r) {
+                    [void]$out.Add('    "rating": null' + $comma)
+                } else {
+                    [void]$out.Add('    "rating": {')
+                    [void]$out.Add('      "avg": '   + (Format-JsonNumber $r.avg)   + ',')
+                    [void]$out.Add('      "sd": '    + (Format-JsonNumber $r.sd)    + ',')
+                    [void]$out.Add('      "count": ' + (Format-JsonNumber $r.count) + ',')
+                    $axKeys = @($r.axes.Keys)
+                    if ($axKeys.Count -eq 0) {
+                        [void]$out.Add('      "axes": {}')
+                    } else {
+                        [void]$out.Add('      "axes": {')
+                        for ($x = 0; $x -lt $axKeys.Count; $x++) {
+                            $xc = ''
+                            if ($x -lt $axKeys.Count - 1) { $xc = ',' }
+                            [void]$out.Add('        ' + (Format-JsonString $axKeys[$x]) + ': ' +
+                                           (Format-JsonNumber $r.axes[$axKeys[$x]]) + $xc)
+                        }
+                        [void]$out.Add('      }')
+                    }
+                    [void]$out.Add('    }' + $comma)
+                }
+            }
+            elseif ($arrayKeys -contains $key) {
                 $vals = @($e.$key)
                 if ($vals.Count -eq 0) {
                     [void]$out.Add('    ' + (Format-JsonString $key) + ': []' + $comma)
@@ -480,6 +604,12 @@ function Build-Entry([System.IO.FileInfo]$File) {
     # 3) 그래도 없으면 파일이 처음 추가된 커밋일
     if (-not $date) { $date = Get-ReportDate $File.FullName }
 
+    # ── 팀 평점 ── ratings.csv 에서 슬러그 또는 제목으로 찾는다
+    $rating = $null
+    foreach ($k in @($slug.ToLowerInvariant(), ([string]$title).Trim().ToLowerInvariant())) {
+        if ($k -and $Ratings.ContainsKey($k)) { $rating = Get-RatingSummary $Ratings[$k]; break }
+    }
+
     return [pscustomobject][ordered]@{
         title     = [string]$title
         studio    = [string]$studio
@@ -492,6 +622,7 @@ function Build-Entry([System.IO.FileInfo]$File) {
         topics    = @($topics)
         status    = [string]$status
         date      = [string]$date
+        rating    = $rating
         slug      = $slug
     }
 }
@@ -505,6 +636,11 @@ if (-not (Test-Path -LiteralPath $ReportsDir)) {
 $files = @(Get-ChildItem -LiteralPath $ReportsDir -File -Recurse |
            Where-Object { $_.Extension -match '^\.html?$' -and -not $_.Name.StartsWith('_') } |
            Sort-Object FullName)
+
+$Ratings = Get-Ratings (Join-Path $Root 'ratings.csv')
+if ($Ratings.Count -gt 0) {
+    Write-Host ("  ratings.csv: {0}개 게임의 평점을 읽었습니다" -f $Ratings.Count) -ForegroundColor DarkGray
+}
 
 $entries = New-Object System.Collections.Generic.List[object]
 foreach ($f in $files) {

@@ -205,6 +205,16 @@
     padding:3px 8px; border-radius:5px}
   .cdate{font-size:11px; color:var(--dim); font-weight:600}
 
+  /* ── 팀 평점 ── */
+  .score{position:absolute; top:9px; right:9px; z-index:2; display:flex; align-items:baseline; gap:3px;
+    padding:4px 9px; border-radius:7px; background:rgba(26,19,21,.74); backdrop-filter:blur(6px);
+    color:#fff; font-variant-numeric:tabular-nums}
+  .score b{font-size:14px; font-weight:800; letter-spacing:-.02em; line-height:1}
+  .score i{font-style:normal; font-size:10px; opacity:.7}
+  .cfoot{display:flex; align-items:center; justify-content:space-between; gap:8px}
+  .rmeta{font-size:11px; color:var(--dim); font-weight:600; font-variant-numeric:tabular-nums}
+  .rmeta .split{color:var(--gold)}
+
   .empty{grid-column:1/-1; text-align:center; padding:80px 20px; color:var(--dim)}
   .empty .big{font-size:34px; margin-bottom:10px}
   .empty p{margin:0 0 16px; font-size:14px; color:var(--muted)}
@@ -312,6 +322,7 @@
           <label for="sort">정렬</label>
           <select class="sort" id="sort">
             <option value="new">최신순</option>
+            <option value="score">평점순</option>
             <option value="old">오래된순</option>
             <option value="title">가나다순</option>
           </select>
@@ -500,6 +511,8 @@ function cardHTML(r){
       <div class="ph">${esc(initials(r.title))}</div>
       ${r.thumb ? `<img loading="lazy" alt="${esc(r.title)} 썸네일" src="${esc(r.thumb)}" onerror="this.remove()">` : ""}
       ${r.status ? `<span class="badge ${STATUS_CLASS[r.status]||""}">${esc(r.status)}</span>` : ""}
+      ${r.rating ? `<span class="score" title="팀 평균 ${r.rating.avg} · ${r.rating.count}명 참여">
+        <b>${r.rating.avg.toFixed(1)}</b><i>/10</i></span>` : ""}
     </div>
     ${r.studio ? `<span class="cstudio">${esc(r.studio)}</span>` : ""}
     <h3 class="ctitle">${esc(r.title)}</h3>
@@ -508,7 +521,13 @@ function cardHTML(r){
       (r.tags||[]).slice(0,2).map(t=>`<span class="tag">${esc(t)}</span>`).join("") +
       (r.platforms||[]).slice(0,2).map(p=>`<span class="tag plat">${esc(p)}</span>`).join("")
     }</div>
-    <span class="cdate">${state.region ? "" : esc(r.region) + " · "}${esc(r.date||"")}</span>
+    <span class="cfoot">
+      <span class="cdate">${state.region ? "" : esc(r.region) + " · "}${esc(r.date||"")}</span>
+      ${r.rating ? `<span class="rmeta">평가 ${r.rating.count}명${
+        r.rating.count >= 2 && r.rating.sd >= 1.5
+          ? ` · <span class="split">편차 ${r.rating.sd.toFixed(1)}</span>` : ""
+      }</span>` : ""}
+    </span>
   </a>`;
 }
 
@@ -527,9 +546,12 @@ function render(){
   });
 
   const s = state.sort;
+  // 평점순에서는 아직 평가 안 된 리포트를 뒤로 보낸다
+  const scoreOf = r => r.rating ? r.rating.avg : -1;
   list.sort((a,b) =>
     s === "title" ? a.title.localeCompare(b.title,"ko")
   : s === "old"   ? String(a.date).localeCompare(String(b.date))
+  : s === "score" ? (scoreOf(b) - scoreOf(a)) || byDateDesc(a,b)
   :                 byDateDesc(a,b));
 
   if (list.length) {
@@ -608,7 +630,8 @@ function normalize(list){
     platforms: r.platforms ? arr(r.platforms) : [],
     topics:    r.topics    ? arr(r.topics)    : arr(r.tags),
     status:    r.status || "",
-    date:      r.date   || ""
+    date:      r.date   || "",
+    rating:    (r.rating && typeof r.rating.avg === "number") ? r.rating : null
   }));
 }
 
