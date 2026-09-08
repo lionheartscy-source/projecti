@@ -1,5 +1,46 @@
 [
   {
+    "title": "Oar'some Adventures",
+    "studio": "Haymaker Games",
+    "desc": "호주 멜버른 인디 스튜디오 Haymaker Games의 신작 「Oar'some Adventures」 — 1~8인이 함께 뗏목을 타고 거대한 강줄기를 내려가는 ‘코지하면서 카오스한(cozy/chaotic)’ 협동 래프팅 어드벤처.",
+    "href": "reports/global/Oarsome_Adventures.html",
+    "region": "국외",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4555210/9b38e209551de2247c89fcba2fbf32bd6394f5e7/ss_9b38e209551de2247c89fcba2fbf32bd6394f5e7.1920x1080.jpg?t=1788507790",
+    "tags": [
+      "협동 파티 어드벤처"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "어드벤처"
+    ],
+    "status": "데모",
+    "date": "2026-09-08",
+    "slug": "Oarsome_Adventures"
+  },
+  {
+    "title": "Slotbound",
+    "studio": "Optima Arch",
+    "desc": "1인 개발사 Optima Arch의 신작 「Slotbound」 — 3×3 슬롯머신을 돌려 유닛을 소환하고, 약한 유닛을 흡수(합성)해 군대를 키우며 적 웨이브·보스를 막아내는 ‘운(luck)과 전략이 만나는’ 로그라이크 오토배틀러 디펜스.",
+    "href": "reports/global/Slotbound.html",
+    "region": "국외",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4459590/c5ff7b3b4544c781a2b4bcb4c0388c09b313461e/ss_c5ff7b3b4544c781a2b4bcb4c0388c09b313461e.1920x1080.jpg?t=1785314042",
+    "tags": [
+      "로그라이크 오토배틀러 디펜스"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "로그라이크",
+      "디펜스"
+    ],
+    "status": "데모",
+    "date": "2026-09-08",
+    "slug": "Slotbound"
+  },
+  {
     "title": "Chaos Bringer",
     "studio": "Beff Inc.",
     "desc": "인디 개발사 Beff Inc.의 신작 「Chaos Bringer」 — ‘혼자서 즐기는 MMORPG 레이드’를 표방하는 전략 RPG. 빠른 택티컬 던전(로그라이크)에서 적을 제압하고, 시간을 멈춰(레이드 리더) 8인 파티에 완벽한 커맨드를 내려 거대 보스를 solo로 공략.",
