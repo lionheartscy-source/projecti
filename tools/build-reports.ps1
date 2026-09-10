@@ -397,6 +397,23 @@ $RatingBlockCss = @'
   .rate-bar i{display:block; height:100%; border-radius:3px; background:var(--accent)}
   .rate-row b{text-align:right; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums}
   .rate-none{font-size:13px; color:var(--muted); margin:0}
+  /* 붙여넣을 줄을 만들어 주는 입력칸 */
+  .rate-form{margin-top:16px; padding-top:14px; border-top:1px dashed var(--line)}
+  .rf-grid{display:flex; flex-wrap:wrap; gap:9px; align-items:flex-end}
+  .rf-grid label{display:flex; flex-direction:column; gap:4px;
+    font-size:11px; font-weight:700; color:var(--muted)}
+  .rf-grid input{width:62px; height:32px; padding:0 8px; font:inherit; font-size:13.5px;
+    color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:7px; outline:none}
+  .rf-grid input#rfName{width:96px}
+  .rf-grid input:focus{border-color:var(--accent)}
+  .rf-out{display:flex; gap:8px; align-items:stretch; margin-top:12px}
+  .rf-out code{flex:1; min-width:0; overflow-x:auto; white-space:nowrap;
+    font-size:11.5px; padding:9px 11px; border-radius:7px;
+    background:var(--surface); border:1px solid var(--line); color:var(--ink2)}
+  .rf-out button{flex:none; padding:0 15px; border-radius:7px; border:1px solid transparent;
+    background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer}
+  .rf-out button:hover{background:var(--accent-ink)}
+  .rf-note{font-size:11.5px; color:var(--dim); margin:9px 0 0; line-height:1.6}
 '@
 
 # 리포트에 넣을 평가표 + 요약 계산 스크립트
@@ -409,16 +426,34 @@ $RatingBlockHtml = @'
     <div class="card">
       <div class="rate-wrap">
         <div>
-          <table class="rating-input">
+          <table class="rating-input" data-rate-v="2">
             <thead>
               <tr><th>평가자</th><th>완성도</th><th>차별화</th><th>적합성</th><th>검증</th><th>역량</th><th>확장성</th></tr>
             </thead>
             <tbody>
-              <tr><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+__ROWS__
             </tbody>
           </table>
           <p class="rate-hint">완성도 = 지금 잘 만들어졌는가 · 차별화 = 고유한 훅이 있는가 · 적합성 = 시장과 타이밍이 맞는가<br>
             검증 = 지표로 확인됐는가 · 역량 = 완주하고 다음을 낼 수 있는가 · 확장성 = 더 커질 여지가 있는가</p>
+
+          <div class="rate-form">
+            <div class="rf-grid">
+              <label>평가자<input id="rfName" type="text" placeholder="이름" autocomplete="off"></label>
+              <label>완성도<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>차별화<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>적합성<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>검증<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>역량<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>확장성<input type="number" min="1" max="10" step="1" data-ax></label>
+            </div>
+            <div class="rf-out">
+              <code id="rfCode">이름을 넣으면 붙여넣을 줄이 만들어집니다.</code>
+              <button type="button" id="rfCopy">복사</button>
+            </div>
+            <p class="rf-note">이 페이지는 저장되지 않습니다. 위 줄을 복사해 이 리포트 파일의
+              <code>&lt;tbody&gt;</code> 안에 붙여넣고 <b>업로드.bat</b> 을 실행하면 반영됩니다.</p>
+          </div>
         </div>
         <div class="rate-sum" id="rateSum"></div>
       </div>
@@ -472,12 +507,70 @@ $RatingBlockHtml = @'
       '<p class="rate-n">' + people.length + '명 평가 · 축별 평균</p>' +
       '<div class="rate-ax">' + rows + '</div>';
   })();
+
+  // 붙여넣을 <tr> 한 줄을 만들어 준다. 페이지 자체는 아무것도 저장하지 않는다.
+  (function(){
+    var name = document.getElementById("rfName");
+    var code = document.getElementById("rfCode");
+    var copy = document.getElementById("rfCopy");
+    if (!name || !code || !copy) return;
+    var nums = [].slice.call(document.querySelectorAll(".rf-grid input[data-ax]"));
+
+    function build(){
+      var who = name.value.trim();
+      if (!who){
+        code.textContent = "이름을 넣으면 붙여넣을 줄이 만들어집니다.";
+        return null;
+      }
+      var cells = nums.map(function(el){
+        var v = parseInt(el.value, 10);
+        if (!isFinite(v) || v < 1 || v > 10) return "<td></td>";
+        return "<td>" + v + "</td>";
+      }).join("");
+      var line = "<tr><td>" + who.replace(/[<>&]/g, "") + "</td>" + cells + "</tr>";
+      code.textContent = line;
+      return line;
+    }
+    [name].concat(nums).forEach(function(el){ el.addEventListener("input", build); });
+
+    copy.addEventListener("click", function(){
+      var line = build();
+      if (!line) { name.focus(); return; }
+      var done = function(){
+        var old = copy.textContent;
+        copy.textContent = "복사됨";
+        setTimeout(function(){ copy.textContent = old; }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(line).then(done, select);
+      } else { select(); }
+      function select(){
+        var r = document.createRange();
+        r.selectNodeContents(code);
+        var s = window.getSelection();
+        s.removeAllRanges(); s.addRange(r);
+        try { document.execCommand("copy"); done(); } catch(e) { copy.textContent = "직접 복사"; }
+      }
+    });
+    build();
+  })();
   </script>
 '@
 
 function Add-RatingBlock([System.IO.FileInfo]$File) {
     $src = Get-Content -LiteralPath $File.FullName -Raw -Encoding UTF8
-    if ($src -match 'class="rating-input"') { return $false }   # 이미 있음
+
+    $hasBlock = $src -match 'class="rating-input"'
+    if ($hasBlock -and $src -match 'data-rate-v="2"') { return $false }   # 최신 버전
+
+    # 이미 옛 평가표가 있으면 적어 둔 점수를 지키면서 블록만 갈아 끼운다
+    $rows = ''
+    if ($hasBlock) {
+        $tb = [regex]::Match($src, '(?s)<table[^>]*class="[^"]*rating-input[^"]*"[^>]*>.*?<tbody>(.*?)</tbody>')
+        if ($tb.Success) { $rows = $tb.Groups[1].Value.Trim() }
+        $src = [regex]::Replace($src, '(?s)[ \t]*<!--\s*TEAM RATING\s*-->.*?</script>\s*', '')
+        $src = [regex]::Replace($src, '(?s)\r?\n[ \t]*/\* 팀 평가표 [^*]*\*/.*?(?=</style>)', "`n")
+    }
 
     $i = $src.IndexOf('</style>')
     if ($i -lt 0) { return $false }
@@ -487,14 +580,20 @@ function Add-RatingBlock([System.IO.FileInfo]$File) {
     # 리포트마다 <footer id="sources"> 이거나 <section id="sources"> 이라 둘 다 받는다.
     $m = [regex]::Match($src, '(?s)[ \t]*(?:<!--\s*SOURCES\s*-->\s*)?<(?:section|footer|div)[^>]*id="sources"')
     if (-not $m.Success) { return $false }
-    $src = $src.Substring(0, $m.Index) + $RatingBlockHtml + "`n" + $src.Substring($m.Index)
 
-    # 목차에도 넣는다. 사이드 네비(숫자 span 이 붙은 형태)를 먼저 처리하고,
-    # 상단 네비는 lookahead 로 사이드 네비를 제외해야 두 번 들어가지 않는다.
-    $src = [regex]::Replace($src, '<a href="#sources"><span class="n">',
-        '<a href="#rating"><span class="n">★</span> 평가</a>' + "`n  " + '<a href="#sources"><span class="n">')
-    $src = [regex]::Replace($src, '<a href="#sources">(?!<span)',
-        '<a href="#rating">평가</a>' + "`n      " + '<a href="#sources">')
+    # 보존한 점수 줄을 넣는다. 없으면 자리표시자 한 줄.
+    if (-not $rows) { $rows = '              <tr><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>' }
+    $block = $RatingBlockHtml.Replace('__ROWS__', $rows)
+    $src = $src.Substring(0, $m.Index) + $block + "`n" + $src.Substring($m.Index)
+
+    # 목차는 처음 넣을 때만 건드린다 (교체할 때는 이미 들어가 있다).
+    # 사이드 네비를 먼저 처리하고, 상단 네비는 lookahead 로 제외해야 두 번 들어가지 않는다.
+    if (-not $hasBlock) {
+        $src = [regex]::Replace($src, '<a href="#sources"><span class="n">',
+            '<a href="#rating"><span class="n">★</span> 평가</a>' + "`n  " + '<a href="#sources"><span class="n">')
+        $src = [regex]::Replace($src, '<a href="#sources">(?!<span)',
+            '<a href="#rating">평가</a>' + "`n      " + '<a href="#sources">')
+    }
 
     [System.IO.File]::WriteAllText($File.FullName, $src, (New-Object System.Text.UTF8Encoding($false)))
     return $true
@@ -875,7 +974,7 @@ foreach ($f in $files) {
     catch { Write-Host ("  [!!] {0} 에 평가표를 넣지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
 }
 if ($linked -gt 0) { Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray }
-if ($rated  -gt 0) { Write-Host ("  평가표를 {0}편에 새로 넣었습니다" -f $rated)      -ForegroundColor DarkGray }
+if ($rated  -gt 0) { Write-Host ("  평가표를 {0}편에 넣거나 갱신했습니다" -f $rated)  -ForegroundColor DarkGray }
 
 $entries = New-Object System.Collections.Generic.List[object]
 foreach ($f in $files) {

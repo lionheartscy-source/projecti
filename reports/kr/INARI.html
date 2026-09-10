@@ -201,6 +201,7 @@
   .homelink svg{flex:none}
   @media(max-width:560px){ .homelink span{display:none} .homelink{padding:7px 9px} }
 
+
   /* 팀 평가표 — build-reports.ps1 이 자동으로 넣습니다 */
   .rate-wrap{display:grid; grid-template-columns:1fr 300px; gap:18px; align-items:start}
   @media(max-width:820px){ .rate-wrap{grid-template-columns:1fr} }
@@ -223,7 +224,24 @@
   .rate-bar{height:5px; border-radius:3px; background:var(--surface); overflow:hidden}
   .rate-bar i{display:block; height:100%; border-radius:3px; background:var(--accent)}
   .rate-row b{text-align:right; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums}
-  .rate-none{font-size:13px; color:var(--muted); margin:0}</style>
+  .rate-none{font-size:13px; color:var(--muted); margin:0}
+  /* 붙여넣을 줄을 만들어 주는 입력칸 */
+  .rate-form{margin-top:16px; padding-top:14px; border-top:1px dashed var(--line)}
+  .rf-grid{display:flex; flex-wrap:wrap; gap:9px; align-items:flex-end}
+  .rf-grid label{display:flex; flex-direction:column; gap:4px;
+    font-size:11px; font-weight:700; color:var(--muted)}
+  .rf-grid input{width:62px; height:32px; padding:0 8px; font:inherit; font-size:13.5px;
+    color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:7px; outline:none}
+  .rf-grid input#rfName{width:96px}
+  .rf-grid input:focus{border-color:var(--accent)}
+  .rf-out{display:flex; gap:8px; align-items:stretch; margin-top:12px}
+  .rf-out code{flex:1; min-width:0; overflow-x:auto; white-space:nowrap;
+    font-size:11.5px; padding:9px 11px; border-radius:7px;
+    background:var(--surface); border:1px solid var(--line); color:var(--ink2)}
+  .rf-out button{flex:none; padding:0 15px; border-radius:7px; border:1px solid transparent;
+    background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer}
+  .rf-out button:hover{background:var(--accent-ink)}
+  .rf-note{font-size:11.5px; color:var(--dim); margin:9px 0 0; line-height:1.6}</style>
 </head>
 <body>
 
@@ -570,6 +588,7 @@
   </section>
 
 
+
   <!-- TEAM RATING -->
   <section id="rating">
     <div class="shead"><span class="snum">★</span><h2>팀 평가</h2></div>
@@ -577,16 +596,34 @@
     <div class="card">
       <div class="rate-wrap">
         <div>
-          <table class="rating-input">
+          <table class="rating-input" data-rate-v="2">
             <thead>
               <tr><th>평가자</th><th>완성도</th><th>차별화</th><th>적합성</th><th>검증</th><th>역량</th><th>확장성</th></tr>
             </thead>
             <tbody>
-              <tr><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
             </tbody>
           </table>
           <p class="rate-hint">완성도 = 지금 잘 만들어졌는가 · 차별화 = 고유한 훅이 있는가 · 적합성 = 시장과 타이밍이 맞는가<br>
             검증 = 지표로 확인됐는가 · 역량 = 완주하고 다음을 낼 수 있는가 · 확장성 = 더 커질 여지가 있는가</p>
+
+          <div class="rate-form">
+            <div class="rf-grid">
+              <label>평가자<input id="rfName" type="text" placeholder="이름" autocomplete="off"></label>
+              <label>완성도<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>차별화<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>적합성<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>검증<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>역량<input type="number" min="1" max="10" step="1" data-ax></label>
+              <label>확장성<input type="number" min="1" max="10" step="1" data-ax></label>
+            </div>
+            <div class="rf-out">
+              <code id="rfCode">이름을 넣으면 붙여넣을 줄이 만들어집니다.</code>
+              <button type="button" id="rfCopy">복사</button>
+            </div>
+            <p class="rf-note">이 페이지는 저장되지 않습니다. 위 줄을 복사해 이 리포트 파일의
+              <code>&lt;tbody&gt;</code> 안에 붙여넣고 <b>업로드.bat</b> 을 실행하면 반영됩니다.</p>
+          </div>
         </div>
         <div class="rate-sum" id="rateSum"></div>
       </div>
@@ -640,8 +677,55 @@
       '<p class="rate-n">' + people.length + '명 평가 · 축별 평균</p>' +
       '<div class="rate-ax">' + rows + '</div>';
   })();
+
+  // 붙여넣을 <tr> 한 줄을 만들어 준다. 페이지 자체는 아무것도 저장하지 않는다.
+  (function(){
+    var name = document.getElementById("rfName");
+    var code = document.getElementById("rfCode");
+    var copy = document.getElementById("rfCopy");
+    if (!name || !code || !copy) return;
+    var nums = [].slice.call(document.querySelectorAll(".rf-grid input[data-ax]"));
+
+    function build(){
+      var who = name.value.trim();
+      if (!who){
+        code.textContent = "이름을 넣으면 붙여넣을 줄이 만들어집니다.";
+        return null;
+      }
+      var cells = nums.map(function(el){
+        var v = parseInt(el.value, 10);
+        if (!isFinite(v) || v < 1 || v > 10) return "<td></td>";
+        return "<td>" + v + "</td>";
+      }).join("");
+      var line = "<tr><td>" + who.replace(/[<>&]/g, "") + "</td>" + cells + "</tr>";
+      code.textContent = line;
+      return line;
+    }
+    [name].concat(nums).forEach(function(el){ el.addEventListener("input", build); });
+
+    copy.addEventListener("click", function(){
+      var line = build();
+      if (!line) { name.focus(); return; }
+      var done = function(){
+        var old = copy.textContent;
+        copy.textContent = "복사됨";
+        setTimeout(function(){ copy.textContent = old; }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(line).then(done, select);
+      } else { select(); }
+      function select(){
+        var r = document.createRange();
+        r.selectNodeContents(code);
+        var s = window.getSelection();
+        s.removeAllRanges(); s.addRange(r);
+        try { document.execCommand("copy"); done(); } catch(e) { copy.textContent = "직접 복사"; }
+      }
+    });
+    build();
+  })();
   </script>
-  <!-- SOURCES -->
+<!-- SOURCES -->
   <footer id="sources">
     <details class="acc">
       <summary><span>참고 출처</span><span class="cnt">5건</span><span class="arw">▼</span></summary>
