@@ -366,6 +366,179 @@ function Add-HomeLink([System.IO.FileInfo]$File) {
     return $true
 }
 
+# ─────────────────────── 리포트 안의 평가표 ───────────────────────
+#
+# 평가표는 리포트 HTML 자신이 갖는다. 점수를 적는 곳도, 결과가 나오는 곳도
+# 그 리포트 한 곳뿐이라 따로 관리할 파일이 없다.
+# 빌드는 이 표를 읽어 인덱스 카드와 랭킹에 쓸 평균을 낸다.
+
+$RatingBlockCss = @'
+
+  /* 팀 평가표 — build-reports.ps1 이 자동으로 넣습니다 */
+  .rate-wrap{display:grid; grid-template-columns:1fr 300px; gap:18px; align-items:start}
+  @media(max-width:820px){ .rate-wrap{grid-template-columns:1fr} }
+  table.rating-input{width:100%; border-collapse:collapse; font-size:13.5px}
+  table.rating-input th, table.rating-input td{border:1px solid var(--line); padding:7px 9px; text-align:center}
+  table.rating-input th{background:var(--surface); font-weight:700; font-size:12px; color:var(--muted); white-space:nowrap}
+  table.rating-input td:first-child, table.rating-input th:first-child{text-align:left; font-weight:600}
+  table.rating-input td{font-variant-numeric:tabular-nums; color:var(--ink2)}
+  table.rating-input tbody tr:nth-child(even){background:var(--surface2)}
+  .rate-hint{font-size:12px; color:var(--dim); margin:9px 0 0; line-height:1.6}
+  .rate-sum{background:var(--surface2); border:1px solid var(--line); border-radius:var(--r); padding:16px}
+  .rate-big{display:flex; align-items:baseline; gap:8px; margin-bottom:2px}
+  .rate-big b{font-size:34px; font-weight:800; letter-spacing:-.03em; color:var(--accent-ink);
+    font-variant-numeric:tabular-nums; line-height:1}
+  .rate-big span{font-size:13px; color:var(--dim); font-weight:600}
+  .rate-n{font-size:12px; color:var(--muted); margin:0 0 14px}
+  .rate-ax{display:flex; flex-direction:column; gap:7px}
+  .rate-row{display:grid; grid-template-columns:52px 1fr 30px; align-items:center; gap:9px; font-size:12px}
+  .rate-row span:first-child{color:var(--muted); font-weight:600}
+  .rate-bar{height:5px; border-radius:3px; background:var(--surface); overflow:hidden}
+  .rate-bar i{display:block; height:100%; border-radius:3px; background:var(--accent)}
+  .rate-row b{text-align:right; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums}
+  .rate-none{font-size:13px; color:var(--muted); margin:0}
+'@
+
+# 리포트에 넣을 평가표 + 요약 계산 스크립트
+$RatingBlockHtml = @'
+
+  <!-- TEAM RATING -->
+  <section id="rating">
+    <div class="shead"><span class="snum">★</span><h2>팀 평가</h2></div>
+    <p class="lead">아래 표에 한 사람당 한 줄씩 1~10점으로 적습니다. 판단할 근거가 없는 축은 비워 두세요 — 그 사람의 평균에서 빠집니다.</p>
+    <div class="card">
+      <div class="rate-wrap">
+        <div>
+          <table class="rating-input">
+            <thead>
+              <tr><th>평가자</th><th>완성도</th><th>차별화</th><th>적합성</th><th>검증</th><th>역량</th><th>확장성</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+          </table>
+          <p class="rate-hint">완성도 = 지금 잘 만들어졌는가 · 차별화 = 고유한 훅이 있는가 · 적합성 = 시장과 타이밍이 맞는가<br>
+            검증 = 지표로 확인됐는가 · 역량 = 완주하고 다음을 낼 수 있는가 · 확장성 = 더 커질 여지가 있는가</p>
+        </div>
+        <div class="rate-sum" id="rateSum"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function(){
+    var AX = ["완성도","차별화","적합성","검증","역량","확장성"];
+    var tb = document.querySelector("table.rating-input");
+    var box = document.getElementById("rateSum");
+    if (!tb || !box) return;
+
+    var head = [].map.call(tb.querySelectorAll("thead th"), function(th){ return th.textContent.trim(); });
+    var people = [], per = {};
+    AX.forEach(function(a){ per[a] = []; });
+
+    [].forEach.call(tb.querySelectorAll("tbody tr"), function(tr){
+      var cells = tr.querySelectorAll("td");
+      if (!cells.length) return;
+      var name = cells[0].textContent.trim();
+      if (!name || name === "—") return;
+      var vals = [];
+      for (var i = 1; i < cells.length && i < head.length; i++){
+        var raw = cells[i].textContent.trim();
+        if (!raw) continue;
+        var v = parseFloat(raw);
+        if (!isFinite(v) || v < 1 || v > 10) continue;
+        vals.push(v);
+        if (per[head[i]]) per[head[i]].push(v);
+      }
+      if (vals.length) people.push(vals.reduce(function(a,b){ return a+b; }, 0) / vals.length);
+    });
+
+    if (!people.length){
+      box.innerHTML = '<p class="rate-none">아직 평가가 없습니다. 왼쪽 표에 한 줄 추가하면 여기에 평균이 나옵니다.</p>';
+      return;
+    }
+    var avg = people.reduce(function(a,b){ return a+b; }, 0) / people.length;
+    var rows = AX.map(function(a){
+      var v = per[a];
+      if (!v.length) return '<div class="rate-row"><span>' + a + '</span><span class="rate-bar"></span><b>—</b></div>';
+      var m = v.reduce(function(x,y){ return x+y; }, 0) / v.length;
+      return '<div class="rate-row"><span>' + a + '</span>' +
+             '<span class="rate-bar"><i style="width:' + (m * 10) + '%"></i></span>' +
+             '<b>' + m.toFixed(1) + '</b></div>';
+    }).join("");
+
+    box.innerHTML =
+      '<div class="rate-big"><b>' + avg.toFixed(1) + '</b><span>/ 10</span></div>' +
+      '<p class="rate-n">' + people.length + '명 평가 · 축별 평균</p>' +
+      '<div class="rate-ax">' + rows + '</div>';
+  })();
+  </script>
+'@
+
+function Add-RatingBlock([System.IO.FileInfo]$File) {
+    $src = Get-Content -LiteralPath $File.FullName -Raw -Encoding UTF8
+    if ($src -match 'class="rating-input"') { return $false }   # 이미 있음
+
+    $i = $src.IndexOf('</style>')
+    if ($i -lt 0) { return $false }
+    $src = $src.Substring(0, $i) + $RatingBlockCss + $src.Substring($i)
+
+    # 출처 섹션 바로 앞에 넣는다
+    $m = [regex]::Match($src, '(?s)([ \t]*)(<!--[^>]*?-->\s*)?<section[^>]*id="sources"')
+    if (-not $m.Success) { return $false }
+    $src = $src.Substring(0, $m.Index) + $RatingBlockHtml + "`n" + $src.Substring($m.Index)
+
+    # 목차에도 넣는다 (상단 네비 · 사이드 네비)
+    $src = [regex]::Replace($src, '(<a href="#sources">)',
+        '<a href="#rating">평가</a>$1')
+    $src = [regex]::Replace($src, '(<a href="#sources"><span class="n">)',
+        '<a href="#rating"><span class="n">★</span> 평가</a>$1')
+
+    [System.IO.File]::WriteAllText($File.FullName, $src, (New-Object System.Text.UTF8Encoding($false)))
+    return $true
+}
+
+# 리포트 안의 평가표를 읽어 사람별 점수로 만든다
+function Get-ReportRatings([string]$Src) {
+    $list = New-Object System.Collections.Generic.List[object]
+    $t = [regex]::Match($Src, '(?s)<table[^>]*class="[^"]*rating-input[^"]*"[^>]*>(.*?)</table>')
+    if (-not $t.Success) { return $list }
+    $body = $t.Groups[1].Value
+
+    # 헤더에서 열 순서를 읽는다 (열을 바꿔도 따라가도록)
+    $cols = @()
+    $h = [regex]::Match($body, '(?s)<tr[^>]*>(.*?)</tr>')
+    if ($h.Success) {
+        foreach ($c in [regex]::Matches($h.Groups[1].Value, '(?s)<th[^>]*>(.*?)</th>')) {
+            $cols += (ConvertTo-PlainText $c.Groups[1].Value)
+        }
+    }
+    if ($cols.Count -lt 2) { return $list }
+
+    foreach ($tr in [regex]::Matches($body, '(?s)<tr[^>]*>(.*?)</tr>')) {
+        $cells = @([regex]::Matches($tr.Groups[1].Value, '(?s)<td[^>]*>(.*?)</td>'))
+        if ($cells.Count -lt 2) { continue }
+        $name = ConvertTo-PlainText $cells[0].Groups[1].Value
+        if (-not $name -or $name -eq '—' -or $name -eq '-') { continue }
+
+        $scores = @{}
+        for ($i = 1; $i -lt $cells.Count -and $i -lt $cols.Count; $i++) {
+            $cell = ConvertTo-PlainText $cells[$i].Groups[1].Value
+            if (-not $cell) { continue }
+            $key = $AxisColumns[$cols[$i]]
+            if (-not $key) { continue }
+            $n = 0.0
+            if ([double]::TryParse($cell, [ref]$n) -and $n -ge 1 -and $n -le 10) {
+                $scores[$key] = [math]::Round($n, 2)
+            }
+        }
+        if ($scores.Count -gt 0) {
+            [void]$list.Add([pscustomobject]@{ rater = $name; scores = $scores })
+        }
+    }
+    return $list
+}
+
 # ─────────────────────────── 팀 평점 ───────────────────────────
 #
 # ratings.csv 는 손으로 고치는 파일이다. 헤더는 다음과 같고,
@@ -658,11 +831,10 @@ function Build-Entry([System.IO.FileInfo]$File) {
     # 3) 그래도 없으면 파일이 처음 추가된 커밋일
     if (-not $date) { $date = Get-ReportDate $File.FullName }
 
-    # ── 팀 평점 ── ratings.csv 에서 슬러그 또는 제목으로 찾는다
+    # ── 팀 평점 ── 리포트 안의 평가표에서 읽는다
     $rating = $null
-    foreach ($k in @($slug.ToLowerInvariant(), ([string]$title).Trim().ToLowerInvariant())) {
-        if ($k -and $Ratings.ContainsKey($k)) { $rating = Get-RatingSummary $Ratings[$k]; break }
-    }
+    $rateRows = Get-ReportRatings $src
+    if ($rateRows.Count -gt 0) { $rating = Get-RatingSummary $rateRows }
 
     return [pscustomobject][ordered]@{
         title     = [string]$title
@@ -691,20 +863,17 @@ $files = @(Get-ChildItem -LiteralPath $ReportsDir -File -Recurse |
            Where-Object { $_.Extension -match '^\.html?$' -and -not $_.Name.StartsWith('_') } |
            Sort-Object FullName)
 
-# 새 리포트에 아카이브 버튼이 빠져 있으면 먼저 넣는다
+# 새 리포트에 빠져 있는 것들을 먼저 채운다
 $linked = 0
+$rated  = 0
 foreach ($f in $files) {
-    try { if (Add-HomeLink $f) { $linked++ } }
+    try { if (Add-HomeLink $f)    { $linked++ } }
     catch { Write-Host ("  [!!] {0} 에 아카이브 버튼을 넣지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
+    try { if (Add-RatingBlock $f) { $rated++ } }
+    catch { Write-Host ("  [!!] {0} 에 평가표를 넣지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
 }
-if ($linked -gt 0) {
-    Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray
-}
-
-$Ratings = Get-Ratings (Join-Path $Root 'ratings.csv')
-if ($Ratings.Count -gt 0) {
-    Write-Host ("  ratings.csv: {0}개 게임의 평점을 읽었습니다" -f $Ratings.Count) -ForegroundColor DarkGray
-}
+if ($linked -gt 0) { Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray }
+if ($rated  -gt 0) { Write-Host ("  평가표를 {0}편에 새로 넣었습니다" -f $rated)      -ForegroundColor DarkGray }
 
 $entries = New-Object System.Collections.Generic.List[object]
 foreach ($f in $files) {
