@@ -414,9 +414,151 @@ $RatingBlockCss = @'
     background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer}
   .rf-out button:hover{background:var(--accent-ink)}
   .rf-note{font-size:11.5px; color:var(--dim); margin:9px 0 0; line-height:1.6}
+  .rf-note code{font-size:11px; background:var(--surface); padding:1px 5px;
+    border-radius:4px; border:1px solid var(--line)}
+  .rf-go{align-self:flex-end; height:32px; padding:0 15px; border-radius:7px;
+    border:1px solid transparent; background:var(--accent); color:#fff;
+    font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap}
+  .rf-go:hover{background:var(--accent-ink)}
+  .rf-go[disabled]{opacity:.45; cursor:default; background:var(--muted)}
+  /* 요약 패널이 카드 안에 들어가면 테두리를 겹치지 않게 한다 */
+  .card .rate-sum{background:transparent; border:none; padding:0}
 '@
 
-# 리포트에 넣을 평가표 + 요약 계산 스크립트
+# 리포트에 넣을 평가 섹션. __BODY__ / __CSV__ / __SLUG__ 만 치환한다.
+# 작은따옴표 here-string 이라 안쪽 JS 의 따옴표·$ 를 PowerShell 이 건드리지 않는다.
+$RatingSectionTpl = @'
+
+  <!-- RATING-START -->
+  <section id="rating">
+    <div class="shead"><span class="snum">★</span><h2>팀 평가</h2></div>
+    <p class="lead">완성도 · 차별화 · 적합성 · 검증 · 역량 · 확장성을 1~10으로 매깁니다. 판단할 근거가 없는 축은 비워 두세요.</p>
+    <div class="card">
+      <div class="rate-sum" id="rateSum">
+__BODY__
+      </div>
+      <div class="rate-form">
+        <div class="rf-grid">
+          <label>평가자<input id="rfName" type="text" placeholder="이름" autocomplete="off" maxlength="20"></label>
+          <label>완성도<input type="number" min="1" max="10" step="1" data-ax="완성도"></label>
+          <label>차별화<input type="number" min="1" max="10" step="1" data-ax="차별화"></label>
+          <label>적합성<input type="number" min="1" max="10" step="1" data-ax="적합성"></label>
+          <label>검증<input type="number" min="1" max="10" step="1" data-ax="검증"></label>
+          <label>역량<input type="number" min="1" max="10" step="1" data-ax="역량"></label>
+          <label>확장성<input type="number" min="1" max="10" step="1" data-ax="확장성"></label>
+          <button type="button" class="rf-go" id="rfSave" disabled>__SLUG__.csv 내려받기</button>
+        </div>
+        <p class="rf-note" id="rfNote">받은 파일을 저장소의 <code>ratings/</code> 폴더에 넣고 <b>업로드.bat</b> 을 실행하면 반영됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function(){
+    var CSV = "__CSV__", SLUG = "__SLUG__";
+    var AX = ["완성도","차별화","적합성","검증","역량","확장성"];
+    var box  = document.getElementById("rateSum");
+    var name = document.getElementById("rfName");
+    var save = document.getElementById("rfSave");
+    var note = document.getElementById("rfNote");
+    var nums = [].slice.call(document.querySelectorAll(".rf-grid input[data-ax]"));
+    var others = [];
+
+    function parse(t){
+      var out = [], lines = t.replace(/^﻿/, "").split(/\r?\n/).filter(function(l){ return l.trim(); });
+      if (!lines.length) return out;
+      var head = lines[0].split(",").map(function(s){ return s.trim(); });
+      var ri = head.indexOf("평가자");
+      if (ri < 0) return out;
+      for (var i = 1; i < lines.length; i++){
+        var c = lines[i].split(",").map(function(s){ return s.trim(); });
+        if (!c[ri]) continue;
+        var s = {};
+        AX.forEach(function(a){
+          var k = head.indexOf(a);
+          if (k < 0) return;
+          var v = parseFloat(c[k]);
+          if (isFinite(v) && v >= 1 && v <= 10) s[a] = v;
+        });
+        if (Object.keys(s).length) out.push({ rater: c[ri], scores: s });
+      }
+      return out;
+    }
+    function mean(a){ return a.reduce(function(x,y){ return x+y; }, 0) / a.length; }
+
+    function paint(rows){
+      if (!rows.length){
+        box.innerHTML = '<p class="rate-none">아직 평가가 없습니다. 아래에 점수를 넣어 보세요.</p>';
+        return;
+      }
+      var ov = rows.map(function(r){
+        var v = AX.map(function(a){ return r.scores[a]; }).filter(function(n){ return typeof n === "number"; });
+        return v.length ? mean(v) : null;
+      }).filter(function(v){ return v !== null; });
+      if (!ov.length) return;
+      var avg = mean(ov);
+      var sd = ov.length < 2 ? 0 : Math.sqrt(mean(ov.map(function(v){ return (v-avg)*(v-avg); })));
+      var bars = AX.map(function(a){
+        var v = rows.map(function(r){ return r.scores[a]; }).filter(function(n){ return typeof n === "number"; });
+        if (!v.length) return '<div class="rate-row"><span>' + a + '</span><span class="rate-bar"></span><b>—</b></div>';
+        var m = mean(v);
+        return '<div class="rate-row"><span>' + a + '</span><span class="rate-bar"><i style="width:' +
+               (m*10) + '%"></i></span><b>' + m.toFixed(1) + '</b></div>';
+      }).join("");
+      box.innerHTML =
+        '<div class="rate-big"><b>' + avg.toFixed(1) + '</b><span>/ 10</span></div>' +
+        '<p class="rate-n">' + ov.length + '명 평가 · 편차 ' + sd.toFixed(2) + ' · 축별 평균</p>' +
+        '<div class="rate-ax">' + bars + '</div>';
+    }
+    function my(){
+      var s = {};
+      nums.forEach(function(el){
+        var v = parseInt(el.value, 10);
+        if (isFinite(v) && v >= 1 && v <= 10) s[el.getAttribute("data-ax")] = v;
+      });
+      return s;
+    }
+    function refresh(){
+      var who = name.value.trim(), s = my();
+      var live = others.filter(function(o){ return o.rater !== who; });
+      if (who && Object.keys(s).length) live = live.concat([{ rater: who, scores: s }]);
+      paint(live);
+      save.disabled = !(who && Object.keys(s).length);
+    }
+    [name].concat(nums).forEach(function(el){ el.addEventListener("input", refresh); });
+
+    save.addEventListener("click", function(){
+      var who = name.value.trim(), s = my();
+      if (!who || !Object.keys(s).length) return;
+      var rows = others.filter(function(o){ return o.rater !== who; }).concat([{ rater: who, scores: s }]);
+      var out = ["평가자," + AX.join(",")];
+      rows.forEach(function(r){
+        out.push([r.rater].concat(AX.map(function(a){
+          return r.scores[a] == null ? "" : r.scores[a];
+        })).join(","));
+      });
+      var blob = new Blob(["﻿" + out.join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = SLUG + ".csv";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
+      note.innerHTML = '내려받았습니다. <b>ratings/</b> 폴더에 넣고 <b>업로드.bat</b> 을 실행하세요.';
+    });
+
+    // 같은 서버의 현재 점수를 읽어 온다. file:// 로 열었을 때는 건너뛴다.
+    if (location.protocol !== "file:" && window.fetch){
+      fetch(CSV, { cache: "no-store" })
+        .then(function(r){ return r.ok ? r.text() : null; })
+        .then(function(t){ if (t){ others = parse(t); refresh(); } })
+        .catch(function(){});
+    }
+  })();
+  </script>
+  <!-- RATING-END -->
+'@
+
+# (구버전 템플릿 — 지금은 쓰지 않는다)
 $RatingBlockHtml = @'
 
   <!-- TEAM RATING -->
@@ -636,13 +778,18 @@ function Set-RatingBlock([System.IO.FileInfo]$File, $Rating) {
                 '      <div class="rate-ax">' + "`n" + $rows + '      </div>'
     }
 
-    $block = "`n" + '  <!-- RATING-START -->' + "`n" +
-             '  <section id="rating">' + "`n" +
-             '    <div class="shead"><span class="snum">★</span><h2>팀 평가</h2></div>' + "`n" +
-             '    <p class="lead">완성도 · 차별화 · 적합성 · 검증 · 역량 · 확장성을 1~10으로 매긴 팀 평균입니다.</p>' + "`n" +
-             '    <div class="card rate-sum">' + "`n" + $body + "`n" + '    </div>' + "`n" +
-             '  </section>' + "`n" +
-             '  <!-- RATING-END -->' + "`n"
+    # 리포트 위치에 맞춰 ratings/<슬러그>.csv 로 가는 상대 경로를 만든다
+    $rel   = $File.FullName.Substring($ReportsDir.Length).TrimStart('\', '/').Replace('\', '/')
+    $depth = @($rel.Split('/')).Count - 1
+    $slug  = [System.IO.Path]::GetFileNameWithoutExtension($File.Name)
+    $csv   = ('../' * ($depth + 1)) + 'ratings/' + $slug + '.csv'
+
+    # 본문은 위에서 만든 템플릿에 값만 끼워 넣는다.
+    # (JS 를 PowerShell 문자열로 이어 붙이면 따옴표 하나에 빌드 전체가 죽는다)
+    $block = $RatingSectionTpl.
+        Replace('__BODY__', $body).
+        Replace('__CSV__',  $csv).
+        Replace('__SLUG__', $slug)
 
     $i = $src.IndexOf('</style>')
     if ($i -lt 0) { return $false }
@@ -755,6 +902,55 @@ function Get-Ratings([string]$Path) {
         [void]$byKey[$key].Add([pscustomobject]@{ rater = $rater; scores = $scores })
     }
     return $byKey
+}
+
+# ratings/<슬러그>.csv — 게임 한 편짜리 평가표. 첫 칸이 '게임' 이 아니라
+# 파일 이름이 곧 게임이므로 헤더는 평가자부터 시작한다.
+function Get-RatingsFolder([string]$Dir) {
+    $byKey = @{}
+    if (-not (Test-Path -LiteralPath $Dir)) { return $byKey }
+
+    foreach ($f in @(Get-ChildItem -LiteralPath $Dir -File -Filter *.csv)) {
+        $raw = Get-Content -LiteralPath $f.FullName -Raw -Encoding UTF8
+        if (-not $raw -or -not $raw.Trim()) { continue }
+        $raw = $raw.TrimStart([char]0xFEFF)
+        $key = [System.IO.Path]::GetFileNameWithoutExtension($f.Name).ToLowerInvariant()
+
+        foreach ($r in @($raw | ConvertFrom-Csv)) {
+            $rater = ('' + $r.'평가자').Trim()
+            if (-not $rater) { continue }
+            $scores = @{}
+            foreach ($col in $AxisColumns.Keys) {
+                $cell = ('' + $r.$col).Trim()
+                if (-not $cell) { continue }
+                $n = 0.0
+                if ([double]::TryParse($cell, [ref]$n) -and $n -ge 1 -and $n -le 10) {
+                    $scores[$AxisColumns[$col]] = [math]::Round($n, 2)
+                }
+            }
+            if ($scores.Count -eq 0) { continue }
+            if (-not $byKey.ContainsKey($key)) { $byKey[$key] = New-Object System.Collections.Generic.List[object] }
+            [void]$byKey[$key].Add([pscustomobject]@{ rater = $rater; scores = $scores })
+        }
+    }
+    return $byKey
+}
+
+# 두 곳을 합친다. 같은 게임·같은 사람이 양쪽에 있으면 개별 파일이 이긴다.
+function Merge-Ratings($Bulk, $PerGame) {
+    $out = @{}
+    foreach ($k in $Bulk.Keys)    { $out[$k] = New-Object System.Collections.Generic.List[object]
+                                    foreach ($e in $Bulk[$k]) { [void]$out[$k].Add($e) } }
+    foreach ($k in $PerGame.Keys) {
+        if (-not $out.ContainsKey($k)) { $out[$k] = New-Object System.Collections.Generic.List[object] }
+        $names = @($PerGame[$k] | ForEach-Object { $_.rater })
+        $kept  = @($out[$k] | Where-Object { $names -notcontains $_.rater })
+        $list  = New-Object System.Collections.Generic.List[object]
+        foreach ($e in $kept)        { [void]$list.Add($e) }
+        foreach ($e in $PerGame[$k]) { [void]$list.Add($e) }
+        $out[$k] = $list
+    }
+    return $out
 }
 
 function Get-RatingSummary($Entries) {
@@ -1039,10 +1235,14 @@ foreach ($f in $files) {
 }
 if ($linked -gt 0) { Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray }
 
-# 평가 점수는 ratings.csv 에서 읽는다 (입력은 평가.html)
-$Ratings = Get-Ratings (Join-Path $Root 'ratings.csv')
+# 평가 점수는 두 곳에서 읽는다.
+#   ratings.csv        — 평가.html 에서 한 번에 내려받은 일괄 파일
+#   ratings/<슬러그>.csv — 리포트에서 게임 하나씩 내려받은 파일 (겹치면 이쪽이 이김)
+$bulkRatings = Get-Ratings (Join-Path $Root 'ratings.csv')
+$gameRatings = Get-RatingsFolder (Join-Path $Root 'ratings')
+$Ratings = Merge-Ratings $bulkRatings $gameRatings
 if ($Ratings.Count -gt 0) {
-    Write-Host ("  ratings.csv: {0}개 게임의 평점을 읽었습니다" -f $Ratings.Count) -ForegroundColor DarkGray
+    Write-Host ("  평점: {0}개 게임 (일괄 {1} · 개별 {2})" -f $Ratings.Count, $bulkRatings.Count, $gameRatings.Count) -ForegroundColor DarkGray
 }
 
 $entries = New-Object System.Collections.Generic.List[object]
