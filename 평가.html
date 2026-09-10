@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리포트 평가</title>
+<script>
+  (function(){
+    try{
+      if (localStorage.getItem("theme") === "light")
+        document.documentElement.setAttribute("data-theme", "light");
+    }catch(e){}
+  })();
+</script>
+<style>
+  :root{
+    color-scheme:dark;
+    --bg:#141013; --surface:#211a1e; --surface2:#1a1417;
+    --ink:#f6f0f1; --ink2:#ded1d4; --muted:#a39196; --dim:#7b686d;
+    --line:#2e2529; --line2:#251e21;
+    --accent:#d93b4e; --accent-ink:#ff8894; --accent-soft:#3b1f26;
+    --lo:#8a7f86; --mid:#7fa3d8; --hi:#3fb98a;
+    --nav-bg:rgba(20,16,19,.9);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
+    --shadow-lg:0 14px 30px -12px rgba(0,0,0,.6);
+    --r:12px;
+  }
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --bg:#ffffff; --surface:#f5f2f2; --surface2:#fbf9f9;
+    --ink:#1a1315; --ink2:#332527; --muted:#6a5457; --dim:#a08a8d;
+    --line:#efe4e5; --line2:#f6edee;
+    --accent:#c02a3c; --accent-ink:#9c1f30; --accent-soft:#f9e2e4;
+    --lo:#8a7f86; --mid:#4a6fa5; --hi:#0f7a52;
+    --nav-bg:rgba(255,255,255,.9);
+    --shadow:0 1px 2px rgba(40,10,15,.05),0 1px 3px rgba(40,10,15,.08);
+    --shadow-lg:0 16px 32px -10px rgba(40,10,15,.16);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    font-size:15px; line-height:1.65; letter-spacing:-.01em; -webkit-font-smoothing:antialiased}
+  button{font:inherit; color:inherit; background:none; border:none; cursor:pointer}
+  a{color:inherit; text-decoration:none}
+  .mono{font-variant-numeric:tabular-nums}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:5px}
+
+  .top{position:sticky; top:0; z-index:30; background:var(--nav-bg);
+    backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
+  .top-in{max-width:1000px; margin:0 auto; padding:11px 22px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .back{display:inline-flex; align-items:center; gap:6px; flex:none; font-size:12.5px; font-weight:700;
+    color:var(--muted); background:var(--surface); border:1px solid var(--line);
+    padding:7px 12px; border-radius:8px}
+  .back:hover{color:var(--accent-ink); background:var(--accent-soft); border-color:transparent}
+  .ttl{font-weight:800; font-size:15px; letter-spacing:-.02em}
+  .who{display:flex; align-items:center; gap:7px; margin-left:auto}
+  .who label{font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--dim)}
+  .who input{width:118px; height:32px; padding:0 10px; font:inherit; font-size:13.5px;
+    color:var(--ink); background:var(--surface); border:1px solid var(--line);
+    border-radius:8px; outline:none}
+  .who input:focus{border-color:var(--accent)}
+
+  .wrap{max-width:1000px; margin:0 auto; padding:24px 22px 120px}
+  .lede{font-size:13.5px; color:var(--muted); margin:0 0 18px; max-width:64ch}
+  .lede b{color:var(--ink2)}
+
+  .prog{display:flex; align-items:center; gap:10px; margin-bottom:20px; font-size:12.5px; color:var(--muted)}
+  .track{flex:1; max-width:280px; height:5px; border-radius:3px; background:var(--surface); overflow:hidden}
+  .track i{display:block; height:100%; background:var(--accent); transition:width .25s}
+
+  .rows{display:flex; flex-direction:column; gap:7px}
+  .row{background:var(--surface2); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+  .row.open{border-color:var(--accent); box-shadow:var(--shadow-lg)}
+  .head{width:100%; display:grid; grid-template-columns:1fr auto auto; gap:14px;
+    align-items:center; padding:11px 15px; text-align:left}
+  .head:hover{background:var(--surface)}
+  .nm b{display:block; font-size:14.5px; font-weight:600; letter-spacing:-.01em}
+  .nm span{font-size:11.5px; color:var(--muted)}
+  .pill{font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px;
+    border:1px solid var(--line); color:var(--muted); margin-left:7px}
+  .cell{text-align:right; min-width:66px}
+  .cell b{display:block; font-size:16px; font-weight:700; letter-spacing:-.02em}
+  .cell span{font-size:10px; color:var(--dim); letter-spacing:.04em}
+  .cell .off{font-size:13px; font-weight:400; color:var(--dim)}
+
+  .panel{padding:4px 15px 14px; background:var(--surface)}
+  .ax{display:grid; grid-template-columns:118px 1fr 40px; align-items:center; gap:12px;
+    padding:7px 0; border-bottom:1px solid var(--line2)}
+  .ax:last-of-type{border-bottom:none}
+  .ax-n{font-size:12.5px; font-weight:600}
+  .ax-n span{display:block; font-size:10.5px; font-weight:400; color:var(--dim); line-height:1.3}
+  .chips{display:flex; gap:3px; flex-wrap:wrap}
+  .chip{width:28px; height:28px; border-radius:6px; border:1px solid var(--line);
+    background:var(--bg); color:var(--muted); font-size:12.5px; font-variant-numeric:tabular-nums;
+    transition:background .12s,color .12s,border-color .12s}
+  .chip:hover{border-color:var(--dim); color:var(--ink)}
+  .chip[aria-pressed="true"]{color:#fff; border-color:transparent; font-weight:700}
+  .chip.lo[aria-pressed="true"]{background:var(--lo)}
+  .chip.mid[aria-pressed="true"]{background:var(--mid)}
+  .chip.hi[aria-pressed="true"]{background:var(--hi)}
+  .ax-t{text-align:right; font-size:12px; color:var(--dim); font-variant-numeric:tabular-nums}
+  .foot{display:flex; justify-content:space-between; align-items:center; gap:12px;
+    margin-top:11px; padding-top:10px; border-top:1px solid var(--line2);
+    font-size:12px; color:var(--muted); flex-wrap:wrap}
+  .foot a{color:var(--accent-ink); font-weight:600}
+  .clear{font-size:11.5px; color:var(--dim); text-decoration:underline; text-underline-offset:3px}
+  .clear:hover{color:var(--accent-ink)}
+
+  .dock{position:fixed; left:0; right:0; bottom:0; z-index:40; background:var(--nav-bg);
+    backdrop-filter:saturate(180%) blur(12px); border-top:1px solid var(--line)}
+  .dock-in{max-width:1000px; margin:0 auto; padding:11px 22px;
+    display:flex; align-items:center; gap:11px; flex-wrap:wrap}
+  .state{font-size:12.5px; color:var(--muted); margin-right:auto}
+  .state b{color:var(--ink)}
+  .btn{padding:9px 16px; border-radius:9px; font-size:13px; font-weight:700;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink2)}
+  .btn:hover{border-color:var(--dim); color:var(--ink)}
+  .btn.go{background:var(--accent); border-color:transparent; color:#fff}
+  .btn.go:hover{background:var(--accent-ink)}
+  .btn[disabled]{opacity:.45; cursor:default}
+  input[type=file]{display:none}
+
+  .note{margin-top:22px; padding:14px 16px; border:1px solid var(--line);
+    border-radius:var(--r); background:var(--surface2); font-size:12.5px;
+    color:var(--muted); line-height:1.75}
+  .note b{color:var(--ink2)}
+  .note code{font-size:11.5px; background:var(--surface); padding:1px 6px;
+    border-radius:5px; border:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <a class="back" href="index.html">← 아카이브</a>
+    <span class="ttl">리포트 평가</span>
+    <div class="who">
+      <label for="who">평가자</label>
+      <input id="who" type="text" placeholder="이름" autocomplete="off" maxlength="20">
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <p class="lede">게임마다 6개 축을 1~10으로 매깁니다. <b>판단할 근거가 없는 축은 비워 두세요</b> —
+    그 축은 평균에서 빠집니다. 입력한 내용은 이 브라우저에 자동 저장되니 나눠서 하셔도 됩니다.
+    다 끝나면 아래에서 <b>ratings.csv</b> 를 내려받아 저장소 폴더에 넣고 업로드하면 사이트에 반영됩니다.</p>
+
+  <div class="prog">
+    <span class="mono" id="progText">0 / 0</span>
+    <span class="track"><i id="progFill" style="width:0%"></i></span>
+    <span id="progWho"></span>
+  </div>
+
+  <div class="rows" id="rows"></div>
+
+  <div class="note">
+    <b>다른 사람 점수와 합치려면</b> — 먼저 <code>불러오기</code> 로 저장소의 현재
+    <code>ratings.csv</code> 를 읽어들이세요. 기존 점수를 그대로 둔 채 내 줄만 더해 내보냅니다.<br>
+    <b>이 페이지는 서버에 저장하지 않습니다.</b> 브라우저를 비우면 입력한 내용도 사라지니,
+    작업을 마치면 내려받아 두세요.
+  </div>
+</div>
+
+<div class="dock">
+  <div class="dock-in">
+    <span class="state" id="state">불러오는 중…</span>
+    <label class="btn" for="importFile">불러오기</label>
+    <input type="file" id="importFile" accept=".csv,text/csv">
+    <button class="btn go" id="exportBtn" disabled>ratings.csv 내려받기</button>
+  </div>
+</div>
+
+<!-- 게임 목록은 인덱스와 같은 파일에서 읽는다 -->
+<script src="reports.js"></script>
+<script>
+const AXES = [
+  { k:"완성도", d:"지금 잘 만들어졌는가" },
+  { k:"차별화", d:"고유한 훅이 있는가" },
+  { k:"적합성", d:"시장과 타이밍이 맞는가" },
+  { k:"검증",   d:"지표로 확인됐는가" },
+  { k:"역량",   d:"완주하고 다음을 낼 수 있는가" },
+  { k:"확장성", d:"더 커질 여지가 있는가" },
+];
+const HEADER = ["게임","평가자"].concat(AXES.map(a => a.k));
+const KEY = "projecti-rating-draft";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
+  ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const band = v => v <= 3 ? "lo" : v <= 6 ? "mid" : "hi";
+const bandCol = v => v <= 3 ? "var(--lo)" : v <= 6 ? "var(--mid)" : "var(--hi)";
+
+const GAMES = (window.__REPORTS__ || []).map(r => ({
+  slug: r.slug, title: r.title, studio: r.studio, region: r.region,
+  status: r.status, href: r.href
+}));
+
+let me = "";        // 평가자 이름
+let mine = {};      // { slug: { 축: 점수 } }
+let others = [];    // 불러온 남의 줄 [{ game, rater, scores }]
+let openSlug = null;
+
+/* ── 저장 ── */
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify({ me, mine })); }catch(e){}
+  paintState();
+}
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (d){ me = d.me || ""; mine = d.mine || {}; }
+  }catch(e){}
+}
+
+/* ── 통계 ── */
+function myAvg(slug){
+  const s = mine[slug] || {};
+  const v = AXES.map(a => s[a.k]).filter(n => typeof n === "number");
+  return v.length ? v.reduce((a,b) => a+b, 0) / v.length : null;
+}
+function rowsFor(slug){
+  const list = others.filter(o => o.game === slug && o.rater !== me).slice();
+  const m = myAvg(slug);
+  if (m !== null) list.push({ game:slug, rater:me || "나", scores:mine[slug] });
+  return list;
+}
+function teamStat(slug){
+  const vals = rowsFor(slug).map(o => {
+    const v = AXES.map(a => o.scores[a.k]).filter(n => typeof n === "number");
+    return v.length ? v.reduce((a,b) => a+b, 0) / v.length : null;
+  }).filter(v => v !== null);
+  if (!vals.length) return null;
+  return { avg: vals.reduce((a,b) => a+b, 0) / vals.length, n: vals.length };
+}
+function axisAvg(slug, k){
+  const v = rowsFor(slug).map(o => o.scores[k]).filter(n => typeof n === "number");
+  return v.length ? v.reduce((a,b) => a+b, 0) / v.length : null;
+}
+
+/* ── 그리기 ── */
+function render(){
+  $("#rows").innerHTML = GAMES.map(g => {
+    const m = myAvg(g.slug), t = teamStat(g.slug), open = openSlug === g.slug;
+    return `<div class="row${open ? " open" : ""}" data-slug="${esc(g.slug)}">
+      <button class="head" data-act="toggle">
+        <span class="nm">
+          <b>${esc(g.title)}</b>
+          <span>${esc(g.studio)}${g.status ? `<span class="pill">${esc(g.status)}</span>` : ""}
+            <span class="pill">${esc(g.region)}</span></span>
+        </span>
+        <span class="cell">${m !== null
+          ? `<b class="mono" style="color:${bandCol(m)}">${m.toFixed(1)}</b>`
+          : `<b class="off">미평가</b>`}<span>내 점수</span></span>
+        <span class="cell">${t
+          ? `<b class="mono">${t.avg.toFixed(1)}</b>`
+          : `<b class="off">—</b>`}<span>${t ? t.n + "명" : "0명"}</span></span>
+      </button>
+      ${open ? panel(g) : ""}
+    </div>`;
+  }).join("");
+  paintProgress();
+}
+function panel(g){
+  const s = mine[g.slug] || {};
+  const axes = AXES.map(a => {
+    const cur = s[a.k], t = axisAvg(g.slug, a.k);
+    const chips = Array.from({length:10}, (_,i) => {
+      const v = i + 1;
+      return `<button class="chip ${band(v)}" data-act="set" data-ax="${esc(a.k)}" data-v="${v}"
+        aria-pressed="${cur === v}" aria-label="${esc(a.k)} ${v}점">${v}</button>`;
+    }).join("");
+    return `<div class="ax">
+      <span class="ax-n">${esc(a.k)}<span>${esc(a.d)}</span></span>
+      <span class="chips">${chips}</span>
+      <span class="ax-t">${t !== null ? t.toFixed(1) : "—"}</span>
+    </div>`;
+  }).join("");
+  const filled = AXES.filter(a => typeof s[a.k] === "number").length;
+  return `<div class="panel">${axes}
+    <div class="foot">
+      <span>${filled ? `${filled} / ${AXES.length} 축 입력` : "아직 입력 없음"}
+        ${filled ? `· <button class="clear" data-act="clear">이 게임 지우기</button>` : ""}</span>
+      <a href="${esc(g.href)}" target="_blank" rel="noopener">리포트 열기 →</a>
+    </div></div>`;
+}
+function paintProgress(){
+  const total = GAMES.length * AXES.length;
+  const done = Object.values(mine)
+    .reduce((a,s) => a + AXES.filter(x => typeof s[x.k] === "number").length, 0);
+  $("#progText").textContent = `${done} / ${total}`;
+  $("#progFill").style.width = total ? (done / total * 100) + "%" : "0%";
+  const games = GAMES.filter(g => myAvg(g.slug) !== null).length;
+  $("#progWho").textContent = games ? `· ${games}개 게임 평가함` : "";
+}
+function paintState(){
+  const games = GAMES.filter(g => myAvg(g.slug) !== null).length;
+  const ok = me.trim() && games > 0;
+  $("#exportBtn").disabled = !ok;
+  $("#state").innerHTML = !me.trim()
+    ? "이름을 먼저 넣어주세요."
+    : games === 0
+      ? `<b>${esc(me)}</b> · 아직 평가한 게임이 없습니다`
+      : `<b>${esc(me)}</b> · ${games}개 게임 · 자동 저장됨${
+          others.length ? ` · 불러온 줄 ${others.filter(o => o.rater !== me).length}개` : ""}`;
+}
+
+/* ── 조작 ── */
+$("#rows").addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if (!b) return;
+  const slug = b.closest(".row").dataset.slug;
+  const act = b.dataset.act;
+  if (act === "toggle"){ openSlug = openSlug === slug ? null : slug; render(); return; }
+  if (act === "clear"){ delete mine[slug]; save(); render(); return; }
+  if (act === "set"){
+    const v = +b.dataset.v, k = b.dataset.ax;
+    mine[slug] = mine[slug] || {};
+    if (mine[slug][k] === v) delete mine[slug][k];
+    else mine[slug][k] = v;
+    if (!Object.keys(mine[slug]).length) delete mine[slug];
+    save(); render();
+  }
+});
+$("#who").addEventListener("input", e => { me = e.target.value; save(); render(); });
+
+/* ── CSV ── */
+function parseCsv(text){
+  const out = [];
+  const lines = text.replace(/^﻿/, "").split(/\r?\n/).filter(l => l.trim());
+  if (!lines.length) return out;
+  const head = lines[0].split(",").map(s => s.trim());
+  const gi = head.indexOf("게임"), ri = head.indexOf("평가자");
+  if (gi < 0 || ri < 0) return out;
+  for (let i = 1; i < lines.length; i++){
+    const c = lines[i].split(",").map(s => s.trim());
+    const game = c[gi], rater = c[ri];
+    if (!game || !rater) continue;
+    const scores = {};
+    AXES.forEach(a => {
+      const idx = head.indexOf(a.k);
+      if (idx < 0) return;
+      const v = parseFloat(c[idx]);
+      if (isFinite(v) && v >= 1 && v <= 10) scores[a.k] = v;
+    });
+    if (Object.keys(scores).length) out.push({ game, rater, scores });
+  }
+  return out;
+}
+function buildCsv(){
+  const lines = [HEADER.join(",")];
+  const keep = others.filter(o => o.rater !== me);
+  const bySlug = {};
+  GAMES.forEach(g => bySlug[g.title] = g.slug);
+  keep.forEach(o => {
+    const slug = bySlug[o.game] || o.game;
+    lines.push([slug, o.rater].concat(AXES.map(a => o.scores[a.k] ?? "")).join(","));
+  });
+  GAMES.forEach(g => {
+    const s = mine[g.slug];
+    if (!s || !AXES.some(a => typeof s[a.k] === "number")) return;
+    lines.push([g.slug, me].concat(AXES.map(a => s[a.k] ?? "")).join(","));
+  });
+  return "﻿" + lines.join("\r\n") + "\r\n";
+}
+$("#importFile").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    const rows = parseCsv(String(rd.result || ""));
+    // 슬러그로 들어온 게임명을 그대로 쓰고, 제목으로 들어온 것도 받아준다
+    const byTitle = {};
+    GAMES.forEach(g => byTitle[g.title.toLowerCase()] = g.slug);
+    others = rows.map(r => ({
+      game: byTitle[r.game.toLowerCase()] || r.game,
+      rater: r.rater, scores: r.scores
+    }));
+    // 내 이름으로 된 줄이 있으면 이어서 편집할 수 있게 가져온다
+    if (me.trim()){
+      others.filter(o => o.rater === me).forEach(o => { mine[o.game] = Object.assign({}, o.scores); });
+    }
+    save(); render();
+    $("#state").innerHTML = `<b>${rows.length}줄</b> 불러왔습니다.`;
+    setTimeout(paintState, 2200);
+  };
+  rd.readAsText(f, "utf-8");
+  e.target.value = "";
+});
+$("#exportBtn").addEventListener("click", () => {
+  const blob = new Blob([buildCsv()], { type:"text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "ratings.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+});
+
+/* ── 시작 ── */
+load();
+$("#who").value = me;
+if (!GAMES.length){
+  $("#rows").innerHTML = `<div class="note">게임 목록을 불러오지 못했습니다.
+    이 파일은 <code>reports.js</code> 와 같은 폴더에 있어야 합니다.</div>`;
+}
+render();
+paintState();
+</script>
+</body>
+</html>

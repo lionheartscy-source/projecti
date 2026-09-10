@@ -103,6 +103,11 @@
     background:var(--surface); padding:1px 6px; border-radius:999px; min-width:18px; text-align:center}
   .tabs button.on .tn{color:var(--accent-ink); background:var(--accent-soft)}
 
+  .ratelink{margin-left:auto; flex:none; font-size:13px; font-weight:700; color:var(--muted);
+    background:var(--bg); border:1px solid var(--line); padding:7px 14px; border-radius:8px;
+    white-space:nowrap; transition:color .16s, background .16s, border-color .16s}
+  .ratelink:hover{color:var(--accent-ink); background:var(--accent-soft); border-color:transparent}
+
   /* ══════════ SHELL ══════════ */
   /* 랭킹 열이 붙으면서 폭을 넓혔다. 좁히면 히어로가 그만큼 작아진다. */
   .shell{max-width:1680px; margin:0 auto; padding:0 24px 90px}
@@ -346,6 +351,7 @@
       <input id="q" type="search" placeholder="리포트 검색" autocomplete="off">
     </div>
     <div class="tabs" id="tabs" role="tablist"></div>
+    <a class="ratelink" href="평가.html">★ 평가하기</a>
   </div>
 </div>
 

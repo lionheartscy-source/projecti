@@ -557,7 +557,8 @@ __ROWS__
   </script>
 '@
 
-function Add-RatingBlock([System.IO.FileInfo]$File) {
+# (구버전 — 평가 입력을 리포트 안에서 받던 시절의 함수. 지금은 쓰지 않는다)
+function Add-RatingBlock-Legacy([System.IO.FileInfo]$File) {
     $src = Get-Content -LiteralPath $File.FullName -Raw -Encoding UTF8
 
     $hasBlock = $src -match 'class="rating-input"'
@@ -600,6 +601,71 @@ function Add-RatingBlock([System.IO.FileInfo]$File) {
 }
 
 # 리포트 안의 평가표를 읽어 사람별 점수로 만든다
+# 평가 결과를 리포트에 써 넣는다. 입력은 평가.html 에서 하고
+# 여기서는 ratings.csv 로 낸 결과만 보여준다. 빌드할 때마다 새로 쓴다.
+function Set-RatingBlock([System.IO.FileInfo]$File, $Rating) {
+    $src  = Get-Content -LiteralPath $File.FullName -Raw -Encoding UTF8
+    $orig = $src
+    $inv  = [System.Globalization.CultureInfo]::InvariantCulture
+
+    # 예전 판(입력표·입력칸 포함)과 지난 빌드의 결과 블록을 걷어낸다
+    $src = [regex]::Replace($src, '(?s)[ \t]*<!--\s*TEAM RATING\s*-->.*?</script>\s*', '')
+    $src = [regex]::Replace($src, '(?s)[ \t]*<!--\s*RATING-START\s*-->.*?<!--\s*RATING-END\s*-->\s*', '')
+    $src = [regex]::Replace($src, '(?s)\r?\n[ \t]*/\* 팀 평가표 [^*]*\*/.*?(?=</style>)', "`n")
+
+    if ($null -eq $Rating) {
+        $body = '      <p class="rate-none">아직 평가가 없습니다. <b>평가.html</b> 에서 점수를 넣고 업로드하면 여기에 나타납니다.</p>'
+    } else {
+        $axNames = [ordered]@{ quality = '완성도'; unique = '차별화'; fit = '적합성'
+                               proof   = '검증';   team   = '역량';   scale = '확장성' }
+        $rows = ''
+        foreach ($k in $axNames.Keys) {
+            if ($Rating.axes[$k]) {
+                $v = [double]$Rating.axes[$k]
+                $rows += '        <div class="rate-row"><span>' + $axNames[$k] + '</span>' +
+                         '<span class="rate-bar"><i style="width:' + (($v * 10).ToString('0.#', $inv)) + '%"></i></span>' +
+                         '<b>' + $v.ToString('0.0', $inv) + '</b></div>' + "`n"
+            } else {
+                $rows += '        <div class="rate-row"><span>' + $axNames[$k] +
+                         '</span><span class="rate-bar"></span><b>—</b></div>' + "`n"
+            }
+        }
+        $body = '      <div class="rate-big"><b>' + ([double]$Rating.avg).ToString('0.0', $inv) + '</b><span>/ 10</span></div>' + "`n" +
+                '      <p class="rate-n">' + $Rating.count + '명 평가 · 편차 ' +
+                    ([double]$Rating.sd).ToString('0.00', $inv) + ' · 축별 평균</p>' + "`n" +
+                '      <div class="rate-ax">' + "`n" + $rows + '      </div>'
+    }
+
+    $block = "`n" + '  <!-- RATING-START -->' + "`n" +
+             '  <section id="rating">' + "`n" +
+             '    <div class="shead"><span class="snum">★</span><h2>팀 평가</h2></div>' + "`n" +
+             '    <p class="lead">완성도 · 차별화 · 적합성 · 검증 · 역량 · 확장성을 1~10으로 매긴 팀 평균입니다.</p>' + "`n" +
+             '    <div class="card rate-sum">' + "`n" + $body + "`n" + '    </div>' + "`n" +
+             '  </section>' + "`n" +
+             '  <!-- RATING-END -->' + "`n"
+
+    $i = $src.IndexOf('</style>')
+    if ($i -lt 0) { return $false }
+    $src = $src.Substring(0, $i) + $RatingBlockCss + $src.Substring($i)
+
+    $m = [regex]::Match($src, '(?s)[ \t]*(?:<!--\s*SOURCES\s*-->\s*)?<(?:section|footer|div)[^>]*id="sources"')
+    if (-not $m.Success) { return $false }
+    $src = $src.Substring(0, $m.Index) + $block + $src.Substring($m.Index)
+
+    # 목차에 '평가' 가 없을 때만 넣는다.
+    # 사이드 네비를 먼저, 상단 네비는 lookahead 로 제외해야 두 번 들어가지 않는다.
+    if ($src -notmatch 'href="#rating"') {
+        $src = [regex]::Replace($src, '<a href="#sources"><span class="n">',
+            '<a href="#rating"><span class="n">★</span> 평가</a>' + "`n  " + '<a href="#sources"><span class="n">')
+        $src = [regex]::Replace($src, '<a href="#sources">(?!<span)',
+            '<a href="#rating">평가</a>' + "`n      " + '<a href="#sources">')
+    }
+
+    if ($src -eq $orig) { return $false }
+    [System.IO.File]::WriteAllText($File.FullName, $src, (New-Object System.Text.UTF8Encoding($false)))
+    return $true
+}
+
 function Get-ReportRatings([string]$Src) {
     $list = New-Object System.Collections.Generic.List[object]
     $t = [regex]::Match($Src, '(?s)<table[^>]*class="[^"]*rating-input[^"]*"[^>]*>(.*?)</table>')
@@ -932,10 +998,11 @@ function Build-Entry([System.IO.FileInfo]$File) {
     # 3) 그래도 없으면 파일이 처음 추가된 커밋일
     if (-not $date) { $date = Get-ReportDate $File.FullName }
 
-    # ── 팀 평점 ── 리포트 안의 평가표에서 읽는다
+    # ── 팀 평점 ── ratings.csv 에서 슬러그 또는 제목으로 찾는다
     $rating = $null
-    $rateRows = Get-ReportRatings $src
-    if ($rateRows.Count -gt 0) { $rating = Get-RatingSummary $rateRows }
+    foreach ($k in @($slug.ToLowerInvariant(), ([string]$title).Trim().ToLowerInvariant())) {
+        if ($k -and $Ratings.ContainsKey($k)) { $rating = Get-RatingSummary $Ratings[$k]; break }
+    }
 
     return [pscustomobject][ordered]@{
         title     = [string]$title
@@ -964,23 +1031,23 @@ $files = @(Get-ChildItem -LiteralPath $ReportsDir -File -Recurse |
            Where-Object { $_.Extension -match '^\.html?$' -and -not $_.Name.StartsWith('_') } |
            Sort-Object FullName)
 
-# 새 리포트에 빠져 있는 것들을 먼저 채운다
+# 새 리포트에 아카이브 버튼이 빠져 있으면 넣는다
 $linked = 0
-$rated  = 0
 foreach ($f in $files) {
-    try { if (Add-HomeLink $f)    { $linked++ } }
+    try { if (Add-HomeLink $f) { $linked++ } }
     catch { Write-Host ("  [!!] {0} 에 아카이브 버튼을 넣지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
-    try { if (Add-RatingBlock $f) { $rated++ } }
-    catch { Write-Host ("  [!!] {0} 에 평가표를 넣지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
 }
 if ($linked -gt 0) { Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray }
-if ($rated  -gt 0) { Write-Host ("  평가표를 {0}편에 넣거나 갱신했습니다" -f $rated)  -ForegroundColor DarkGray }
 
 $entries = New-Object System.Collections.Generic.List[object]
+$script:ratedWritten = 0
 foreach ($f in $files) {
     try {
         $e = Build-Entry $f
         [void]$entries.Add($e)
+        # 평가 결과를 리포트 안에도 써 넣는다 (평가.html 로 입력한 값)
+        try { if (Set-RatingBlock $f $e.rating) { $script:ratedWritten++ } }
+        catch { Write-Host ("  [!!] {0} 에 평가 결과를 쓰지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
         $tagText = if ($e.topics.Count) { ($e.topics -join ', ') } else { '-' }
         $stText  = if ($e.status) { $e.status } else { '-' }
         Write-Host ("  [OK] {0,-4} {1,-30} {2,-24} {3,-6} {4,-8} {5}" -f $e.region, $e.slug, $e.title, $stText, $e.date, $tagText)
@@ -988,6 +1055,10 @@ foreach ($f in $files) {
         # 한 파일이 깨져도 전체가 죽지 않게
         Write-Host ("  [!!] {0} 파싱 실패: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow
     }
+}
+
+if ($script:ratedWritten -gt 0) {
+    Write-Host ("  평가 결과를 {0}편에 반영했습니다" -f $script:ratedWritten) -ForegroundColor DarkGray
 }
 
 $sorted = @($entries | Sort-Object -Property @{Expression = 'date'; Descending = $true},
