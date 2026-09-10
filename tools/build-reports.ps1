@@ -483,16 +483,18 @@ function Add-RatingBlock([System.IO.FileInfo]$File) {
     if ($i -lt 0) { return $false }
     $src = $src.Substring(0, $i) + $RatingBlockCss + $src.Substring($i)
 
-    # 출처 섹션 바로 앞에 넣는다
-    $m = [regex]::Match($src, '(?s)([ \t]*)(<!--[^>]*?-->\s*)?<section[^>]*id="sources"')
+    # 출처 블록 바로 앞에 넣는다.
+    # 리포트마다 <footer id="sources"> 이거나 <section id="sources"> 이라 둘 다 받는다.
+    $m = [regex]::Match($src, '(?s)[ \t]*(?:<!--\s*SOURCES\s*-->\s*)?<(?:section|footer|div)[^>]*id="sources"')
     if (-not $m.Success) { return $false }
     $src = $src.Substring(0, $m.Index) + $RatingBlockHtml + "`n" + $src.Substring($m.Index)
 
-    # 목차에도 넣는다 (상단 네비 · 사이드 네비)
-    $src = [regex]::Replace($src, '(<a href="#sources">)',
-        '<a href="#rating">평가</a>$1')
-    $src = [regex]::Replace($src, '(<a href="#sources"><span class="n">)',
-        '<a href="#rating"><span class="n">★</span> 평가</a>$1')
+    # 목차에도 넣는다. 사이드 네비(숫자 span 이 붙은 형태)를 먼저 처리하고,
+    # 상단 네비는 lookahead 로 사이드 네비를 제외해야 두 번 들어가지 않는다.
+    $src = [regex]::Replace($src, '<a href="#sources"><span class="n">',
+        '<a href="#rating"><span class="n">★</span> 평가</a>' + "`n  " + '<a href="#sources"><span class="n">')
+    $src = [regex]::Replace($src, '<a href="#sources">(?!<span)',
+        '<a href="#rating">평가</a>' + "`n      " + '<a href="#sources">')
 
     [System.IO.File]::WriteAllText($File.FullName, $src, (New-Object System.Text.UTF8Encoding($false)))
     return $true

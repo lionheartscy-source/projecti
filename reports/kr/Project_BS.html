@@ -193,7 +193,30 @@
     border-color:transparent; text-decoration:none}
   .homelink svg{flex:none}
   @media(max-width:560px){ .homelink span{display:none} .homelink{padding:7px 9px} }
-</style>
+
+  /* 팀 평가표 — build-reports.ps1 이 자동으로 넣습니다 */
+  .rate-wrap{display:grid; grid-template-columns:1fr 300px; gap:18px; align-items:start}
+  @media(max-width:820px){ .rate-wrap{grid-template-columns:1fr} }
+  table.rating-input{width:100%; border-collapse:collapse; font-size:13.5px}
+  table.rating-input th, table.rating-input td{border:1px solid var(--line); padding:7px 9px; text-align:center}
+  table.rating-input th{background:var(--surface); font-weight:700; font-size:12px; color:var(--muted); white-space:nowrap}
+  table.rating-input td:first-child, table.rating-input th:first-child{text-align:left; font-weight:600}
+  table.rating-input td{font-variant-numeric:tabular-nums; color:var(--ink2)}
+  table.rating-input tbody tr:nth-child(even){background:var(--surface2)}
+  .rate-hint{font-size:12px; color:var(--dim); margin:9px 0 0; line-height:1.6}
+  .rate-sum{background:var(--surface2); border:1px solid var(--line); border-radius:var(--r); padding:16px}
+  .rate-big{display:flex; align-items:baseline; gap:8px; margin-bottom:2px}
+  .rate-big b{font-size:34px; font-weight:800; letter-spacing:-.03em; color:var(--accent-ink);
+    font-variant-numeric:tabular-nums; line-height:1}
+  .rate-big span{font-size:13px; color:var(--dim); font-weight:600}
+  .rate-n{font-size:12px; color:var(--muted); margin:0 0 14px}
+  .rate-ax{display:flex; flex-direction:column; gap:7px}
+  .rate-row{display:grid; grid-template-columns:52px 1fr 30px; align-items:center; gap:9px; font-size:12px}
+  .rate-row span:first-child{color:var(--muted); font-weight:600}
+  .rate-bar{height:5px; border-radius:3px; background:var(--surface); overflow:hidden}
+  .rate-bar i{display:block; height:100%; border-radius:3px; background:var(--accent)}
+  .rate-row b{text-align:right; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums}
+  .rate-none{font-size:13px; color:var(--muted); margin:0}</style>
 </head>
 <body>
 
@@ -210,6 +233,7 @@
       <a href="#market">04 시장성</a>
       <a href="#invest">05 투자</a>
       <a href="#deep">06 심화</a>
+      <a href="#rating">평가</a>
       <a href="#sources">출처</a>
     </nav>
   </div>
@@ -223,6 +247,7 @@
   <a href="#market"><span class="n">04</span> 시장성</a>
   <a href="#invest"><span class="n">05</span> 투자</a>
   <a href="#deep"><span class="n">06</span> 심화</a>
+  <a href="#rating"><span class="n">★</span> 평가</a>
   <a href="#sources"><span class="n">·</span> 출처</a>
 </nav>
 
@@ -500,6 +525,78 @@
     <div class="note" style="margin-top:16px"><b>종합</b> — 충성도 높은 소울라이크 장르에 <span class="hl">애니풍 아트·매력적 주인공 IP·속성 스킬 빌드</span>를 얹은 훅이 또렷한 신작입니다. 다만 <b>미출시·개발사 정보 부족·완성도 문턱이 높은 하드코어 장르</b>인 만큼, 개발사 실체와 전투 완성도(데모·시연) 검증, 그리고 콘솔·IP 확장 실행력이 시장성의 열쇠입니다.</div>
   </section>
 
+
+  <!-- TEAM RATING -->
+  <section id="rating">
+    <div class="shead"><span class="snum">★</span><h2>팀 평가</h2></div>
+    <p class="lead">아래 표에 한 사람당 한 줄씩 1~10점으로 적습니다. 판단할 근거가 없는 축은 비워 두세요 — 그 사람의 평균에서 빠집니다.</p>
+    <div class="card">
+      <div class="rate-wrap">
+        <div>
+          <table class="rating-input">
+            <thead>
+              <tr><th>평가자</th><th>완성도</th><th>차별화</th><th>적합성</th><th>검증</th><th>역량</th><th>확장성</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+          </table>
+          <p class="rate-hint">완성도 = 지금 잘 만들어졌는가 · 차별화 = 고유한 훅이 있는가 · 적합성 = 시장과 타이밍이 맞는가<br>
+            검증 = 지표로 확인됐는가 · 역량 = 완주하고 다음을 낼 수 있는가 · 확장성 = 더 커질 여지가 있는가</p>
+        </div>
+        <div class="rate-sum" id="rateSum"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function(){
+    var AX = ["완성도","차별화","적합성","검증","역량","확장성"];
+    var tb = document.querySelector("table.rating-input");
+    var box = document.getElementById("rateSum");
+    if (!tb || !box) return;
+
+    var head = [].map.call(tb.querySelectorAll("thead th"), function(th){ return th.textContent.trim(); });
+    var people = [], per = {};
+    AX.forEach(function(a){ per[a] = []; });
+
+    [].forEach.call(tb.querySelectorAll("tbody tr"), function(tr){
+      var cells = tr.querySelectorAll("td");
+      if (!cells.length) return;
+      var name = cells[0].textContent.trim();
+      if (!name || name === "—") return;
+      var vals = [];
+      for (var i = 1; i < cells.length && i < head.length; i++){
+        var raw = cells[i].textContent.trim();
+        if (!raw) continue;
+        var v = parseFloat(raw);
+        if (!isFinite(v) || v < 1 || v > 10) continue;
+        vals.push(v);
+        if (per[head[i]]) per[head[i]].push(v);
+      }
+      if (vals.length) people.push(vals.reduce(function(a,b){ return a+b; }, 0) / vals.length);
+    });
+
+    if (!people.length){
+      box.innerHTML = '<p class="rate-none">아직 평가가 없습니다. 왼쪽 표에 한 줄 추가하면 여기에 평균이 나옵니다.</p>';
+      return;
+    }
+    var avg = people.reduce(function(a,b){ return a+b; }, 0) / people.length;
+    var rows = AX.map(function(a){
+      var v = per[a];
+      if (!v.length) return '<div class="rate-row"><span>' + a + '</span><span class="rate-bar"></span><b>—</b></div>';
+      var m = v.reduce(function(x,y){ return x+y; }, 0) / v.length;
+      return '<div class="rate-row"><span>' + a + '</span>' +
+             '<span class="rate-bar"><i style="width:' + (m * 10) + '%"></i></span>' +
+             '<b>' + m.toFixed(1) + '</b></div>';
+    }).join("");
+
+    box.innerHTML =
+      '<div class="rate-big"><b>' + avg.toFixed(1) + '</b><span>/ 10</span></div>' +
+      '<p class="rate-n">' + people.length + '명 평가 · 축별 평균</p>' +
+      '<div class="rate-ax">' + rows + '</div>';
+  })();
+  </script>
   <!-- SOURCES -->
   <footer id="sources">
     <details class="acc">
