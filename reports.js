@@ -368,18 +368,7 @@ window.__REPORTS__ = [
     ],
     "status": "데모",
     "date": "2026-08-12",
-    "rating": {
-      "avg": 7.4,
-      "sd": 0.43,
-      "count": 3,
-      "axes": {
-        "quality": 8,
-        "unique": 8.67,
-        "fit": 6.67,
-        "team": 5.67,
-        "scale": 8
-      }
-    },
+    "rating": null,
     "slug": "SURA_Blade_of_Eternity"
   },
   {
