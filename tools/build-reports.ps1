@@ -312,6 +312,60 @@ function Get-ReportDate([string]$Path) {
     return (Get-Item -LiteralPath $Path).LastWriteTime.ToString('yyyy-MM-dd')
 }
 
+# ─────────────────────── 아카이브 복귀 버튼 ───────────────────────
+#
+# 새 리포트에 버튼이 빠져 있으면 빌드할 때 넣는다.
+# 리포트를 쓸 때마다 기억할 필요가 없도록 하기 위한 것이고,
+# 이미 버튼이 있는 파일은 건드리지 않는다.
+
+$HomeLinkCss = @'
+
+  /* 아카이브(메인) 복귀 버튼 — build-reports.ps1 이 자동으로 넣습니다 */
+  .navleft{display:flex; align-items:center; gap:12px; min-width:0}
+  .homelink{display:inline-flex; align-items:center; gap:6px; flex:none;
+    font-size:12.5px; font-weight:700; color:var(--muted);
+    background:var(--surface); border:1px solid var(--line);
+    padding:7px 12px; border-radius:8px; white-space:nowrap;
+    transition:color .16s, background .16s, border-color .16s}
+  .homelink:hover{color:var(--accent-ink); background:var(--accent-soft);
+    border-color:transparent; text-decoration:none}
+  .homelink svg{flex:none}
+  @media(max-width:560px){ .homelink span{display:none} .homelink{padding:7px 9px} }
+'@
+
+function Add-HomeLink([System.IO.FileInfo]$File) {
+    $src = Get-Content -LiteralPath $File.FullName -Raw -Encoding UTF8
+    if ($src -match 'class="homelink"') { return $false }   # 이미 있음
+    if ($src -notmatch 'class="brand"')  { return $false }   # 상단바 구조가 다름
+
+    # reports/ 기준 깊이만큼 거슬러 올라간다 (kr/x.html → ../../index.html)
+    $rel   = $File.FullName.Substring($ReportsDir.Length).TrimStart('\', '/').Replace('\', '/')
+    $depth = @($rel.Split('/')).Count - 1
+    $href  = ('../' * ($depth + 1)) + 'index.html'
+
+    $btn = '<a class="homelink" href="' + $href + '" title="리포트 아카이브로 돌아가기">' +
+           '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
+           '<path d="M8.5 2.5 4 7l4.5 4.5" stroke="currentColor" stroke-width="1.8" ' +
+           'stroke-linecap="round" stroke-linejoin="round"/></svg><span>아카이브</span></a>'
+
+    $i = $src.IndexOf('</style>')
+    if ($i -lt 0) { return $false }
+    $src = $src.Substring(0, $i) + $HomeLinkCss + $src.Substring($i)
+
+    $m = [regex]::Match($src, '(?s)([ \t]*)(<a\b[^>]*class="brand"[^>]*>.*?</a>)')
+    if (-not $m.Success) { return $false }
+
+    $ind  = $m.Groups[1].Value
+    $wrap = $ind + '<div class="navleft">' + "`n" +
+            $ind + '  ' + $btn + "`n" +
+            $ind + '  ' + $m.Groups[2].Value + "`n" +
+            $ind + '</div>'
+    $src = $src.Substring(0, $m.Index) + $wrap + $src.Substring($m.Index + $m.Length)
+
+    [System.IO.File]::WriteAllText($File.FullName, $src, (New-Object System.Text.UTF8Encoding($false)))
+    return $true
+}
+
 # ─────────────────────────── 팀 평점 ───────────────────────────
 #
 # ratings.csv 는 손으로 고치는 파일이다. 헤더는 다음과 같고,
@@ -636,6 +690,16 @@ if (-not (Test-Path -LiteralPath $ReportsDir)) {
 $files = @(Get-ChildItem -LiteralPath $ReportsDir -File -Recurse |
            Where-Object { $_.Extension -match '^\.html?$' -and -not $_.Name.StartsWith('_') } |
            Sort-Object FullName)
+
+# 새 리포트에 아카이브 버튼이 빠져 있으면 먼저 넣는다
+$linked = 0
+foreach ($f in $files) {
+    try { if (Add-HomeLink $f) { $linked++ } }
+    catch { Write-Host ("  [!!] {0} 에 아카이브 버튼을 넣지 못했습니다: {1}" -f $f.Name, $_.Exception.Message) -ForegroundColor Yellow }
+}
+if ($linked -gt 0) {
+    Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray
+}
 
 $Ratings = Get-Ratings (Join-Path $Root 'ratings.csv')
 if ($Ratings.Count -gt 0) {
