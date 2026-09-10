@@ -1039,6 +1039,12 @@ foreach ($f in $files) {
 }
 if ($linked -gt 0) { Write-Host ("  아카이브 버튼을 {0}편에 새로 넣었습니다" -f $linked) -ForegroundColor DarkGray }
 
+# 평가 점수는 ratings.csv 에서 읽는다 (입력은 평가.html)
+$Ratings = Get-Ratings (Join-Path $Root 'ratings.csv')
+if ($Ratings.Count -gt 0) {
+    Write-Host ("  ratings.csv: {0}개 게임의 평점을 읽었습니다" -f $Ratings.Count) -ForegroundColor DarkGray
+}
+
 $entries = New-Object System.Collections.Generic.List[object]
 $script:ratedWritten = 0
 foreach ($f in $files) {
