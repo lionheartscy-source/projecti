@@ -67,6 +67,29 @@ window.__REPORTS__ = [
     "slug": "INARI"
   },
   {
+    "title": "Oh! Robot: Legendary Mechanic",
+    "studio": "Garage Arts",
+    "desc": "한국 인디 스튜디오 Garage Arts와 신작 「Oh! Robot: Legendary Mechanic(오! 로봇: 전설의 정비공)」 — 소녀가 로봇 제로봇(ZeroBot)에 탑승해 폭주 기계들과 싸우는 탑다운 트윈스틱 슈터 · 불릿헬 로그라이트.",
+    "href": "reports/kr/Oh_Robot.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3715770/888bb99013f33d5fbc0c98948a95da0379c402e9/header.jpg",
+    "tags": [
+      "트윈스틱 슈터",
+      "불릿헬 로그라이트"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "슈터",
+      "로그라이크"
+    ],
+    "status": "데모",
+    "date": "2026-09-11",
+    "rating": null,
+    "slug": "Oh_Robot"
+  },
+  {
     "title": "PARRUITS!",
     "studio": "Cluko",
     "desc": "인디 개발사 Cluko의 신작 「PARRUITS!」 — 과일로 변신하는 앵무새들이 등장하는 2~6인 파티 브롤러. 각 과일의 고유 능력으로 친구를 섬 밖으로 날려버리고 최후의 1인이 되는 유쾌한 난투 게임. 로컬·온라인·리모트 플레이를 지원하는 캐주얼 파티 신작에 대한 출시 전(Pre-Launch, 2027년 1분기 예정) 분석.",
@@ -362,29 +385,6 @@ window.__REPORTS__ = [
     "date": "2026-08-12",
     "rating": null,
     "slug": "Little_Sheep_Valley"
-  },
-  {
-    "title": "Oh! Robot: Legendary Mechanic",
-    "studio": "Garage Arts",
-    "desc": "한국 인디 스튜디오 Garage Arts와 신작 「Oh! Robot: Legendary Mechanic(오! 로봇: 전설의 정비공)」 — 소녀가 로봇 제로봇(ZeroBot)에 탑승해 폭주 기계들과 싸우는 탑다운 트윈스틱 슈터 · 불릿헬 로그라이트.",
-    "href": "reports/kr/Oh_Robot.html",
-    "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3715770/888bb99013f33d5fbc0c98948a95da0379c402e9/header.jpg",
-    "tags": [
-      "트윈스틱 슈터",
-      "불릿헬 로그라이트"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "슈터",
-      "로그라이크"
-    ],
-    "status": "데모",
-    "date": "2026-08-12",
-    "rating": null,
-    "slug": "Oh_Robot"
   },
   {
     "title": "Sephiria",
