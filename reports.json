@@ -43,6 +43,29 @@
     "slug": "Forest_Punk"
   },
   {
+    "title": "INARI",
+    "studio": "1HP STUDIO",
+    "desc": "한국 인디 스튜디오 1HP STUDIO와 신작 「INARI(이나리)」 — 동양 판타지 세계에서 쿠나이 투척과 순간이동으로 질주하는 초고속 액션 플랫포머. 사신 ‘이즈나’가 되어 ‘일곱 딸’을 처단하는, 킥스타터 17분 목표 달성·1주 위시리스트 5만의 화제작에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
+    "href": "reports/kr/INARI.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3910680/d321f7cc1d3f96013c413ccc53e20498c05f5dcc/ss_d321f7cc1d3f96013c413ccc53e20498c05f5dcc.1920x1080.jpg?t=1785728900",
+    "tags": [
+      "고속 쿠나이 액션 플랫포머"
+    ],
+    "platforms": [
+      "PC",
+      "콘솔"
+    ],
+    "topics": [
+      "플랫포머",
+      "액션"
+    ],
+    "status": "데모",
+    "date": "2026-09-11",
+    "rating": null,
+    "slug": "INARI"
+  },
+  {
     "title": "PARRUITS!",
     "studio": "Cluko",
     "desc": "인디 개발사 Cluko의 신작 「PARRUITS!」 — 과일로 변신하는 앵무새들이 등장하는 2~6인 파티 브롤러. 각 과일의 고유 능력으로 친구를 섬 밖으로 날려버리고 최후의 1인이 되는 유쾌한 난투 게임. 로컬·온라인·리모트 플레이를 지원하는 캐주얼 파티 신작에 대한 출시 전(Pre-Launch, 2027년 1분기 예정) 분석.",
@@ -314,28 +337,6 @@
     "date": "2026-08-12",
     "rating": null,
     "slug": "Horde_Arena"
-  },
-  {
-    "title": "INARI",
-    "studio": "1HP STUDIO",
-    "desc": "한국 인디 스튜디오 1HP STUDIO와 신작 「INARI(이나리)」 — 동양 판타지 세계에서 쿠나이 투척과 순간이동으로 질주하는 초고속 액션 플랫포머. 사신 ‘이즈나’가 되어 ‘일곱 딸’을 처단하는, 킥스타터 17분 목표 달성·1주 위시리스트 5만의 화제작에 대한 개발사·게임·시장성 중심 출시 전(Pre-Launch) 분석.",
-    "href": "reports/kr/INARI.html",
-    "region": "국내",
-    "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3910680/d321f7cc1d3f96013c413ccc53e20498c05f5dcc/ss_d321f7cc1d3f96013c413ccc53e20498c05f5dcc.1920x1080.jpg?t=1785728900",
-    "tags": [
-      "고속 쿠나이 액션 플랫포머"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "플랫포머",
-      "액션"
-    ],
-    "status": "출시예정",
-    "date": "2026-08-12",
-    "rating": null,
-    "slug": "INARI"
   },
   {
     "title": "Little Sheep Valley",
