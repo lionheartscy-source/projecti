@@ -1,6 +1,52 @@
 /* 자동 생성 파일 - 직접 수정하지 마세요. tools/build-reports.ps1 이 만듭니다. */
 window.__REPORTS__ = [
   {
+    "title": "Aksun(악선)",
+    "studio": "Wayway Inc",
+    "desc": "한국 6인 인디 스튜디오 Wayway Inc의 신작 「Aksun(악선)」 — 한국 무속(샤머니즘) 신화에 뿌리를 둔 핵앤슬래시 로그라이트. 저주받은 장치 ‘관(the Casket)’을 통해 악선의 어둠으로 내려가, 수백 개의 원소 아티팩트·능력을 연쇄해 파괴적 반응을 일으키며 저주의 굴레를 끊는 신작에 대한 앞서 해보기(Early Acce…",
+    "href": "reports/kr/Aksun.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/104dc793f3fb2b458099f720bb96c7cd532dc88d/ss_104dc793f3fb2b458099f720bb96c7cd532dc88d.1920x1080.jpg?t=1787808334",
+    "tags": [
+      "핵앤슬래시 로그라이트"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "로그라이크"
+    ],
+    "status": "앞서 해보기",
+    "date": "2026-09-11",
+    "rating": null,
+    "slug": "Aksun"
+  },
+  {
+    "title": "Transpawt Train",
+    "studio": "ORIN SOFT",
+    "desc": "한국 인디 개발사 ORIN SOFT(오린소프트)의 출시작 「Transpawt Train」 — 동물 마을 ‘포시티(Paw-City)’에 첫 철도를 놓는 캐주얼 코지 전략·퍼즐 게임. 마을 사이에 철도를 손으로 그려 기차를 운행하고, 새 마을·재난에 맞춰 노선을 다시 설계합니다.",
+    "href": "reports/kr/Transpawt_Train.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/2123c938d8c1602fa2518ff91822316c2af40965/ss_2123c938d8c1602fa2518ff91822316c2af40965.1920x1080.jpg?t=1779715771",
+    "tags": [
+      "캐주얼 코지 전략",
+      "퍼즐"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [
+      "전략",
+      "캐주얼",
+      "코지",
+      "퍼즐"
+    ],
+    "status": "출시",
+    "date": "2026-09-11",
+    "rating": null,
+    "slug": "Transpawt_Train"
+  },
+  {
     "title": "Oar'some Adventures",
     "studio": "Haymaker Games",
     "desc": "호주 멜버른 인디 스튜디오 Haymaker Games의 신작 「Oar'some Adventures」 — 1~8인이 함께 뗏목을 타고 거대한 강줄기를 내려가는 ‘코지하면서 카오스한(cozy/chaotic)’ 협동 래프팅 어드벤처.",
@@ -156,31 +202,6 @@ window.__REPORTS__ = [
     "date": "2026-08-13",
     "rating": null,
     "slug": "RELOADIAN"
-  },
-  {
-    "title": "Transpawt Train",
-    "studio": "ORIN SOFT",
-    "desc": "인디 개발사 ORIN SOFT의 출시작 「Transpawt Train」 — 동물 마을 ‘포시티(Paw-City)’에 첫 철도를 놓는 캐주얼 코지 전략·퍼즐 게임. 마을 사이에 철도를 손으로 그려 기차를 운행하고, 새 마을·재난에 맞춰 노선을 다시 설계합니다.",
-    "href": "reports/kr/Transpawt_Train.html",
-    "region": "국내",
-    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3422460/2123c938d8c1602fa2518ff91822316c2af40965/ss_2123c938d8c1602fa2518ff91822316c2af40965.1920x1080.jpg?t=1779715771",
-    "tags": [
-      "캐주얼 코지 전략",
-      "퍼즐"
-    ],
-    "platforms": [
-      "PC"
-    ],
-    "topics": [
-      "전략",
-      "캐주얼",
-      "코지",
-      "퍼즐"
-    ],
-    "status": "출시",
-    "date": "2026-08-13",
-    "rating": null,
-    "slug": "Transpawt_Train"
   },
   {
     "title": "Dinoblade",
