@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aksun(악선) · Wayway Inc — 개발사·게임·시장성 분석 리포트</title>
+<title>PARRUITS! · Cluko — 개발사·게임·시장성 분석 리포트</title>
 <style>
   :root{
-    --bg:#ffffff; --surface:#f7eef0; --surface2:#fcf7f8;
-    --ink:#1c1214; --ink2:#2f2023; --muted:#6a5157; --dim:#a98d94;
-    --line:#f0e0e4; --line2:#f7edef;
-    --accent:#9c2c4a; --accent-ink:#7d2340; --accent-soft:#f5dde3;
-    --gold:#c1901a; --gold-soft:#f7ecd0; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
-    --shadow-sm:0 1px 2px rgba(40,10,20,.05),0 1px 3px rgba(40,10,20,.08);
-    --shadow:0 4px 8px -2px rgba(40,10,20,.08),0 2px 4px -2px rgba(40,10,20,.05);
-    --shadow-lg:0 16px 32px -10px rgba(40,10,20,.16);
+    --bg:#ffffff; --surface:#fbeef3; --surface2:#fdf6f9;
+    --ink:#1e1218; --ink2:#312029; --muted:#6d5460; --dim:#b0909e;
+    --line:#f4e0e9; --line2:#faeef3;
+    --accent:#e0447e; --accent-ink:#bd2f64; --accent-soft:#fbdfeb;
+    --gold:#5aa61e; --gold-soft:#e7f4d5; --green:#0b8a4e; --red:#d64550; --amber:#c07d16; --blue:#2f6bd6;
+    --shadow-sm:0 1px 2px rgba(40,10,25,.05),0 1px 3px rgba(40,10,25,.08);
+    --shadow:0 4px 8px -2px rgba(40,10,25,.08),0 2px 4px -2px rgba(40,10,25,.05);
+    --shadow-lg:0 16px 32px -10px rgba(40,10,25,.16);
     --r:14px;
   }
   *{box-sizing:border-box}
@@ -29,7 +29,7 @@
   .topnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line)}
   .topnav-inner{max-width:1120px; margin:0 auto; height:60px; padding:0 20px; display:flex; align-items:center; gap:16px; justify-content:space-between}
   .brand{display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; color:var(--ink); flex:none}
-  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#c14e6c); color:#fff; border-radius:8px; font-size:14px}
+  .brand .star{display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),#f06fa0); color:#fff; border-radius:8px; font-size:14px}
   .brand small{display:block; font-size:10.5px; font-weight:600; color:var(--dim); letter-spacing:.06em}
   .navlinks{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
   .navlinks::-webkit-scrollbar{display:none}
@@ -98,11 +98,6 @@
   .pl-good{color:#0b6b3d; background:#e5f6ec} .pl-mid{color:#8a5a05; background:#fbf0dc} .pl-cond{color:var(--accent-ink); background:var(--accent-soft)}
   .tag{display:inline-block; font-size:11px; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600}
 
-  .rate{display:flex; align-items:baseline; gap:9px}
-  .rate .big{font-size:26px; font-weight:800; color:var(--green)}
-  .ratebar{height:9px; border-radius:999px; background:var(--line); overflow:hidden; margin:10px 0 5px}
-  .ratebar>i{display:block; height:100%; background:linear-gradient(90deg,var(--green),#3ec97e); border-radius:999px}
-
   ul.clean{list-style:none; margin:0; padding:0}
   ul.clean li{position:relative; padding-left:22px; margin:8px 0; color:var(--ink2); font-size:14px}
   ul.clean li::before{content:""; position:absolute; left:4px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--accent)}
@@ -152,18 +147,18 @@
   .disc{font-size:11.5px; color:var(--dim); margin-top:16px; line-height:1.6}
   .backtop{display:inline-block; margin-top:14px; font-size:12.5px; color:var(--muted)}
 
-  .emph{background:#f8eef1; border:1px solid #f0dbe1; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
+  .emph{background:#fceef4; border:1px solid #f6d9e6; border-radius:20px; padding:28px 30px 34px; box-shadow:var(--shadow-sm)}
   .emph > .shead{margin-bottom:10px}
   @media(max-width:560px){.emph{padding:20px 16px 24px}}
-  @media print{.emph{background:#f9f0f3 !important; border-color:#f0dbe1; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
+  @media print{.emph{background:#fdf0f5 !important; border-color:#f6d9e6; -webkit-print-color-adjust:exact; print-color-adjust:exact; break-inside:auto}}
 
   .zoomable{cursor:zoom-in}
-  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(24,8,14,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
+  .lightbox{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(28,8,18,.9); backdrop-filter:blur(4px); padding:24px; opacity:0; transition:opacity .18s ease}
   .lightbox.open{display:flex; opacity:1}
   .lightbox img{max-width:96vw; max-height:90vh; border-radius:10px; box-shadow:0 24px 70px rgba(0,0,0,.55); cursor:zoom-out; object-fit:contain}
   .lightbox .lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border:none; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-size:26px; line-height:1; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:background .2s}
   .lightbox .lb-close:hover{background:rgba(255,255,255,.26)}
-  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#e2c6cf; font-size:12px}
+  .lightbox .lb-cap{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#e6c6d6; font-size:12px}
 
   @media print{
     @page{margin:14mm}
@@ -198,7 +193,6 @@
     border-color:transparent; text-decoration:none}
   .homelink svg{flex:none}
   @media(max-width:560px){ .homelink span{display:none} .homelink{padding:7px 9px} }
-
   /* 팀 평가표 — build-reports.ps1 이 자동으로 넣습니다 */
   .rate-wrap{display:grid; grid-template-columns:1fr 300px; gap:18px; align-items:start}
   @media(max-width:820px){ .rate-wrap{grid-template-columns:1fr} }
@@ -254,7 +248,7 @@
   <div class="topnav-inner">
     <div class="navleft">
       <a class="homelink" href="../../index.html" title="리포트 아카이브로 돌아가기"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.5 2.5 4 7l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>아카이브</span></a>
-      <a href="#top" class="brand"><span class="star">🪬</span> Aksun · 악선 <small>분석 리포트</small></a>
+      <a href="#top" class="brand"><span class="star">🦜</span> PARRUITS! <small>분석 리포트</small></a>
     </div>
     <nav class="navlinks" aria-label="목차">
       <a href="#summary">01 요약</a>
@@ -285,36 +279,36 @@
 
   <!-- HERO -->
   <section class="hero" id="top" style="margin-top:0">
-    <span class="kicker">🪬 Early Access · Developer &amp; Market Analysis</span>
-    <h1>Aksun(악선) —<br>개발사 · 게임 · 시장성 리포트</h1>
-    <p class="sub">한국 6인 인디 스튜디오 <b>Wayway Inc</b>의 신작 「Aksun(악선)」 — <b>한국 무속(샤머니즘) 신화에 뿌리를 둔 핵앤슬래시 로그라이트</b>. 저주받은 장치 ‘관(the Casket)’을 통해 악선의 어둠으로 내려가, <b>수백 개의 원소 아티팩트·능력을 연쇄해 파괴적 반응</b>을 일으키며 저주의 굴레를 끊는 신작에 대한 <b>앞서 해보기(Early Access)</b> 시점 분석.</p>
+    <span class="kicker">🦜 Pre-Launch · Developer &amp; Market Analysis</span>
+    <h1>PARRUITS! —<br>개발사 · 게임 · 시장성 리포트</h1>
+    <p class="sub">인디 개발사 <b>Cluko</b>의 신작 「PARRUITS!」 — <b>과일로 변신하는 앵무새</b>들이 등장하는 <b>2~6인 파티 브롤러</b>. 각 과일의 고유 능력으로 친구를 섬 밖으로 <b>날려버리고 최후의 1인이 되는</b> 유쾌한 난투 게임. 로컬·온라인·리모트 플레이를 지원하는 캐주얼 파티 신작에 대한 <b>출시 전(Pre-Launch, 2027년 1분기 예정)</b> 분석.</p>
     <div class="hero-meta">
-      <span class="chip">장르 <b>핵앤슬래시 로그라이트 (액션 RPG)</b></span>
-      <span class="chip">상태 <b>Early Access (2026.07.21)</b></span>
-      <span class="chip">평가 <b>대체로 긍정적 78%</b></span>
-      <span class="chip">가격 <b>$11.99</b></span>
-      <span class="chip">언어 <b>14개 (한국어 포함)</b></span>
-      <span class="chip">🔗 <a href="https://store.steampowered.com/app/3129360/Aksun/" target="_blank" rel="noopener"><b>Steam 상점 페이지</b></a></span>
+      <span class="chip">장르 <b>파티 브롤러 (PvP 난투)</b></span>
+      <span class="chip">상태 <b>Coming Soon · 2027 Q1</b></span>
+      <span class="chip">플랫폼 <b>PC (Steam)</b></span>
+      <span class="chip">인원 <b>2~6인 (로컬·온라인)</b></span>
+      <span class="chip">언어 <b>13개 (한국어 포함)</b></span>
+      <span class="chip">🔗 <a href="https://store.steampowered.com/app/4981660/PARRUITS/" target="_blank" rel="noopener"><b>Steam 상점 페이지</b></a></span>
     </div>
     <div class="hero-figure">
-      <img loading="lazy" alt="Aksun 대표 이미지" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/104dc793f3fb2b458099f720bb96c7cd532dc88d/ss_104dc793f3fb2b458099f720bb96c7cd532dc88d.1920x1080.jpg?t=1787808334">
+      <img loading="lazy" alt="PARRUITS! 대표 이미지" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/922c16b6ee205bf11f0b2e8a7fd516bdc425b197/ss_922c16b6ee205bf11f0b2e8a7fd516bdc425b197.1920x1080.jpg?t=1787248887">
     </div>
-    <div class="figcap">▲ 「Aksun(악선)」 인게임 화면 (출처: Steam 공식) · <a href="https://store.steampowered.com/app/3129360/Aksun/" target="_blank" rel="noopener">Steam 상점에서 데모·전체 스크린샷 보기 →</a></div>
+    <div class="figcap">▲ 「PARRUITS!」 인게임 화면 (출처: Steam 공식) · <a href="https://store.steampowered.com/app/4981660/PARRUITS/" target="_blank" rel="noopener">Steam 상점에서 전체 스크린샷 보기 →</a></div>
   </section>
 
   <!-- 01 SUMMARY -->
   <section id="summary">
     <div class="shead"><span class="snum">01</span><h2>핵심 요약</h2></div>
     <div class="card">
-      <p><b>Wayway Inc</b>는 앞서 해보기(Early Access)로 출시한 <span class="hg">「Aksun(악선)」</span>을 개발·자체 퍼블리싱하는 <b>한국 6인 인디 스튜디오</b>입니다. 게임은 <b>한국 무속·샤머니즘 신화</b>를 전면에 내세운 <b>아이소메트릭 핵앤슬래시 로그라이트</b>로, 저주받은 장치 <b>‘관(the Casket)’</b>을 통해 여러 챕터와 <b>육도(六道, 삼사라의 여섯 생)</b>를 내려가며 <b>기억·고통·환생</b>의 서사를 풀어갑니다. 전투는 <b>적의 리듬을 읽는 묵직하고 신중한 실시간 액션</b>에 <b>‘카운터 스펠(패링)’로 파훼 불가한 악귀(Fiend)를 무너뜨리는</b> 설계가 핵심입니다.</p>
-      <p style="margin-bottom:0">빌드는 <b>총 90종 아티팩트(전설 30·일반 60+)</b>, <b>5원소(불·얼음·바람·대지·번개)</b>, <b>3종 무기</b>와 각성 스킬을 <b>연쇄(chain reaction)</b>시키는 깊은 조합이 특징이며, 3개 챕터·보스·에코(Echo) 성장 시스템을 담았습니다. <b>영어 풀보이스 + 한국어 등 14개 언어</b>를 지원합니다. 2026년 7월 EA 출시 후 <span class="hl">Steam ‘대체로 긍정적’(78%, 32개 리뷰)</span>으로 <b>초기 반응은 우호적</b>이며, <b>독창적인 한국 무속 IP + 검증된 인기 장르(핵앤슬래시 로그라이트)</b>의 조합이 강점입니다. 다만 리뷰 표본이 작고 EA 콘텐츠 확장은 진행 중입니다.</p>
+      <p><b>Cluko</b>는 미출시(Coming Soon) 신작 <span class="hg">「PARRUITS!」</span>를 개발·자체 퍼블리싱하는 인디 개발사입니다. 게임은 <b>과일로 변신하는 앵무새(Parrot+Fruit=Parruit)</b>들이 벌이는 <b>2~6인 파티 브롤러</b>로, 서로 박치기하고 <b>과일을 먹어 고유 능력</b>을 얻어 친구를 <b>섬 밖으로 날려버려 최후의 1인</b>이 되는 것이 목표입니다. <b>체력바가 없는 넉백형 전투(대난투 스매시브라더스 계열)</b>로, 누적 대미지가 쌓일수록 넉백이 강해져 장외로 튕겨나가는 구조입니다.</p>
+      <p style="margin-bottom:0">수박(씨앗 발사)·두리안(강력 폭발)·포도(잡기) 등 <b>과일별 1회성 능력의 전략적 타이밍</b>과, 라운드 사이 <b>강화 카드</b>로 매 판 빌드를 바꾸는 재미가 특징입니다. <b>로컬 분할화면·온라인 PvP·리모트 플레이 투게더</b>를 지원하고, 알록달록 가족 친화 아트에 <b>한국어 등 13개 언어</b>를 지원합니다. 현재 <span class="hl">미출시(2027 Q1 예정)</span> 단계로, <span class="hl">폭발적으로 성장한 ‘파티 게임’ 트렌드에 올라탄 유망작</span>이나 상업 검증·개발사 정보·넷코드 완성도는 아직 남은 과제입니다.</p>
     </div>
 
     <div class="kpis" style="margin-top:16px">
-      <div class="kpi"><div class="n g">78%</div><div class="l">Steam 대체로 긍정적(32)</div></div>
-      <div class="kpi"><div class="n o">90 아티팩트</div><div class="l">5원소·연쇄 빌드</div></div>
-      <div class="kpi"><div class="n">$11.99</div><div class="l">앞서 해보기 가격</div></div>
-      <div class="kpi"><div class="n">14개</div><div class="l">지원 언어(한국어 포함)</div></div>
+      <div class="kpi"><div class="n">2~6인</div><div class="l">로컬·온라인 PvP</div></div>
+      <div class="kpi"><div class="n o">넉백형</div><div class="l">스매시 계열 난투</div></div>
+      <div class="kpi"><div class="n g">13개</div><div class="l">지원 언어(한국어 포함)</div></div>
+      <div class="kpi"><div class="n">2027 Q1</div><div class="l">출시 예정</div></div>
     </div>
 
     <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>한눈에 보는 종합 평가</div>
@@ -322,46 +316,46 @@
       <table>
         <thead><tr><th style="width:22%">평가 항목</th><th>핵심 근거</th><th style="width:16%">등급</th></tr></thead>
         <tbody>
-          <tr><td><b>차별화 훅</b></td><td>한국 무속·육도 세계관 + 90 아티팩트 5원소 연쇄 빌드</td><td><span class="pill pl-good">우수</span></td></tr>
-          <tr><td><b>장르 적합도</b></td><td>핵앤슬래시 로그라이트 — 리텐션·리플레이 강한 인기 장르</td><td><span class="pill pl-good">우수</span></td></tr>
-          <tr><td><b>초기 반응</b></td><td>Steam ‘대체로 긍정적’ 78% — 다만 리뷰 표본 작음(32)</td><td><span class="pill pl-good">양호</span></td></tr>
-          <tr><td><b>아트·연출</b></td><td>무속 다크판타지·아이소메트릭 비주얼 — 차별적 감각 훅</td><td><span class="pill pl-good">양호</span></td></tr>
-          <tr><td><b>콘텐츠 볼륨</b></td><td>EA 3챕터 — 정식(연말 예정)까지 확장·밸런스 진행</td><td><span class="pill pl-mid">확장 대기</span></td></tr>
-          <tr><td><b>투자 매력도</b></td><td>독창 IP·인기 장르·우호적 초기 반응 vs 소규모·EA·표본</td><td><span class="pill pl-cond">관찰(유망)</span></td></tr>
+          <tr><td><b>장르 적합도</b></td><td>파티 게임 — 확산성·리텐션 강한 현재 인기 장르</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>차별화 훅</b></td><td>‘과일 변신 앵무새’ 콘셉트 + 과일별 능력·강화 카드</td><td><span class="pill pl-good">양호</span></td></tr>
+          <tr><td><b>확산성·접근성</b></td><td>2~6인 로컬+온라인+리모트·13개 언어·쉬운 조작</td><td><span class="pill pl-good">우수</span></td></tr>
+          <tr><td><b>완성도(넷코드·밸런스)</b></td><td>온라인 PvP 넷코드·캐릭터 밸런스 — 검증 필요</td><td><span class="pill pl-mid">관찰</span></td></tr>
+          <tr><td><b>상업 검증</b></td><td>미출시 — 판매·리뷰 부재, 위시리스트·플레이테스트가 선행지표</td><td><span class="pill pl-mid">미검증</span></td></tr>
+          <tr><td><b>투자 매력도</b></td><td>인기 장르·확산성·독창 콘셉트 vs 미출시·경쟁·정보 제한</td><td><span class="pill pl-cond">관찰(유망)</span></td></tr>
         </tbody>
       </table>
     </div>
-    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>앞서 해보기(Early Access · 2026.07.21)</b> 단계로, 콘텐츠·밸런스가 계속 확장·개선됩니다(정식 출시 2026년 말 예정). 초기 평가는 EA 특성상 변동성이 있으므로, <b>리뷰 추이·업데이트 이행·정식 출시 반응</b>을 함께 추적하는 것이 바람직합니다. 본 리포트는 Steam 공식 정보·매체 자료 기반 분석입니다.</div>
+    <div class="note" style="margin-top:14px; font-size:13px"><b>참고</b> — 본 게임은 <b>미출시(Coming Soon · 2027 Q1 예정)</b>로 출시일 확정·가격·판매·리뷰 등 지표가 아직 없습니다. 개발사(Cluko)의 국적·규모 등 공개 정보도 제한적이라, 본 리포트는 스토어 정보·장르 시장성 중심의 <b>출시 전 전망</b>이며 위시리스트·플레이테스트 반응이 확인되면 정량 보강이 필요합니다.</div>
   </section>
 
   <!-- 02 STUDIO -->
   <section id="studio">
-    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Wayway Inc</h2></div>
+    <div class="shead"><span class="snum">02</span><h2>개발사 개요 — Cluko</h2></div>
     <div class="grid g2" style="align-items:start">
       <div>
         <div class="subh"><span class="bar"></span>개발사 프로필</div>
         <div class="tbl-wrap">
           <table class="kv"><tbody>
-            <tr><th>개발사</th><td>Wayway Inc (대한민국 인디)</td></tr>
-            <tr><th>규모</th><td>약 6인 소규모 스튜디오</td></tr>
-            <tr><th>성격</th><td>인디 개발 · 자체 퍼블리싱</td></tr>
-            <tr><th>대표작</th><td>Aksun(악선) — 2026.07.21 앞서 해보기 출시</td></tr>
-            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/3129360/Aksun/" target="_blank" rel="noopener">Steam</a>, Windows) · STOVE(데모)</td></tr>
-            <tr><th>노출·전시</th><td>EAIGC 동아시아 인디 게임 페스티벌 · 국내 매체 보도</td></tr>
+            <tr><th>개발사</th><td>Cluko (인디)</td></tr>
+            <tr><th>국적·소재</th><td>공개 미확인 — 스토어·웹에 국적/소재 정보 없음</td></tr>
+            <tr><th>성격</th><td>인디 게임 개발 · 자체 퍼블리싱</td></tr>
+            <tr><th>대표작</th><td>PARRUITS! (미출시 · 2027 Q1 예정)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/4981660/PARRUITS/" target="_blank" rel="noopener">Steam</a>, Windows 64-bit)</td></tr>
+            <tr><th>커뮤니티</th><td>Discord · Instagram · X(Twitter) · YouTube</td></tr>
           </tbody></table>
         </div>
-        <p class="cap" style="margin-top:8px">※ 설립 시점·이전 작품 등 상세 프로필은 공개 정보가 제한적입니다.</p>
+        <p class="cap" style="margin-top:8px">※ Cluko의 국적·팀 규모·이전 작품 등 상세 프로필은 공개 정보가 제한적입니다(한국어 포함 13개 언어 지원은 국적 판단 근거가 아님).</p>
       </div>
       <div>
         <div class="subh"><span class="bar"></span>개발사 특징</div>
         <div class="card">
-          <p style="font-size:14.5px">Wayway Inc는 <b>6인 규모의 한국 인디</b>로, 데뷔작에서 <b>‘한국 무속’이라는 강한 문화적 정체성 + 검증된 인기 장르(핵앤슬래시 로그라이트)</b>를 결합했습니다. <b>데모(Steam·STOVE)</b>로 손맛을 사전 검증하고, <b>앞서 해보기</b>로 커뮤니티 피드백을 반영하며 정식 출시를 준비합니다.</p>
+          <p style="font-size:14.5px">Cluko는 <b>자체 개발·퍼블리싱</b> 구조의 인디로, 데뷔작에서 <b>현재 최강세 장르(파티 게임)+독창적 콘셉트(과일 변신 앵무새)</b>라는 대중·확산 친화 조합을 택했습니다. <b>로컬+온라인+리모트 플레이·13개 언어</b>로 글로벌 파티 수요를 넓게 겨냥하고, 다채널(Discord·SNS) 커뮤니티를 운영합니다.</p>
           <ul class="clean">
-            <li><b>독창적 문화 IP</b> — 한국 무속·육도 세계관의 뚜렷한 차별화</li>
-            <li>데모·EA로 <b>손맛·밸런스 사전 검증</b> 및 커뮤니티 운영</li>
-            <li>14개 언어·풀보이스 → <b>글로벌 대중</b> 겨냥</li>
+            <li>확산성 강한 <b>파티 브롤러</b>로 친구 동반·스트리밍 지향</li>
+            <li>로컬·온라인·리모트 <b>멀티 옵션</b>으로 접근성 확보</li>
+            <li>13개 언어·가족 친화 아트 → <b>글로벌 대중</b> 소구</li>
           </ul>
-          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘한국 무속을 로그라이트로 재해석한 인디’. 관건은 소규모 팀이 <b>EA 콘텐츠 볼륨·밸런스</b>를 정식 출시까지 끌어올리고, 우호적 초기 평가를 <b>판매·리텐션</b>으로 확장하는 실행력입니다.</div>
+          <div class="note" style="margin-top:6px"><b>포지셔닝</b> — ‘과일 앵무새 콘셉트의 캐주얼 파티 브롤러’. 관건은 <b>온라인 넷코드·캐릭터 밸런스·콘텐츠 볼륨</b>을 플레이테스트로 입증하고, 화제성을 위시리스트·출시 흥행으로 전환하는 것입니다.</div>
         </div>
       </div>
     </div>
@@ -369,14 +363,14 @@
 
   <!-- 03 GAME -->
   <section id="game">
-    <div class="shead"><span class="snum">03</span><h2>게임 분석 — Aksun(악선)</h2></div>
+    <div class="shead"><span class="snum">03</span><h2>게임 분석 — PARRUITS!</h2></div>
 
     <div class="case-feat">
-      <div class="cf-img" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/ececc3959e72fd7ed7a66f8bd5a74131bfa9c970/header.jpg'); background-size:contain; background-repeat:no-repeat; background-position:center; background-color:#1f0e14"></div>
+      <div class="cf-img" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/98d184bb7a1ab70136fd9ec7d651a4ec9f2261a0/header.jpg?t=1787248887'); background-size:contain; background-repeat:no-repeat; background-position:center; background-color:#25101a"></div>
       <div class="cf-body">
-        <div class="case-tags" style="margin-bottom:10px"><span class="tag">핵앤슬래시</span><span class="tag">로그라이트</span><span class="tag">아이소메트릭</span><span class="tag">무속 다크판타지</span><span class="tag">퍼머데스</span></div>
-        <p style="font-size:14.5px; margin-bottom:10px">저주받은 장치 <b>‘관(the Casket)’</b>을 통해 악선의 어둠·<b>육도</b>로 내려가는 무속 신화 핵앤슬래시 로그라이트. <b>적의 리듬을 읽는 묵직한 실시간 전투</b>와 <b>카운터 스펠(패링)</b>로 악귀를 파훼합니다.</p>
-        <p style="font-size:13.5px; color:var(--muted); margin:0"><b>90종 아티팩트·5원소·3무기</b>를 <b>연쇄(chain reaction)</b>시켜 파괴적 빌드를 완성하고, 분기 노드 맵·에코 성장으로 매 런을 다르게 만듭니다. <b>기억·고통·환생</b>의 서사가 축입니다.</p>
+        <div class="case-tags" style="margin-bottom:10px"><span class="tag">파티 게임</span><span class="tag">PvP 난투</span><span class="tag">넉백 파이터</span><span class="tag">로컬·온라인</span><span class="tag">캐주얼·코미디</span></div>
+        <p style="font-size:14.5px; margin-bottom:10px"><b>과일로 변신하는 앵무새</b>들의 2~6인 파티 브롤러. 박치기하고 <b>과일을 먹어 고유 능력</b>을 얻어 친구를 <b>섬 밖으로 날려버려 최후의 1인</b>이 되는 게 목표입니다. <b>체력바 없는 넉백형 전투</b>(스매시 계열)가 핵심입니다.</p>
+        <p style="font-size:13.5px; color:var(--muted); margin:0">수박(씨앗)·두리안(폭발)·포도(잡기) 등 <b>1회성 과일 능력의 타이밍</b>과, 라운드 사이 <b>강화 카드</b>로 매 판 다른 빌드를 만듭니다. 로컬 분할화면·온라인 PvP·리모트 플레이를 지원합니다.</p>
       </div>
     </div>
 
@@ -385,66 +379,64 @@
         <div class="subh"><span class="bar"></span>제품 개요</div>
         <div class="tbl-wrap">
           <table class="kv"><tbody>
-            <tr><th>장르</th><td>액션 · 인디 · RPG · 앞서 해보기 (핵앤슬래시 로그라이트)</td></tr>
-            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/3129360/Aksun/" target="_blank" rel="noopener">Steam</a>, Windows) · 풀 컨트롤러 지원</td></tr>
-            <tr><th>출시</th><td>2026.07.21 (Early Access · 정식 2026년 말 예정)</td></tr>
-            <tr><th>개발·퍼블리싱</th><td>Wayway Inc (자체)</td></tr>
-            <tr><th>핵심 루프</th><td>‘관’ 하강 → 전투·패링 → 아티팩트·원소 연쇄 빌드 → 보스</td></tr>
-            <tr><th>빌드</th><td>90 아티팩트(전설 30·일반 60+)·5원소·3무기·각성 스킬</td></tr>
-            <tr><th>가격</th><td>$11.99 (EA 가격 — 정식 출시 시 인상 예정)</td></tr>
-            <tr><th>지원 언어</th><td>영어(풀보이스)·한국어·일본어·중국어(간체/번체)·프랑스·독일·스페인·폴란드·포르투갈·러시아·터키 등 14개</td></tr>
+            <tr><th>장르</th><td>액션 · 캐주얼 · 인디 (파티 브롤러 · PvP 난투)</td></tr>
+            <tr><th>플랫폼</th><td>PC (<a href="https://store.steampowered.com/app/4981660/PARRUITS/" target="_blank" rel="noopener">Steam</a>, Windows 64-bit) · 게임패드 권장</td></tr>
+            <tr><th>출시</th><td>미정 (Coming Soon · 2027년 1분기 예정)</td></tr>
+            <tr><th>개발·퍼블리싱</th><td>Cluko (자체)</td></tr>
+            <tr><th>핵심 루프</th><td>과일 섭취·변신 → 능력 사용 → 넉백으로 장외 → 강화 카드</td></tr>
+            <tr><th>멀티플레이</th><td>2~6인 · 로컬 분할화면 · 온라인 PvP · 리모트 플레이 투게더</td></tr>
+            <tr><th>지원 언어</th><td>영어·한국어·일본어·중국어(간체/번체)·프랑스·독일·스페인·폴란드·포르투갈·러시아·터키 등 13개</td></tr>
+            <tr><th>기능</th><td>멀티플레이 · 풀 컨트롤러 지원 · 패밀리 셰어링</td></tr>
           </tbody></table>
         </div>
       </div>
       <div>
-        <div class="subh"><span class="bar"></span>시장 반응 및 평가</div>
+        <div class="subh"><span class="bar"></span>출시 전 관찰</div>
         <div class="card">
-          <div class="rate"><span class="big">대체로 긍정적</span><span style="color:var(--muted); font-size:14px">78% · 리뷰 32</span></div>
-          <div class="ratebar"><i style="width:78%"></i></div>
-          <div style="font-size:12px; color:var(--dim); margin-bottom:14px">EA 초기 단계 — <b>리뷰 표본이 작아</b> 지표 변동성 유의</div>
+          <p style="font-size:14.5px; margin-bottom:8px">아직 <b>정식 출시 전</b>이라 판매·리뷰 지표는 없습니다. 공개된 스크린샷 기준으로 <b>‘과일 앵무새’라는 유쾌하고 독창적인 훅과 알록달록한 아트</b>가 부각됩니다. 파티 게임은 <b>스트리밍·친구 동반</b>으로 폭발적 확산을 보입니다.</p>
           <ul class="clean g">
-            <li>독창 무속 IP·연쇄 빌드 → <b>차별화·클립 소구</b></li>
-            <li>묵직한 전투·패링 → <b>코어 액션 팬 호평</b></li>
-            <li>데모·14개 언어 → <b>글로벌 사전 검증·저변</b></li>
+            <li>과일 변신·넉백 난투 → <b>스트리밍·클립·친구 동반</b></li>
+            <li>강화 카드·과일 능력 → <b>매 판 다른 전개·리플레이</b></li>
+            <li>13개 언어·리모트 플레이 → <b>글로벌 위시리스트</b></li>
           </ul>
-          <div class="note gold" style="margin-top:12px; font-size:13px"><b>유의점</b> — EA 특성상 <b>콘텐츠 볼륨·밸런스·최적화</b>가 진행 중이며, 리뷰 추이·정식 출시 반응을 함께 봐야 합니다.</div>
+          <div class="note gold" style="margin-top:12px; font-size:13px"><b>선행지표 권장</b> — 출시 전망을 위해 <b>플레이테스트·데모·위시리스트·스트리머 픽업·넷코드 반응</b>을 추적하면 좋습니다(현재 공개 수치 없음).</div>
         </div>
       </div>
     </div>
 
     <div class="subh" style="margin:26px 0 12px"><span class="bar"></span>공식 스크린샷</div>
     <div class="gallery">
-      <div class="shot"><img loading="lazy" alt="Aksun 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/8dc03eb8fbaf42771aef5ce166926a53a7dd561f/ss_8dc03eb8fbaf42771aef5ce166926a53a7dd561f.1920x1080.jpg?t=1787808334"></div>
-      <div class="shot"><img loading="lazy" alt="Aksun 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/9d1f44fe322884d42e6472c755dc5b5ba566d31d/ss_9d1f44fe322884d42e6472c755dc5b5ba566d31d.1920x1080.jpg?t=1787808334"></div>
-      <div class="shot"><img loading="lazy" alt="Aksun 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/c9d42dee2f4b45dda28aa0314ebc9454f9a97127/ss_c9d42dee2f4b45dda28aa0314ebc9454f9a97127.1920x1080.jpg?t=1787808334"></div>
-      <div class="shot"><img loading="lazy" alt="Aksun 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/60e25ba8584a23581ee1bc305f0afe7ebd23277f/ss_60e25ba8584a23581ee1bc305f0afe7ebd23277f.1920x1080.jpg?t=1787808334"></div>
-      <div class="shot"><img loading="lazy" alt="Aksun 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/019cc6bb7cc70cb4a0d356f784e881bb4dbcb232/ss_019cc6bb7cc70cb4a0d356f784e881bb4dbcb232.1920x1080.jpg?t=1787808334"></div>
-      <div class="shot"><img loading="lazy" alt="Aksun 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3129360/ed5bc13e691aa68b3c6e845e58cd8ba80cc72b89/ss_ed5bc13e691aa68b3c6e845e58cd8ba80cc72b89.1920x1080.jpg?t=1787808334"></div>
+      <div class="shot"><img loading="lazy" alt="PARRUITS! 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/aa1397e78e1131979607341fba2a7fa73d3f4d7d/ss_aa1397e78e1131979607341fba2a7fa73d3f4d7d.1920x1080.jpg?t=1787248887"></div>
+      <div class="shot"><img loading="lazy" alt="PARRUITS! 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/b17a4e705de1dfaae9b0b0935642e28d088e78ea/ss_b17a4e705de1dfaae9b0b0935642e28d088e78ea.1920x1080.jpg?t=1787248887"></div>
+      <div class="shot"><img loading="lazy" alt="PARRUITS! 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/a20c8fb850a88ddb6ef4fd34656376a9061e0dc9/ss_a20c8fb850a88ddb6ef4fd34656376a9061e0dc9.1920x1080.jpg?t=1787248887"></div>
+      <div class="shot"><img loading="lazy" alt="PARRUITS! 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/f5114556c225cb8c18d9a9332b8ab33890ffc959/ss_f5114556c225cb8c18d9a9332b8ab33890ffc959.1920x1080.jpg?t=1787248887"></div>
+      <div class="shot"><img loading="lazy" alt="PARRUITS! 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/519363b93683ebc33ed35bb4ecf7373a2289cf28/ss_519363b93683ebc33ed35bb4ecf7373a2289cf28.1920x1080.jpg?t=1787248887"></div>
+      <div class="shot"><img loading="lazy" alt="PARRUITS! 스크린샷" src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/af21bdc77026a6b8bfd456a372a8176aaa023b24/ss_af21bdc77026a6b8bfd456a372a8176aaa023b24.1920x1080.jpg?t=1787248887"></div>
     </div>
-    <div class="cap" style="margin-top:12px">▲ 「Aksun(악선)」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/3129360/Aksun/" target="_blank" rel="noopener">Steam 상점에서 전체 보기 →</a></div>
+    <div class="cap" style="margin-top:12px">▲ 「PARRUITS!」 공식 스크린샷 (출처: Steam 상점) · 이미지 클릭 시 확대 · <a href="https://store.steampowered.com/app/4981660/PARRUITS/" target="_blank" rel="noopener">Steam 상점에서 전체 보기 →</a></div>
   </section>
 
   <!-- 04 MARKET -->
   <section id="market">
-    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 핵앤슬래시 로그라이트</h2></div>
-    <p class="lead"><span class="hl">인디 초강세 장르인 핵앤슬래시 로그라이트</span> × <span class="hl">독창적 한국 무속 IP</span> — 리텐션·차별화가 강하나 경쟁·콘텐츠 볼륨이 성패를 가른다.</p>
+    <div class="shead"><span class="snum">04</span><h2>장르 시장성 — 파티 브롤러 · 파티 게임</h2></div>
+    <p class="lead"><span class="hl">현재 최강세인 캐주얼 파티 게임</span> × <span class="hl">스매시식 넉백 난투</span> — 확산성은 폭발적이나 넷코드·라이브 운영·경쟁이 성패를 가른다.</p>
     <div class="grid g2" style="align-items:start">
       <div>
         <div class="subh"><span class="bar"></span>장르 포지션</div>
         <div class="card">
-          <p style="font-size:14px; margin-bottom:8px"><b>핵앤슬래시 로그라이트</b>는 <b>Hades·Dead Cells·Ravenswatch</b>로 대표되는 인디 초강세 장르로, <b>빌드 다양성·손맛·리플레이</b>가 흥행을 좌우합니다. Aksun은 여기에 <b>한국 무속·육도 세계관과 90종 아티팩트 연쇄 빌드</b>로 뚜렷하게 차별화합니다.</p>
+          <p style="font-size:14px; margin-bottom:8px"><b>파티 게임/난투</b>는 <b>Fall Guys·Party Animals·Stumble Guys·Gang Beasts·스매시브라더스</b>로 대표되는 대중 최강세 장르로, <b>‘친구와의 예측불가 난장판’</b>이 스트리밍·클립에서 폭발적으로 확산됩니다. PARRUITS!는 <b>‘과일 변신 앵무새’</b>라는 독창적 콘셉트와 <b>강화 카드 로그라이트 요소</b>로 차별화합니다.</p>
           <ul class="clean g">
-            <li>연쇄 빌드·리플레이 → <b>높은 플레이타임·스트리밍성</b></li>
-            <li>독창 무속 IP → <b>‘한 눈에 다른’ 비주얼·문화 소구</b></li>
-            <li>14개 언어·풀보이스 → <b>글로벌 코어 저변</b></li>
+            <li>예측불가 난투·유머 → <b>스트리밍·클립</b> 확산성 최상</li>
+            <li>2~6인 로컬+온라인 → <b>친구 동반·동반 구매</b></li>
+            <li>13개 언어·리모트 플레이 → <b>글로벌 대중 소구</b></li>
           </ul>
         </div>
       </div>
       <div>
         <div class="subh"><span class="bar"></span>기회와 한계</div>
         <div class="card">
-          <p style="font-size:14px; margin-bottom:8px">‘무속 핵앤슬래시 로그라이트’는 매력적 훅이지만, 로그라이트는 <b>콘텐츠 볼륨·밸런스가 곧 수명</b>이고 <b>Hades급 완성도</b>를 기준으로 비교되는 경쟁 장르입니다. 소규모 팀의 <b>EA 볼륨·최적화·정식 전환</b>이 관건입니다.</p>
-          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 이 장르는 <b>‘손맛·빌드 다양성·콘텐츠 볼륨·업데이트’</b>가 성패를 좌우합니다. 훅·초기 평가·데모는 확보, 관건은 <b>정식 출시까지의 볼륨·밸런스와 리뷰 반등</b>입니다.</div>
+          <p style="font-size:14px; margin-bottom:8px">파티 난투는 매력적이지만, <b>온라인 넷코드·매칭·밸런스</b>가 소규모 팀에 큰 난제이고, 파티 게임은 <b>초기 화제 이후 라이브 운영(신규 캐릭터·시즌)</b>이 롱테일을 좌우합니다. 대형·인디 경쟁도 치열합니다.</p>
+          <div class="note gold" style="font-size:13px"><b>핵심 변수</b> — 파티 게임은 <b>‘난투 재미·넷코드·확산성·라이브 콘텐츠’</b>가 성패를 좌우합니다. 훅·확산성은 확보, 관건은 <b>넷코드 완성도·초기 스트리머 노출·시즌 운영</b>입니다.</div>
         </div>
       </div>
     </div>
@@ -455,53 +447,53 @@
     <div class="shead"><span class="snum">05</span><h2>투자 가능성 분석</h2></div>
     <div class="swot">
       <div class="quad q-s"><h4>강점 (Strengths)</h4><ul>
-        <li>독창적 문화 IP(한국 무속·육도)의 강한 차별화</li>
-        <li>인기·리텐션 강한 장르(핵앤슬래시 로그라이트)</li>
-        <li>90 아티팩트·5원소 연쇄의 깊은 빌드 다양성</li>
-        <li>우호적 초기 평가(78%)·14개 언어·데모·확정 출시</li>
+        <li>현재 최강세 장르(파티 게임)의 폭발적 확산성</li>
+        <li>독창적 콘셉트(과일 변신 앵무새)·유쾌한 아트</li>
+        <li>2~6인 로컬+온라인+리모트·13개 언어 접근성</li>
+        <li>강화 카드 로그라이트로 리플레이·전략성 가미</li>
       </ul></div>
       <div class="quad q-w"><h4>약점 (Weaknesses)</h4><ul>
-        <li>EA 초기·리뷰 표본 작음(32) — 지표 신뢰도 제한</li>
-        <li>6인 소규모 — 콘텐츠 볼륨·최적화·업데이트 여력</li>
-        <li>로그라이트 특유의 볼륨·밸런스 부담(Hades 기준 비교)</li>
-        <li>정식 출시·판매 규모 검증 미완</li>
+        <li>미출시 — 상업성(판매·리뷰·위시리스트) 미검증</li>
+        <li>온라인 PvP 넷코드·매칭·밸런스 부담</li>
+        <li>개발사(Cluko) 국적·규모·트랙레코드 정보 제한</li>
+        <li>파티 게임 신작 경쟁 심화 — 초기 노출·잔존</li>
       </ul></div>
       <div class="quad q-o"><h4>기회 (Opportunities)</h4><ul>
-        <li>콘솔(PS/Xbox/Switch) 이식 — 핵앤슬래시 친화 시장</li>
-        <li>정식 출시 콘텐츠·스토리·챕터 확장</li>
-        <li>무속 IP의 문화적 화제·스트리머·글로벌 소구</li>
-        <li>14개 언어로 글로벌 판매 확대</li>
+        <li>콘솔(Switch/PS/Xbox) 이식 — 파티 게임 최적 시장</li>
+        <li>스트리머·친구 동반의 저비용 오가닉 바이럴</li>
+        <li>코스메틱·시즌·신규 과일/맵 라이브 수익화</li>
+        <li>13개 언어로 글로벌 위시리스트 확대</li>
       </ul></div>
       <div class="quad q-t"><h4>위협 (Threats)</h4><ul>
-        <li>Hades·Dead Cells 등 초강자와 비교되는 경쟁</li>
-        <li>콘텐츠 볼륨·밸런스 부족 시 리텐션 급락</li>
-        <li>EA 평가 고착 시 정식 흥행 둔화</li>
+        <li>Fall Guys·Party Animals 등과의 치열한 경쟁</li>
+        <li>넷코드·밸런스 미흡 시 초기 평판·잔존 타격</li>
+        <li>출시 화제 소진 후 동접·판매 둔화</li>
         <li>환율·플랫폼 수수료 등 외부 변수</li>
       </ul></div>
     </div>
 
     <div class="card" style="margin-top:16px">
-      <p>Aksun은 <span class="hl">독창적 무속 IP·인기 장르·우호적 초기 평가를 갖춘 ‘출시(EA) 유망주’</span>입니다. 투자·퍼블리싱 관점에서는 <b>선행지표(EA 리뷰 추이·데모·정식 콘텐츠 로드맵)에 기반한 잠재력 베팅</b>이며, <b>정식 출시까지 콘텐츠 볼륨·밸런스만 뒷받침되면 문화 IP·장르 상방이 큰</b> 편입니다.</p>
+      <p>PARRUITS!는 <span class="hl">현재 최강세 파티 장르·폭발적 확산성·독창 콘셉트를 갖춘 ‘출시 전 유망주’</span>이나 아직 상업적으로 검증되지 않았습니다. 투자·퍼블리싱 관점에서는 확정 성과가 아니라 <b>선행지표(플레이테스트·위시리스트·넷코드)에 기반한 잠재력 베팅</b>이며, <b>넷코드·라이브 운영만 뒷받침되면 파티 장르 확산성 기반 상방이 큰</b> 편입니다.</p>
       <div class="grid g2" style="margin-top:4px">
         <div><div class="subh"><span class="bar" style="background:var(--green)"></span>투자 매력 요인</div>
           <ul class="clean g">
-            <li>재현 어려운 독창 문화 IP(무속)·차별적 비주얼</li>
-            <li>인기·리텐션 강한 장르 + 깊은 연쇄 빌드</li>
-            <li>우호적 초기 평가·14개 언어·데모로 검증</li>
-            <li>콘솔·정식 콘텐츠·문화 화제로 확장 여지</li>
+            <li>최강세 장르·확산성 → 저비용 오가닉 마케팅</li>
+            <li>독창 콘셉트·유머 → 클립·스트리밍 소구</li>
+            <li>로컬+온라인+13개 언어 → 친구 동반·글로벌</li>
+            <li>콘솔·코스메틱·시즌으로 확장 용이</li>
           </ul>
         </div>
         <div><div class="subh"><span class="bar" style="background:var(--amber)"></span>실사 시 필수 점검</div>
           <ul class="clean a">
-            <li><b>EA 리뷰 추이·동시접속·리텐션</b>(핵심 지표)</li>
-            <li>6인 팀의 콘텐츠 볼륨·업데이트 지속성</li>
-            <li><b>정식 출시 로드맵·밸런스·최적화</b></li>
-            <li>콘솔 이식 계획·플랫폼 조건</li>
-            <li>판매량·환불률·마케팅 효율</li>
+            <li><b>플레이테스트 반응·넷코드·위시리스트</b>(핵심)</li>
+            <li>개발사(Cluko) 국적·규모·자금·개발 진척</li>
+            <li><b>온라인 매칭·밸런스·최적화</b> 완성도</li>
+            <li>콘텐츠 볼륨(과일·맵·모드)·시즌 운영 계획</li>
+            <li>콘솔 이식·라이브 로드맵</li>
           </ul>
         </div>
       </div>
-      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(유망)’</b>. 독창 IP·인기 장르·우호적 초기 평가는 뚜렷한 강점이나 EA 초기·소규모·표본 한계가 있어, <b>리뷰 추이·콘텐츠 볼륨·정식 출시 반응을 확인한 뒤</b> 판단하는 것이 바람직합니다. 볼륨·밸런스가 정식까지 확장되면 특히 <b>콘솔·글로벌·문화 IP 관점</b>에서 적극 검토 여지가 있습니다.</div>
+      <div class="note" style="margin-top:6px"><b>투자 의견</b> — 현 시점 <b>‘관찰(유망)’</b>. 최강세 장르·확산성·독창 콘셉트는 뚜렷하나 미출시·경쟁·정보 제한이라, <b>플레이테스트·넷코드·위시리스트 반응을 확인한 뒤</b> 판단하는 것이 바람직합니다. 넷코드·초기 반응이 양호하면 특히 <b>콘솔·스트리밍·라이브 확장 관점</b>에서 적극 검토 여지가 있습니다.</div>
     </div>
   </section>
 
@@ -509,55 +501,54 @@
   <section id="deep" class="emph">
     <div class="shead"><span class="snum">06</span><h2>심화 분석 — 시장성 · 아트 · 메커니즘</h2></div>
 
-    <div class="subh"><span class="bar"></span>① 장르 시장 — 핵앤슬래시 로그라이트</div>
+    <div class="subh"><span class="bar"></span>① 장르 시장 — 파티 게임 · 난투</div>
     <div class="grid g2" style="align-items:start">
       <div>
         <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
-          <div class="kpi"><div class="n">초강세</div><div class="l">인디 핵심 장르</div></div>
-          <div class="kpi"><div class="n o">빌드</div><div class="l">리플레이 동력</div></div>
-          <div class="kpi"><div class="n g">$12~25</div><div class="l">로그라이트 가격대</div></div>
-          <div class="kpi"><div class="n">볼륨</div><div class="l">콘텐츠=수명</div></div>
+          <div class="kpi"><div class="n">최강세</div><div class="l">파티 게임 수요</div></div>
+          <div class="kpi"><div class="n o">스트리밍</div><div class="l">확산 폭발력</div></div>
+          <div class="kpi"><div class="n g">$10~20</div><div class="l">파티 게임 가격대</div></div>
+          <div class="kpi"><div class="n">넷코드</div><div class="l">완성도 병목</div></div>
         </div>
       </div>
       <div class="card">
-        <p style="margin-bottom:8px"><b>결론 — 상방 큰 인기 장르이나 완성도·볼륨이 관건.</b> 핵앤슬래시 로그라이트는 <b>Hades·Dead Cells</b>처럼 인디 초대박이 나오는 장르지만, 그만큼 <b>완성도 기준이 높고 경쟁이 치열</b >합니다. Aksun은 <b>한국 무속이라는 독창 IP</b>로 시각·문화 차별화를 확보해 유리한 출발선에 섰습니다.</p>
-        <div class="note gold" style="font-size:13px"><b>Aksun의 위치</b> — ‘한국 무속 × 90 아티팩트 연쇄 빌드’라는 <b>독창적이고 감각적인 훅</b>. 관건은 이를 <b>콘텐츠 볼륨·밸런스·정식 출시 완성도</b>로 뒷받침해 초기 호평을 판매·리텐션으로 잇는 실행력.</div>
+        <p style="margin-bottom:8px"><b>결론 — 확산성 최상이나 넷코드·라이브 운영이 성패를 가른다.</b> <b>Fall Guys·Party Animals·Stumble Guys</b>가 증명하듯 파티 게임은 <b>스트리밍 확산성</b>이 강력한 마케팅 엔진입니다. 다만 <b>온라인 넷코드</b>가 소규모 팀엔 난제이고, 초기 화제 이후 <b>시즌·신규 콘텐츠</b>가 롱테일을 좌우합니다.</p>
+        <div class="note gold" style="font-size:13px"><b>PARRUITS!의 위치</b> — ‘과일 변신 앵무새 + 강화 카드 난투’라는 <b>신선하고 확산성 큰 훅</b>으로 차별화. 관건은 이 훅을 <b>넷코드 안정성·밸런스·시즌 콘텐츠</b>로 실제 위시리스트·판매·잔존까지 잇는 실행력.</div>
       </div>
     </div>
 
     <div class="subh" style="margin-top:26px"><span class="bar"></span>② 게임·개발사 시장성</div>
     <div class="card">
-      <p>시장성의 핵심은 <b>‘초강세 핵앤슬래시 로그라이트 + 독창적 한국 무속 IP + 깊은 연쇄 빌드 + 글로벌(14개 언어)’의 결합</b>입니다. 장르 수요는 견고하고 무속 IP는 재현 어려운 차별화 자산이며, 초기 평가도 우호적입니다. 남은 변수는 <b>6인 팀의 콘텐츠 볼륨·밸런스·정식 전환</b> — 로그라이트는 볼륨이 곧 수명이라, <b>시장성은 ‘IP·장르·초기 반응은 강점, 볼륨·정식 검증은 진행 중’의 유망형</b>입니다.</p>
+      <p>시장성의 핵심은 <b>‘최강세 파티 장르 + 독창적 과일 앵무새 콘셉트 + 2~6인 확산성 + 글로벌(13개 언어)’의 결합</b>입니다. 장르 수요·확산성은 폭발적이고 콘셉트·멀티 옵션도 매력적입니다. 남은 변수는 <b>온라인 넷코드·밸런스·라이브 운영과 개발사 정보</b> — 소규모 팀엔 난제라, <b>시장성은 ‘검증 대기’의 유망형(확산성·글로벌 상방 큼, 실행 난도 높음)</b>입니다.</p>
       <ul class="clean g" style="margin-top:2px">
-        <li><b>시장성 유망형(상방 큼)</b> — 독창 IP + 인기 장르 + 우호적 초기 반응</li>
-        <li>관건 — <b>콘텐츠 볼륨·밸런스·정식 출시 반응·콘솔 확장</b></li>
+        <li><b>시장성 유망형(상방 큼)</b> — 최강세 장르 + 독창 콘셉트 + 확산성</li>
+        <li>관건 — <b>넷코드·밸런스·시즌 운영·콘솔 확장·개발사 검증</b></li>
       </ul>
     </div>
 
-    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔 이식 + 정식 출시 콘텐츠 확장’</b><br>핵앤슬래시 로그라이트는 <b>콘솔(Switch·PS·Xbox) 이식</b>으로 액션 수요가 큰 시장을 넓힐 수 있고(Hades·Dead Cells가 콘솔에서 크게 성장), Aksun의 <b>독창 무속 IP</b>는 콘솔·글로벌에서 문화적 화제를 얻기 좋습니다. (정식 출시 완성도를 전제로) 1순위 미개척 수익원은 <b>콘솔 이식 + 정식 출시 콘텐츠(신규 챕터·아티팩트·보스·스토리)</b>이며, 2순위는 <b>무속 IP 기반 아트북·OST·굿즈</b> 등 문화 상품, 3순위는 <b>스트리머 협업·시즌 이벤트</b>입니다. 단, 현재는 <b>‘EA 콘텐츠 볼륨과 정식 출시 완성도(밸런스·최적화)’가 최우선</b>입니다.</div>
+    <div class="note gold" style="margin-top:14px"><b>💰 미개척 수익원 — 1순위는 ‘콘솔 이식 + 코스메틱/시즌 라이브’</b><br>파티 게임의 최대 상방은 <b>콘솔(Switch·PS·Xbox) 이식</b>입니다. 파티 난투는 <b>거실·친구 초대·콘솔 커뮤니티</b>(특히 스위치)에서 큰 수요가 있어 신규 시장을 크게 넓힐 수 있습니다. 동시에 앵무새·과일의 밝은 톤을 살린 <b>코스메틱(스킨)·시즌 이벤트·신규 과일/맵</b>은 자연스러운 라이브 수익원입니다. (출시 성공을 전제로) 1순위 미개척 수익원은 <b>콘솔 이식 + 코스메틱/시즌 라이브</b>이며, 2순위는 <b>신규 과일·캐릭터·맵·모드 업데이트</b>로 잔존을 방어하는 것, 3순위는 <b>스트리머 협업·굿즈</b>입니다. 단, 모든 확장의 전제는 <b>‘온라인 넷코드·밸런스 완성도’</b>이며, 이것이 초기 평판과 롱테일을 좌우합니다.</div>
 
     <div class="subh" style="margin-top:26px"><span class="bar"></span>③ 아트 · 메커니즘 분석</div>
     <div class="grid g2">
       <div class="card">
         <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">🎨 아트</p>
         <ul class="clean">
-          <li><b>한국 무속·육도의 다크판타지 아이소메트릭</b> — 재현 어려운 문화 훅</li>
-          <li>왜곡된 세계·사회 불평등·종교적 희생 등 <b>강한 테마성</b></li>
-          <li>독창 세계관·악귀 디자인으로 <b>스크린샷·클립·IP</b> 확장 여지</li>
+          <li><b>알록달록 가족 친화 카툰·과일 앵무새</b> — 강한 대중·SNS 소구</li>
+          <li>유쾌한 코미디 톤 — 클립화가 쉬운 화면 임팩트</li>
+          <li>과일·앵무새 캐릭터성으로 <b>코스메틱·굿즈·IP</b> 확장 여지</li>
         </ul>
       </div>
       <div class="card">
         <p style="font-weight:800; color:var(--accent-ink); margin:0 0 8px">⚙️ 메커니즘</p>
         <ul class="clean">
-          <li><b>90 아티팩트·5원소·3무기 연쇄(chain reaction)</b> 빌드</li>
-          <li><b>리듬 읽기 전투 + 카운터 스펠(패링)</b>의 묵직한 손맛</li>
-          <li>과제 — 로그라이트의 <b>콘텐츠 볼륨·밸런스·정식 전환</b>(6인 팀)</li>
+          <li><b>체력바 없는 넉백형 난투</b>(스매시 계열)의 직관적 손맛</li>
+          <li><b>과일별 1회성 능력 + 강화 카드</b>로 매 판 전략 변화</li>
+          <li>과제 — <b>온라인 넷코드·매칭·밸런스·콘텐츠 볼륨</b></li>
         </ul>
       </div>
     </div>
-    <div class="note" style="margin-top:16px"><b>종합</b> — 인기·리텐션 강한 핵앤슬래시 로그라이트에 <span class="hl">재현 어려운 한국 무속 IP·깊은 연쇄 빌드·우호적 초기 평가·14개 언어</span>를 얹은 유망 신작입니다. 다만 <b>EA 초기·6인 소규모·표본 한계</b>가 과제로 남아, 리뷰 추이·콘텐츠 볼륨·정식 출시 완성도와 콘솔·문화 IP 확장 실행력이 시장성의 열쇠입니다.</div>
+    <div class="note" style="margin-top:16px"><b>종합</b> — 현재 최강세인 파티 장르에 <span class="hl">독창적 과일 앵무새 콘셉트·2~6인 확산성·강화 카드·13개 언어</span>를 얹은 유망 신작입니다. 다만 <b>미출시·경쟁·개발사 정보 제한·넷코드 난도</b>가 과제로 남아, 플레이테스트의 넷코드·밸런스·위시리스트 전환과 콘솔·라이브 확장 실행력이 시장성의 열쇠입니다.</div>
   </section>
-
 
 
   <!-- RATING-START -->
@@ -571,20 +562,18 @@
       <p class="rate-cta"><a href="../../평가.html">평가 페이지에서 점수 매기기 →</a></p>
     </div>
   </section>
-  <!-- RATING-END --><!-- SOURCES -->
+  <!-- RATING-END -->  <!-- SOURCES -->
   <footer id="sources">
     <details class="acc">
-      <summary><span>참고 출처</span><span class="cnt">4건</span><span class="arw">▼</span></summary>
+      <summary><span>참고 출처</span><span class="cnt">2건</span><span class="arw">▼</span></summary>
       <div class="acc-body">
         <div class="sources">
-          <a href="https://store.steampowered.com/app/3129360/Aksun/" target="_blank" rel="noopener">Steam — Aksun (악선)</a>
-          <a href="https://www.dizzobiz.co.kr/news/articleView.html?idxno=10198" target="_blank" rel="noopener">디지틀조선일보 — 한국 무속 로그라이트 ‘악선’ EA 출시</a>
-          <a href="https://namu.wiki/w/악선" target="_blank" rel="noopener">나무위키 — 악선</a>
-          <a href="https://store.onstove.com/ko/games/102000" target="_blank" rel="noopener">STOVE — 악선 데모</a>
+          <a href="https://store.steampowered.com/app/4981660/PARRUITS/" target="_blank" rel="noopener">Steam — PARRUITS!</a>
+          <a href="https://store.steampowered.com/app/4981660/PARRUITS/?l=koreana" target="_blank" rel="noopener">Steam — PARRUITS! (한국어 상점)</a>
         </div>
       </div>
     </details>
-    <p class="disc" style="margin-top:16px">이미지 © Wayway Inc / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>앞서 해보기(Early Access · 2026.07.21)</b> 단계로 콘텐츠·밸런스·평가가 계속 변동됩니다(정식 출시 2026년 말 예정). 초기 리뷰·수치는 시점에 따라 달라질 수 있으므로 실제 투자 검토 시 최신 리뷰 추이·판매·업데이트 로드맵·콘솔 계획 확인이 필요합니다. · 기준일 2026.09.11</p>
+    <p class="disc" style="margin-top:16px">이미지 © Cluko / Steam 공식 자료. 본 리포트는 공개 자료 기반 분석으로 투자 권유·자문이 아니며, 본 게임은 <b>미출시(Coming Soon · 2027 Q1 예정)</b>로 출시일 확정·가격·판매·리뷰 등 상업 지표가 없어 콘셉트·장르 시장성 중심의 출시 전 전망입니다. 개발사(Cluko)의 국적·규모 등 상세 정보는 공개가 제한적이므로(한국어 지원은 국적 근거가 아님) 실제 투자 검토 시 개발사 실체·플레이테스트·넷코드 확인이 필요합니다. · 기준일 2026.09.11</p>
     <a href="#top" class="backtop">↑ 맨 위로</a>
   </footer>
 

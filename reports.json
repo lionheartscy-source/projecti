@@ -21,6 +21,47 @@
     "slug": "Aksun"
   },
   {
+    "title": "Forest Punk(동물 특공대)",
+    "studio": "Petrichor",
+    "desc": "한국 인디 개발자 Simon Kim(김동건, 스튜디오 Petrichor)의 모바일 신작 「Forest Punk(동물 특공대)」 — 동물 특공대가 폭주한 로봇 군단에 맞서는 ‘로그라이크 서바이버(뱀서라이크) + 기지 재건’ 액션.",
+    "href": "reports/kr/Forest_Punk.html",
+    "region": "국내",
+    "thumb": "https://play-lh.googleusercontent.com/PpexyiHkhDb7rlONq9_FiCivHe1rvqzc0kpgICe_p4bWSr2ZeAjpsfaoex-4Vjf1cx4omTQ-foVK-9baai926A=w512-h512",
+    "tags": [
+      "로그라이크 서바이버 + 기지 재건"
+    ],
+    "platforms": [
+      "모바일"
+    ],
+    "topics": [
+      "로그라이크",
+      "서바이버"
+    ],
+    "status": "",
+    "date": "2026-09-11",
+    "rating": null,
+    "slug": "Forest_Punk"
+  },
+  {
+    "title": "PARRUITS!",
+    "studio": "Cluko",
+    "desc": "인디 개발사 Cluko의 신작 「PARRUITS!」 — 과일로 변신하는 앵무새들이 등장하는 2~6인 파티 브롤러. 각 과일의 고유 능력으로 친구를 섬 밖으로 날려버리고 최후의 1인이 되는 유쾌한 난투 게임. 로컬·온라인·리모트 플레이를 지원하는 캐주얼 파티 신작에 대한 출시 전(Pre-Launch, 2027년 1분기 예정) 분석.",
+    "href": "reports/kr/PARRUITS.html",
+    "region": "국내",
+    "thumb": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4981660/922c16b6ee205bf11f0b2e8a7fd516bdc425b197/ss_922c16b6ee205bf11f0b2e8a7fd516bdc425b197.1920x1080.jpg?t=1787248887",
+    "tags": [
+      "파티 브롤러"
+    ],
+    "platforms": [
+      "PC"
+    ],
+    "topics": [],
+    "status": "출시예정",
+    "date": "2026-09-11",
+    "rating": null,
+    "slug": "PARRUITS"
+  },
+  {
     "title": "Transpawt Train",
     "studio": "ORIN SOFT",
     "desc": "한국 인디 개발사 ORIN SOFT(오린소프트)의 출시작 「Transpawt Train」 — 동물 마을 ‘포시티(Paw-City)’에 첫 철도를 놓는 캐주얼 코지 전략·퍼즐 게임. 마을 사이에 철도를 손으로 그려 기차를 운행하고, 새 마을·재난에 맞춰 노선을 다시 설계합니다.",
